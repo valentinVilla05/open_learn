@@ -1,0 +1,71 @@
+CREATE DATABASE IF NOT EXISTS open_learn;
+USE open_learn;
+
+CREATE TABLE users(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	email VARCHAR(100) NOT NULL UNIQUE,
+    	user_password VARCHAR(255) NOT NULL,
+    	role ENUM('admin', 'teacher', 'student') DEFAULT 'student',
+    	register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE courses(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	teacher_id INT NOT NULL,
+	title VARCHAR(255) NOT NULL,
+	description TEXT NOT NULL,
+	subject VARCHAR(255) NOT NULL,
+	duration INT,
+	FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE resources(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	course_id INT NOT NULL,
+	name VARCHAR(255) NOT NULL,
+	limit_date DATE,
+	url VARCHAR(255) NOT NULL,
+	FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
+-- CREATE TABLE assignations(
+--	id INT AUTO_INCREMENT PRIMARY KEY,
+--	teacher_id INT NOT NULL,
+--	course_id INT NOT NULL,
+--	assignation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--	FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE, 
+--	FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+-- );
+
+CREATE TABLE comments(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	user_id INT NOT NULL,
+	course_id INT NOT NULL,
+	publication_date DATE NOT NULL,
+	comment_text TEXT NOT NULL,	
+	response_id INT NULL, 
+	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+	FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+	FOREIGN KEY (response_id) REFERENCES comments(id) ON DELETE SET NULL
+	
+);
+
+CREATE TABLE inscriptions(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	user_id INT NOT NULL,
+	course_id INT NOT NULL,
+	inscription_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+	FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
+CREATE TABLE certificates(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	user_id INT NOT NULL,
+	course_id INT NOT NULL,
+	ending_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	code VARCHAR(50) UNIQUE NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+	FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
