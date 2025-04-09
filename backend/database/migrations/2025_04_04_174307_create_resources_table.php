@@ -17,10 +17,11 @@ return new class extends Migration
             $table->unsignedBigInteger('course_id');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
 
+            $table->enum('type', ['document', 'activity', 'link']);
             $table->string('name');
             $table->text('description')->nullable();
             $table->timestamp('limit_date')->nullable();
-            $table->string('url');
+            $table->string('url')->nullable();
             $table->timestamps();
         });
     }
