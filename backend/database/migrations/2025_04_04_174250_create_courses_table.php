@@ -18,12 +18,12 @@ return new class extends Migration
             $table->foreign('teacher_id')->references('id')->on('users')->onDelete('cascade');
             
             $table->string('title');
-            $table->string('description');
-            $table->enum('privacity', ['private', 'public']);
+            $table->text('description');
+            $table->enum('privacy', ['private', 'public']);
             $table->string('image')->nullable();
             $table->unsignedInteger("max_students")->default(0);
             $table->string('subject');
-            $table->integer('duration')->nullable();
+            $table->string('duration')->nullable();
             $table->timestamps();
         });
     }
