@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'rol',
+        'register_date',
     ];
 
     /**
@@ -42,7 +44,32 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'register_date' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Define the realtionshionsips of the user
+
+    // An user can have many courses
+    public function courses(){
+        return $this->hasMany(Course::class, 'teacher_id');
+    }
+
+    // Courses where the user is enrolled
+    public function inscriptions(){
+        return $this->hasMany(Inscription::class);
+    }
+    public function enrolledCourses(){
+        return $this->belongsToMany(Course::class, 'inscriptions');
+    }
+
+    // An user can write many comments
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+    // An user can have many certificates
+    public function certificates(){
+        return $this->hasMany(Certificate::class);
     }
 }

@@ -5,9 +5,9 @@ CREATE TABLE users(
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL,
 	email VARCHAR(100) NOT NULL UNIQUE,
-    	user_password VARCHAR(255) NOT NULL,
-    	role ENUM('admin', 'teacher', 'student') DEFAULT 'student',
-    	register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    user_password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'teacher', 'student') DEFAULT 'student',
+    register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE courses(
