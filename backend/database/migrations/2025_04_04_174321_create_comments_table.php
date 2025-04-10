@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreign('resource_id')->references('id')->on('resources')->onDelete('cascade');
             $table->foreign('response_id')->references('id')->on('comments')->onDelete('cascade');
 
-            $table->timestamp('publication_date')->useCurrent();
             $table->text('comment');
             $table->timestamps();
         });

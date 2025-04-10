@@ -18,7 +18,7 @@ class Resource extends Model
     // We declare the attributes that are cast to a specific type
     protected $casts = [
         'limit_date' => 'datetime',
-    ];
+    ];  
 
     // We declare the relationship 
 
