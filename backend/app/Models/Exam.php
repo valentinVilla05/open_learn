@@ -28,7 +28,7 @@ class Exam extends Model
     // An exam is made by an user
     public function userExams()
     {
-        return $this->hasMany(UserExam::class);
+        return $this->hasMany(UserTest::class);
     }
     // An exam has many califications by different users
     public function califications(){

@@ -15,7 +15,8 @@ class CourseController extends Controller
     }
 
     // Method to get a course by ID
-    public function getCourseById($id){
+    public function getCourseById($id)
+    {
         // First, we check if the course exists using the findOrFail method from laravel which send a 404 status if the course is not found
         $course = Course::findOrFail($id);
 
@@ -23,25 +24,31 @@ class CourseController extends Controller
     }
 
     // Method to create a new course
-    public function createCourse(Request $request){
+    public function createCourse(Request $request)
+    {
         // We validate the data passed from the user
-        $data = $request->validate([
-            'teacher_id' => 'required|exists:users,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'privacy' => 'required|in:private,public',
-            'image' => 'nullable|string',
-            'max_students' => 'required|integer|min:0',
-            'subject' => 'required|string|max:255',
-            'duration' => 'nullable|string|max:255',
-        ]);
-        // We create a new course with the validated data
-        $course = Course::create($data); 
-        return response()->json($course, 201); // Return the new course with a 201 status
+        try {
+            $data = $request->validate([
+                'teacher_id' => 'required|exists:users,id',
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'privacy' => 'required|in:private,public',
+                'image' => 'nullable|string',
+                'max_students' => 'required|integer|min:0',
+                'subject' => 'required|string|max:255',
+                'duration' => 'nullable|string|max:255',
+            ]);
+            // We create a new course with the validated data
+            $course = Course::create($data);
+            return response()->json($course, 201); // Return the new course with a 201 status
+        } catch(\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     // Method to update a course
-    public function updateCourse(Request $request, $id){
+    public function updateCourse(Request $request, $id)
+    {
         // First, we check if the course exists using the findOrFail method from laravel which send a 404 status if the course is not found
         $course = Course::findOrFail($id);
         // We validate the data
@@ -61,10 +68,11 @@ class CourseController extends Controller
     }
 
     // Method to delete a course
-    public function deleteCourse($id){
+    public function deleteCourse($id)
+    {
         // First, we check if the course exists using the findOrFail method from laravel which send a 404 status if the course is not found
         $course = Course::findOrFail($id);
-        
+
         $course->delete(); // Delete the course;
         return response()->json(['message' => 'The course was deleted successfully'], 200); // Return a success message with a 200 status
     }

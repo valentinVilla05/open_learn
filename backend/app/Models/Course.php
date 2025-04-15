@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class Course extends Model
 {
+    use HasFactory; // We add this line to use the factory later
     // We declare the attributes that can be mass assigned
     protected $fillable = [
+        'teacher_id',
         'title',
         'description',
         'privacy',
@@ -37,6 +41,6 @@ class Course extends Model
     }
     // A course can have many resources
     public function resources(){
-        return $this->hasMany(Resources::class);
+        return $this->hasMany(Resource::class);
     }
 }
