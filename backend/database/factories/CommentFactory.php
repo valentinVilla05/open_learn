@@ -17,7 +17,10 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+          'user_id' => $this->faker->numberBetween(1, 6),
+          'resource_id' => $this->faker->numberBetween(1, 20),
+          'response_id' => $this->faker->numberBetween(1, 20),
+          'comment' => $this->faker->sentence(10),
         ];
     }
 }
