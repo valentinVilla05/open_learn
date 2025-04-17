@@ -17,7 +17,9 @@ class ExamFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'course_id' => $this->faker->numberBetween(1, 10),
+            'title' => $this->faker->sentence(3),
+            'is_active' => $this->faker->boolean(),
         ];
     }
 }

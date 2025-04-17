@@ -17,7 +17,11 @@ class UserTestFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => $this->faker->numberBetween(1, 6),
+            'test_id' => $this->faker->numberBetween(1, 100),
+            'exam_id' => $this->faker->numberBetween(1, 10),
+            'user_answer' => $this->faker->word(),
+            'is_correct' => $this->faker->boolean(),
         ];
     }
 }

@@ -17,7 +17,10 @@ class CalificationFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => $this->faker->numberBetween(1, 6),
+            'exam_id' => $this->faker->numberBetween(1, 10),
+            'calification' => $this->faker->randomFloat(2, 0, 10),
+            'attempted_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }
