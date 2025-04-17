@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,9 @@ class ExamFactory extends Factory
      */
     public function definition(): array
     {
+        $courses= Course::all();
         return [
-            'course_id' => $this->faker->numberBetween(1, 10),
+            'course_id' => $courses->random()->id,
             'title' => $this->faker->sentence(3),
             'is_active' => $this->faker->boolean(),
         ];

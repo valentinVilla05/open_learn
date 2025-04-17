@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\Course;
+use App\Models\Exam;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,10 +19,13 @@ class UserTestFactory extends Factory
      */
     public function definition(): array
     {
+        $users = User::all();
+        $courses = Course::all();
+        $exams = Exam::all();
         return [
-            'user_id' => $this->faker->numberBetween(1, 6),
-            'test_id' => $this->faker->numberBetween(1, 100),
-            'exam_id' => $this->faker->numberBetween(1, 10),
+            'user_id' => $users->random()->id,
+            'test_id' => $courses->random()->id,
+            'exam_id' => $exams->random()->id,
             'user_answer' => $this->faker->word(),
             'is_correct' => $this->faker->boolean(),
         ];

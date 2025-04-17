@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\Exam;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,9 +18,11 @@ class CalificationFactory extends Factory
      */
     public function definition(): array
     {
+        $users = User::all();
+        $exams = Exam::all();
         return [
-            'user_id' => $this->faker->numberBetween(1, 6),
-            'exam_id' => $this->faker->numberBetween(1, 10),
+            'user_id' => $users->random()->id,
+            'exam_id' => $exams->random()->id,
             'calification' => $this->faker->randomFloat(2, 0, 10),
             'attempted_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];

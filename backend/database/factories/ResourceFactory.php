@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,9 @@ class ResourceFactory extends Factory
      */
     public function definition(): array
     {
+        $courses = Course::all();
         return [
-            'course_id' => $this->faker->numberBetween(1, 10), 
+            'course_id' => $courses->random()->id, // We take a random id from all the courses
             'type' => $this->faker->randomElement(['document', 'activity', 'link']),
             'name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),

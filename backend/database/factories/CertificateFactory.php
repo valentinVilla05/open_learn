@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,9 +18,11 @@ class CertificateFactory extends Factory
      */
     public function definition(): array
     {
+        $users = User::all();
+        $courses = Course::all();
         return [
-            'user_id' => $this->faker->numberBetween(1, 6),
-            'course_id' => $this->faker->numberBetween(1, 10),
+            'user_id' => $users->random()->id,
+            'course_id' => $courses->random()->id,
             'certificate_code' => $this->faker->unique()->bothify('CERT-##??##??##??'),
             'ending_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
