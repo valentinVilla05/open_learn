@@ -10,6 +10,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// Endpoint Auth
+Route::post('/login', [UserController::class, 'login']); // Login
+
 //Endpoint Users
 Route::get('/users', [UserController::class, 'showAllUsers']); // Get all users
 Route::get('/users/{id}', [UserController::class, 'showUserById']); // Get a user by ID

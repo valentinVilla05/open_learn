@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Resource extends Model
 {
+    use HasFactory;
     // We declare the attributes that can be mass assigned
     protected $fillable = [
         'course_id',
