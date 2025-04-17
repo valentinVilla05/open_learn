@@ -4,9 +4,29 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
+    // Add a login method to give a token to the user
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            "email" => "required|email",
+            "password" => "required"
+        ]);
+
+        if (!Auth::attempt($data)) {
+            return response()->json([['message' => 'Invalid email or password'], 401]);
+        }
+        $user = Auth::user();
+        $auth_token = $user->createToken('auth_token')->plainTextToken; // We create the token 
+        return response()->json(['message' => 'Login successful', 
+        'token_type:' => 'Bearer', 
+        'auth_token' => $auth_token], 200);
+    }
+
     public function showAllUsers()
     {
         $users = User::all();
