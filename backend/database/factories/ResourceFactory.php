@@ -17,7 +17,7 @@ class ResourceFactory extends Factory
     public function definition(): array
     {
         return [
-            'course_id' => $this->faker->numberBetween(1, 10), // Assuming you have 10 courses
+            'course_id' => $this->faker->numberBetween(1, 10), 
             'type' => $this->faker->randomElement(['document', 'activity', 'link']),
             'name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),

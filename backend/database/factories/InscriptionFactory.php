@@ -17,7 +17,9 @@ class InscriptionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => $this->faker->numberBetween(1, 6), 
+            'course_id' => $this->faker->numberBetween(1, 10),
+            'inscription_date' => now(),
         ];
     }
 }
