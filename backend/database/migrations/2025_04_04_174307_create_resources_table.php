@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('course_id');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
 
-            $table->enum('type', ['document', 'activity', 'link']);
+            $table->enum('type', ['document', 'video', 'link']);
             $table->string('name');
             $table->text('description')->nullable();
             $table->timestamp('limit_date')->nullable();

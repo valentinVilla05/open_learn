@@ -19,7 +19,7 @@ class ResourceFactory extends Factory
     {
         return [
             'course_id' => Course::inRandomOrder()->first()->id, // We take a random id from all the courses
-            'type' => $this->faker->randomElement(['document', 'activity', 'link']),
+            'type' => $this->faker->randomElement(['document', 'video', 'link']),
             'name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),
             'limit_date' => $this->faker->dateTimeBetween('now', '+1 month'),

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ResourceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -29,4 +30,11 @@ Route::get('/courses/{id}', [CourseController::class, 'getCourseById']); // Ever
     Route::delete('/courses/{id}', [CourseController::class, 'deleteCourse']);
     Route::put('/courses/{id}', [CourseController::class, 'updateCourse']);
 //});
+
+// Endpoint Resources
+Route::get('/resources', [ResourceController::class, 'showAllResources']); // Get all resources
+Route::get('/resources/{courseId}', [ResourceController::class, 'showResourceByCourseId']); // Get resources from an specific course
+Route::post('/resources', [ResourceController::class, 'createResource']); // Create a new resource
+Route::put('/resources/{id}', [ResourceController::class, 'updateResource']); // Update an specific resource
+Route::delete('/resources/{id}', [ResourceController::class, 'deleteResource']); // Delete an specific resource
 
