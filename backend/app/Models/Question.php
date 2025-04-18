@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-class Test extends Model
+class Question extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -15,7 +15,7 @@ class Test extends Model
       'correct_answer',
       'incorrect_answer_1',
       'incorrect_answer_2',
-      'incorrect_answer_3',  
+      'incorrect_answer_3',
     ];
     // A question belongs to an exam
     public function exam()
@@ -44,5 +44,5 @@ class Test extends Model
         return $this->correct_answer === $userAnswer;
     }
 
-    
+
 }

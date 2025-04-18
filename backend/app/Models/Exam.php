@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class Exam extends Model
-{ 
+{
     use HasFactory;
     protected $fillable = [
         'course_id',
@@ -26,7 +26,7 @@ class Exam extends Model
     // An exam has many questions
     public function questions()
     {
-        return $this->hasMany(Test::class);
+        return $this->hasMany(Question::class);
     }
     // An exam is made by an user
     public function userExams()

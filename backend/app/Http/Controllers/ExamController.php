@@ -23,16 +23,26 @@ class ExamController extends Controller
         $data = $request->validate([
             'course_id' => 'required|integer',
             'title' => 'required|string',
-            'is_active' => 'boolean',
+            'is_active' => 'boolean|default:false',
         ]);
         $examen = Exam::create($data);
         return response()->json(['message' => 'The exam was created succesfully'], 201);
+    }
+    public function updateExam(Request $request, $id){
+        $exam = Exam::findOrFail($id);
+
+        $data = $request->validate([
+            'is_active' => 'boolean',
+        ]);
+
+        $exam->update($data);
+        return response()->json(['message' => 'The exam was updated succesfully'], 200);
     }
 
     public function deleteExam($id){
         $exam = Exam::findOrFail($id);
 
         $exam->delete();
-        return response()->json(['message' => 'The exam was deleted succesfully'], 200);
+        return response()->json(['message' => 'The exam and all the questions associated to it were deleted succesfully'], 200);
     }
 }

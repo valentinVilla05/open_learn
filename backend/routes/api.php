@@ -3,7 +3,9 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -59,5 +61,13 @@ Route::delete('/inscriptions/{user_id}/{course_id}', [InscriptionController::cla
 Route::get('/exams', [ExamController::class, 'getAllExams']); // Get all exams
 Route::get('/exams/course/{course_id}', [ExamController::class, 'getExamsFromCourse']); // Get all exams from a course
 Route::post('/exams', [ExamController::class, 'createExam']); // Create a new exam
+Route::put('/exams/{id}', [ExamController::class,'updateExam']); // Update an exam
 Route::delete('/exams/{id}', [ExamController::class, 'deleteExam']); // Delete an exam
+
+// Endpoint Questions
+Route::get('/questions', [QuestionController::class, 'showAllQuestions']); // Get all questions
+Route::get('/questions/exam/{exam_id}', [QuestionController::class, 'showQuestionsFromExam']); // Get all questions from an exam
+Route::post('/questions', [QuestionController::class,'createQuestion']); // Create a new question
+Route::put('/questions/{id}', [QuestionController::class, 'updateQuestion']); // Update a question
+Route::delete('/questions/{id}', [QuestionController::class, 'deleteQuestion']); // Delete a question
 

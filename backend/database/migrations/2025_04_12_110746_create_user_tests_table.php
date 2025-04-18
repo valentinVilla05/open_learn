@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('test_id');
             $table->unsignedBigInteger('exam_id');
 
-            $table->foreign('test_id')->references('id')->on('tests')->onDelete('cascade');
+            $table->foreign('test_id')->references('id')->on('questions')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
             $table->string('user_answer')->nullable();

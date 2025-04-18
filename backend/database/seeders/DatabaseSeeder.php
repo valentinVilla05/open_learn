@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             InscriptionSeeder::class,
             ResourceSeeder::class,
             ExamSeeder::class,
-            TestSeeder::class,
+            QuestionSeeder::class,
             UserTestSeeder::class,
             CalificationSeeder::class,
             CommentSeeder::class,

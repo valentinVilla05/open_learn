@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Test;
+use App\Models\Question;
 use App\Models\User;
 use App\Models\Exam;
 use App\Models\UserTest;
@@ -17,7 +17,7 @@ class UserTestSeeder extends Seeder
     public function run(): void
     {
         $users = User::all();
-        $tests = Test::all();
+        $tests = Question::all();
         $exams = Exam::all();
 
         UserTest::factory()->count(100)->make()->each(function ($userTest) use ($users, $tests, $exams){

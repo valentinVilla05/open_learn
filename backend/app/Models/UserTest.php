@@ -14,16 +14,16 @@ class UserTest extends Model
         'test_id',
         'exam_id',
         'user_answer',
-        'is_correct',   
+        'is_correct',
     ];
-    
+
     // An answer belongs to an user
     public function user(){
         return $this->belongsTo(User::class);
     }
     // An answer belongs to a question
     public function test(){
-        return $this->belongsTo(Test::class);
+        return $this->belongsTo(Question::class);
     }
     // An aswer belongs to an exam
     public function exam(){
