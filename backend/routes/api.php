@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ResourceController;
 use Illuminate\Http\Request;
@@ -53,3 +54,10 @@ Route::get('/inscriptions/user/{user_id}', [InscriptionController::class, 'getCo
 Route::get('/inscriptions/course/{course_id}', [InscriptionController::class, 'getUsersFromCourse']); // Get all users from a course
 Route::post('/inscriptions', [InscriptionController::class, 'createInscription']); // Create a new inscription
 Route::delete('/inscriptions/{user_id}/{course_id}', [InscriptionController::class, 'deleteInscription']); // Delete an inscription
+
+// Endpoint Exams 
+Route::get('/exams', [ExamController::class, 'getAllExams']); // Get all exams
+Route::get('/exams/course/{course_id}', [ExamController::class, 'getExamsFromCourse']); // Get all exams from a course
+Route::post('/exams', [ExamController::class, 'createExam']); // Create a new exam
+Route::delete('/exams/{id}', [ExamController::class, 'deleteExam']); // Delete an exam
+
