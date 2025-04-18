@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ResourceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,3 +47,9 @@ Route::get('/comments/user/{user_id}', [CommentController::class, 'showCommentBy
 Route::post('/comments', [CommentController::class, 'createComment']); // Create a new comment
 Route::put('/comments/{id}', [CommentController::class, 'updateComment']); // Update a comment
 Route::delete('/comments/{id}', [CommentController::class, 'deleteComment']); // Delete a comment
+
+// Endpoint Inscription
+Route::get('/inscriptions/user/{user_id}', [InscriptionController::class, 'getCoursesFromUser']); // Get all courses from a user
+Route::get('/inscriptions/course/{course_id}', [InscriptionController::class, 'getUsersFromCourse']); // Get all users from a course
+Route::post('/inscriptions', [InscriptionController::class, 'createInscription']); // Create a new inscription
+Route::delete('/inscriptions/{user_id}/{course_id}', [InscriptionController::class, 'deleteInscription']); // Delete an inscription
