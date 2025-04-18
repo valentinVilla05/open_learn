@@ -26,6 +26,8 @@ class UserSeeder extends Seeder
             'rol' => 'teacher',
         ])->create();
 
-        User::factory(14)->create();
+        User::factory(14)->state([
+            'rol' => 'student',
+        ])->create();
     }
 }
