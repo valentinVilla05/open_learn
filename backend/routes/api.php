@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ResourceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,8 +34,15 @@ Route::get('/courses/{id}', [CourseController::class, 'getCourseById']); // Ever
 
 // Endpoint Resources
 Route::get('/resources', [ResourceController::class, 'showAllResources']); // Get all resources
-Route::get('/resources/{courseId}', [ResourceController::class, 'showResourceByCourseId']); // Get resources from an specific course
+Route::get('/resources/{courseId}', [ResourceController::class, 'showResourceByCourseId']); // Get resources from a specific course
 Route::post('/resources', [ResourceController::class, 'createResource']); // Create a new resource
-Route::put('/resources/{id}', [ResourceController::class, 'updateResource']); // Update an specific resource
-Route::delete('/resources/{id}', [ResourceController::class, 'deleteResource']); // Delete an specific resource
+Route::put('/resources/{id}', [ResourceController::class, 'updateResource']); // Update a resource
+Route::delete('/resources/{id}', [ResourceController::class, 'deleteResource']); // Delete a resource
 
+// Endpoint Comments
+Route::get('/comments', [CommentController::class, 'showAllComments']); // Get all comments
+Route::get('/comments/resource/{resource_id}', [CommentController::class, 'showCommentsByResource']); // Get comments from a specific resource
+Route::get('/comments/user/{user_id}', [CommentController::class, 'showCommentByUserId']); // Get comments from a specific user
+Route::post('/comments', [CommentController::class, 'createComment']); // Create a new comment
+Route::put('/comments/{id}', [CommentController::class, 'updateComment']); // Update a comment
+Route::delete('/comments/{id}', [CommentController::class, 'deleteComment']); // Delete a comment
