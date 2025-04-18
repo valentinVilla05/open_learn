@@ -17,6 +17,15 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             CourseSeeder::class,
+            InscriptionSeeder::class,
+            ResourceSeeder::class,
+            ExamSeeder::class,
+            TestSeeder::class,
+            UserTestSeeder::class,
+            CalificationSeeder::class,
+            CommentSeeder::class,
+            CertificateSeeder::class,
+
         ]);
     }
 }
