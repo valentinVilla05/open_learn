@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Exam;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,9 +16,7 @@ class TestFactory extends Factory
      */
     public function definition(): array
     {
-        $exams = Exam::factory()->create();
         return [
-            'exam_id' => $exams->random()->id,
             'statement' => $this->faker->sentence(),
             'correct_answer' => $this->faker->word(),
             'incorrect_answer_1' => $this->faker->word(),

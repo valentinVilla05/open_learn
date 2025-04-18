@@ -18,11 +18,9 @@ class InscriptionFactory extends Factory
      */
     public function definition(): array
     {
-        $users = User::all();
-        $courses = Course::all();
         return [
-            'user_id' => $users->random()->id, 
-            'course_id' => $courses->random()->id,
+            'user_id' => User::factory(),
+            'course_id' => Course::factory(),
             'inscription_date' => now(),
         ];
     }

@@ -17,9 +17,8 @@ class ResourceFactory extends Factory
      */
     public function definition(): array
     {
-        $courses = Course::all();
         return [
-            'course_id' => $courses->random()->id, // We take a random id from all the courses
+            'course_id' => Course::inRandomOrder()->first()->id, // We take a random id from all the courses
             'type' => $this->faker->randomElement(['document', 'activity', 'link']),
             'name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),

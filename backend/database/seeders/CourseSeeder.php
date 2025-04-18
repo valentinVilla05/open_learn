@@ -19,8 +19,11 @@ class CourseSeeder extends Seeder
         // We create 10 teachers
         $teacher = User::where('rol', 'teacher')->pluck('id');
 
-        Course::factory(10)->create([
-            'teacher_id' => $teacher->random(),
+        Course::factory(10)->create([ 
+            // We take a random teacher from the list to each course
+            'teacher_id' => function () use ($teacher) {
+                return $teacher->random();
+            },
         ]);
     }
 }

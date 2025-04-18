@@ -21,15 +21,10 @@ class CommentFactory extends Factory
     {
       $resources = Resource::all();
       $users = User::all();
-      // We generate a random number to decide if the comment get a response or not
-      $hasResponse = $this->faker->boolean(30); // 30% chance
-      // In case the comment has a response, we get a random comment id
-      $responseId = $hasResponse ? Comment::pluck('id')->random() : null;
 
         return [
           'user_id' => $users->random()->id,
           'resource_id' => $resources->random()->id,
-          'response_id' => $responseId,
           'comment' => $this->faker->sentence(10),
         ];
     }
