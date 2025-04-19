@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalificationController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\InscriptionController;
@@ -78,3 +79,9 @@ Route::get('/answers/{user_id}/{exam_id}', [UserTestController::class, 'showAnsw
 Route::post('/answers', [UserTestController::class, 'createAnswer']); // Create a new answer
 Route::get('/answers/{id}', [UserTestController::class, 'correctAnswer']); // Correct an answer
 Route::get('/answers/score/{user_id}/{exam_id}', [UserTestController::class, 'getScore']); // Get the score of a user in an exam
+
+// Endpoint Calificationss
+Route::get('/califications', [CalificationController::class, 'showAllCalifications']); // Get all califications
+Route::get('/califications/user/{user_id}', [CalificationController::class, 'showCalificationsFromUser']); // Get all califications from an user 
+Route::get('/califications/exam/{exam_id}', [CalificationController::class, 'showCalificationsFromExam']); // Get all califications from an exam
+Route::post('/califications', [CalificationController::class, 'createCalification']); // Create a new calification
