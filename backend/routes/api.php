@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CalificationController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\InscriptionController;
@@ -80,8 +81,12 @@ Route::post('/answers', [UserTestController::class, 'createAnswer']); // Create 
 Route::get('/answers/{id}', [UserTestController::class, 'correctAnswer']); // Correct an answer
 Route::get('/answers/score/{user_id}/{exam_id}', [UserTestController::class, 'getScore']); // Get the score of a user in an exam
 
-// Endpoint Calificationss
+// Endpoint Califications
 Route::get('/califications', [CalificationController::class, 'showAllCalifications']); // Get all califications
 Route::get('/califications/user/{user_id}', [CalificationController::class, 'showCalificationsFromUser']); // Get all califications from an user 
 Route::get('/califications/exam/{exam_id}', [CalificationController::class, 'showCalificationsFromExam']); // Get all califications from an exam
 Route::post('/califications', [CalificationController::class, 'createCalification']); // Create a new calification
+
+// Endpoint Certificates
+Route::get('/certificates/user/{user_id}', [CertificateController::class, 'getAllCertificatesFromUser']); // Get all certificates from a user
+Route::get('/certificates/{user_id}/{course_id}', [CertificateController::class, 'generateCertificate']); // Generate a certificate for a user and a course')
