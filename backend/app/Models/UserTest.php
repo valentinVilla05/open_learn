@@ -11,7 +11,7 @@ class UserTest extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'test_id',
+        'question_id',
         'exam_id',
         'user_answer',
         'is_correct',

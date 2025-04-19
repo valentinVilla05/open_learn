@@ -17,12 +17,12 @@ class UserTestSeeder extends Seeder
     public function run(): void
     {
         $users = User::all();
-        $tests = Question::all();
+        $questions = Question::all();
         $exams = Exam::all();
 
-        UserTest::factory()->count(100)->make()->each(function ($userTest) use ($users, $tests, $exams){
+        UserTest::factory()->count(100)->make()->each(function ($userTest) use ($users, $questions, $exams){
             $userTest->user_id = $users->random()->id;
-            $userTest->test_id  = $tests->random()->id;
+            $userTest->question_id  = $questions->random()->id;
             $userTest->exam_id = $exams->random()->id;
             $userTest->save();
         });

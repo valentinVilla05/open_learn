@@ -6,6 +6,7 @@ use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\UserTestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -71,3 +72,9 @@ Route::post('/questions', [QuestionController::class,'createQuestion']); // Crea
 Route::put('/questions/{id}', [QuestionController::class, 'updateQuestion']); // Update a question
 Route::delete('/questions/{id}', [QuestionController::class, 'deleteQuestion']); // Delete a question
 
+// Endpont Answers
+Route::get('/answers', [UserTestController::class, 'showAllAnswers']); // Get all answers
+Route::get('/answers/{user_id}/{exam_id}', [UserTestController::class, 'showAnswerFromUserAndExam']); // Get all answers from a user and an exam
+Route::post('/answers', [UserTestController::class, 'createAnswer']); // Create a new answer
+Route::get('/answers/{id}', [UserTestController::class, 'correctAnswer']); // Correct an answer
+Route::get('/answers/score/{user_id}/{exam_id}', [UserTestController::class, 'getScore']); // Get the score of a user in an exam
