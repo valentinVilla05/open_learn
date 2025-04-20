@@ -1,0 +1,79 @@
+Endpoint for Resources: http://localhost:8000/api/resources
+______________________________________________________
+
+1.- Get all resources: http://localhost:8000/api/resources
+
+fetch(' http://localhost:8000/api/resources ', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Resources:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+2.- Get resource by course: http://localhost:8000/api/resources/{course_id}
+
+fetch('http://localhost:8000/api/resources/{course_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Resources:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+3.- Create a resource: http://localhost:8000/api/resources
+
+const resourceData = {
+    course_id: ''
+    type: 'document/video/link'
+    name: '',
+    description: '', (nullable)
+    limit_date: '', (nullable)
+    url: '' (nullable)
+}
+
+fetch('http://localhost:8000/api/resources', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(resourceData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Resource created:', data.user);
+    } else {
+        console.log('Error creating resource:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+4.- Update a resource: http://localhost:8000/api/resources/{resource_id}
+
+
+const updateResource = {
+    name: ' ',
+    description: '', (nullable)
+    limit_date: '', (nullable)
+    url: '' (nullable)
+};
+
+fetch('http://localhost:8000/api/resources/{resource_id}', {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updateResource)
+})
+.then(response => response.json())
+.then(data => console.log('Response:', data))
+______________________________________________________
+
+5.- Delete a resource: http://localhost:8000/api/resources
+
+fetch('http://localhost:8000/api/resources', {
+    method: 'DELETE',
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data))
+.catch(error => console.error('Error:', error));
