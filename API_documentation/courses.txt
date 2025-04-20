@@ -1,0 +1,89 @@
+EndPoint for courses: http://localhost:8000/api/courses
+
+______________________________________________________
+
+1.- Get all courses: http://localhost:8000/api/courses
+
+fetch('http://localhost:8000/api/courses', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Courses:', data))
+.catch(error => console.log('Error:', error));
+
+______________________________________________________
+
+2.- Get an User by ID: http://localhost:8000/api/courses/{course_id}
+
+fetch('http://localhost:8000/api/courses/{course_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Course:', data))
+.catch(error => console.log('Error:', error));
+
+______________________________________________________
+
+3.- Create a course: http://localhost:8000/api/courses
+
+const courseData = {
+    teacher_id: '',
+    title: '',
+    description: '',
+    privacy: '',
+    image: '',
+    max_student: '',
+    subject: '',
+    duration: ''
+}
+
+fetch('http://localhost:8000/api/courses', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(courseData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('User created:', data.user);
+    } else {
+        console.log('Error creating user:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+
+______________________________________________________
+
+4.- Update a course: http://localhost:8000/api/courses/{course_id}
+
+const updateCourse = {
+    teacher_id: '',
+    title: '',
+    description: '',
+    privacy: '',
+    image: '',
+    max_student: '',
+    subject: '',
+    duration: ''
+};
+
+fetch('http://localhost:8000/api/courses/{course_id}', {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updateCourse)
+})
+.then(response => response.json())
+.then(data => console.log('Response:', data))
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+5.- Delete a course: http://localhost:8000/api/courses
+
+fetch('http://localhost:8000/api/courses', {
+    method: 'DELETE',
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data))
+.catch(error => console.error('Error:', error));

@@ -1,4 +1,4 @@
-Endpoints para USERS: http://localhost:8000/api/users
+Endpoints for USERS: http://localhost:8000/api/users
 
 ______________________________________________________
 
