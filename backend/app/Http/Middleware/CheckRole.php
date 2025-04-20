@@ -16,8 +16,8 @@ class CheckRole
     public function handle(Request $request, Closure $next, $rol): Response
     {
         $user = $request->user(); // We get the user
-        if(!$user || $user->rol != 'admin' ){
-            return response()->json(['message' => 'Unauthotized'], 401); // If there isn't a user authenticated or the user isn't an admin, we return a message with a 401 status    
+        if (!$user || !$user->isAdmin()) {
+            return response()->json(['message' => 'Unauthorized'], 401); // If there isn't a user authenticated or the user isn't an admin, we return a message with a 401 status    
         }
         return $next($request);
     }

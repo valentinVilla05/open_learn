@@ -1,0 +1,103 @@
+Endpoints para USERS: http://localhost:8000/api/users
+
+______________________________________________________
+
+1.- Login (get the auth token): http://localhost:8000/api/login
+
+In this case (POST), you have to send a body with the information
+
+const loginData = {
+    email: 'email@example.es',
+    password: 'password'
+}
+
+fetch('http://localhost:8000/api/login', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(loginData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Login exitoso:', data.user);
+    } else {
+        console.log('Error de login:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+
+This POST will return the bearer token which should be sended in the request that require authentication.
+______________________________________________________
+
+2.- Get all users: http://localhost:8000/api/users
+
+fetch('http://localhost:8000/api/users', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Users:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+3.- Get an User by ID: http://localhost:8000/api/users/{user_id}
+
+fetch('http://localhost:8000/api/users/{user_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('User:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+4.- Create an user: http://localhost:8000/api/users
+
+const userData = {
+    name: 'example',
+    email: 'open@example.es',
+    password: 'password'
+}
+
+fetch('http://localhost:8000/api/users', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('User created:', data.user);
+    } else {
+        console.log('Error creating user:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+5.- Update the rol of an user: http://localhost:8000/api/users/{user_id}
+
+const updatedRole = {
+    rol: 'admin/teacher/student'
+};
+
+fetch('http://localhost:8000/api/users/{user_id}', {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedRole)
+})
+.then(response => response.json())
+.then(data => console.log('Response:', data))
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+6.- Delete an user: http://localhost:8000/api/users/{user_id}
+
+fetch('http://localhost:8000/api/users/{user_id}', {
+    method: 'DELETE',
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data))
+.catch(error => console.error('Error:', error));

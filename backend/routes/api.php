@@ -33,7 +33,7 @@ Route::delete('/users/{id}', [UserController::class, 'deleteUser']); // Delete a
 Route::get('/courses', [CourseController::class, 'showAllCourses']); // Everyone can see the courses
 Route::get('/courses/{id}', [CourseController::class, 'getCourseById']); // Everyone can an especific course
 // For creating, editing and deleting a course we need to be atohorized as an admin
-//Route::middleware(['auth:sanctum', 'rol:admin'])->group(function () {
+//Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/courses', [CourseController::class, 'createCourse']);
     Route::delete('/courses/{id}', [CourseController::class, 'deleteCourse']);
     Route::put('/courses/{id}', [CourseController::class, 'updateCourse']);
