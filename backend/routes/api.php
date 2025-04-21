@@ -89,4 +89,4 @@ Route::post('/califications', [CalificationController::class, 'createCalificatio
 
 // Endpoint Certificates
 Route::get('/certificates/user/{user_id}', [CertificateController::class, 'getAllCertificatesFromUser']); // Get all certificates from a user
-Route::get('/certificates/{user_id}/{course_id}', [CertificateController::class, 'generateCertificate']); // Generate a certificate for a user and a course')
+Route::get('/certificates/{user_id}/{course_id}', [CertificateController::class, 'generateCertificate']); // Generate a certificate for a user and a course

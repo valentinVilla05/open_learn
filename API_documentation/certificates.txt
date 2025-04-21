@@ -1,0 +1,20 @@
+Endpoints for Calification: http://localhost:8000/api/certificates
+
+______________________________________________________
+
+1.- Get all Calification from user: http://localhost:8000/api/certificates/user/{user_id}
+
+fetch('http://localhost:8000/api/certificates/user/{user_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Certificates:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+2.- Generate a certificate: http://localhost:8000/api/certificates/{user_id}/{course_id}
+
+fetch('http://localhost:8000/api/certificates/{user_id}/{course_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Certificates:', data))
+.catch(error => console.log('Error:', error));

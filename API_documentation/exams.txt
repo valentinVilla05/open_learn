@@ -1,0 +1,74 @@
+Endpoints for USERS: http://localhost:8000/api/exams
+
+______________________________________________________
+
+1.- Get all exams: http://localhost:8000/api/exams
+
+fetch('http://localhost:8000/api/exams', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Exams:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+2.- Get all exams from a course: http://localhost:8000/api/exams/course/{course_id}
+
+fetch('http://localhost:8000/api/exams/course/{course_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Exams:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+3.- Create an exam: http://localhost:8000/api/exams
+
+const newExam = {
+    course_id: '',
+    title: '',
+    is_active: '' (bool)
+}
+
+fetch('http://localhost:8000/api/exams', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Exam created:', data);
+    } else {
+        console.log('Error creating exam:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+4.- Update the status of an exam: http://localhost:8000/api/exams/{exam_id}
+
+const updatedStatus = {
+    is_active: ''
+};
+
+fetch('http://localhost:8000/api/exams/{user_id}', {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedStatus)
+})
+.then(response => response.json())
+.then(data => console.log('Response:', data))
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+5.- Delete an exam: http://localhost:8000/api/exams/{exam_id}
+
+fetch('http://localhost:8000/api/exams/{exam_id}', {
+    method: 'DELETE',
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data))
+.catch(error => console.error('Error:', error));

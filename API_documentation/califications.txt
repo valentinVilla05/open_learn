@@ -1,0 +1,55 @@
+Endpoints for Calification: http://localhost:8000/api/califications
+
+______________________________________________________
+
+1.- Get all Calification: http://localhost:8000/api/califications
+
+fetch('http://localhost:8000/api/califications', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Calification:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+2.- Get all Calification from an user: http://localhost:8000/api/califications/user/{user_id}
+
+fetch('http://localhost:8000/api/califications/user/{user_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Calification::', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+3.- Get all Calification from an exam: http://localhost:8000/api/califications/exam/{exam_id}
+
+fetch('http://localhost:8000/api/califications/exam/{exam_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Calification::', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+4.- Create a calification: http://localhost:8000/api/califications
+
+const newCalification = {
+    user_id: '',
+    exam_od: '',
+    calification: ''
+}
+
+fetch('http://localhost:8000/api/califications', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newCalification)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Question created:', data);
+    } else {
+        console.log('Error creating the question:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));

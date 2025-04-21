@@ -40,7 +40,7 @@ fetch('http://localhost:8000/api/resources', {
 .then(response => response.json())
 .then(data => {
     if (data.status === 'success') {
-        console.log('Resource created:', data.user);
+        console.log('Resource created:', data);
     } else {
         console.log('Error creating resource:', data.message);
     }

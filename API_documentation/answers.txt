@@ -1,0 +1,67 @@
+Endpoints for Answers: http://localhost:8000/api/answers
+
+______________________________________________________
+
+1.- Get all Answers: http://localhost:8000/api/answers
+
+fetch('http://localhost:8000/api/answers', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Answers:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+2.- Get all Answers from an exam: http://localhost:8000/api/answers/{user_id}/{course_id}
+
+fetch('http://localhost:8000/api/answers/exam/{exam_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Answers:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+3.- Create a answer: http://localhost:8000/api/answers
+
+const newQuestion = {
+    user_id: '',
+    question_id: '',
+    examn_id: '',
+    user_answer: ''
+}
+
+fetch('http://localhost:8000/api/answers', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newQuestion)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Question created:', data);
+    } else {
+        console.log('Error creating the question:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+4.- Correct the answer: http://localhost:8000/api/answers/{answer_id}
+
+fetch('http://localhost:8000/api/answers/{answer_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Is correct?', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+5.- Get score: http://localhost:8000/api/answers/score/{user_id}/{exam_id}
+
+fetch('http://localhost:8000/api/answers/score/{user_id}/{exam_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Score:', data))
+.catch(error => console.log('Error:', error));
+
+

@@ -67,7 +67,7 @@ fetch('http://localhost:8000/api/users', {
 .then(response => response.json())
 .then(data => {
     if (data.status === 'success') {
-        console.log('User created:', data.user);
+        console.log('User created:', data);
     } else {
         console.log('Error creating user:', data.message);
     }

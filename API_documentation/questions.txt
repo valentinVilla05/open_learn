@@ -1,0 +1,82 @@
+Endpoints for Questions: http://localhost:8000/api/questions
+
+______________________________________________________
+
+1.- Get all questions: http://localhost:8000/api/questions
+
+fetch('http://localhost:8000/api/questions', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Questions:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+2.- Get all questions from an exam: http://localhost:8000/api/questions/exam/{exam_id}
+
+fetch('http://localhost:8000/api/questions/exam/{exam_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Questions::', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+3.- Create a question: http://localhost:8000/api/questions
+
+const newQuestion = {
+    exam_id: '', (nullable)
+    statement: '',
+    correct_answer: '',
+    incorrect_answer_1: '',
+    incorrect_answer_2: '', (nullable)
+    incorrect_answer_3: ''(nullable)
+}
+
+fetch('http://localhost:8000/api/questions', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Question created:', data);
+    } else {
+        console.log('Error creating the question:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+4.- Update a question: http://localhost:8000/api/questions/{question_id}
+
+const updatedRole = {
+    exam_id: '', (nullable)
+    statement: '',
+    correct_answer: '',
+    incorrect_answer_1: '',
+    incorrect_answer_2: '', (nullable)
+    incorrect_answer_3: ''(nullable)
+};
+
+fetch('http://localhost:8000/api/questions/{user_id}', {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedRole)
+})
+.then(response => response.json())
+.then(data => console.log('Response:', data))
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+5.- Delete a question: http://localhost:8000/api/questions/{question_id}
+
+fetch('http://localhost:8000/api/questions/{question_id}', {
+    method: 'DELETE',
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data))
+.catch(error => console.error('Error:', error));

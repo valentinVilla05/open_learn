@@ -1,0 +1,55 @@
+Endpoints for Inscriptions: http://localhost:8000/api/inscriptions
+
+______________________________________________________
+
+1.- Get all courses from an user: http://localhost:8000/api/inscriptions/user/{user_id}
+
+fetch('http://localhost:8000/api/inscriptions/user/{user_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Courses from this user:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+2.- Get all users from a course: http://localhost:8000/api/inscriptions/course/{course_id}
+
+fetch('http://localhost:8000/api/inscriptions/course/{course_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Users from this course:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+3.- Create a new inscription: http://localhost:8000/api/inscriptions
+
+const newInscription = {
+    user_id: '',
+    course_id: ''
+}
+
+fetch('http://localhost:8000/api/inscriptions', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('User created:', data);
+    } else {
+        console.log('Error creating inscription:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+______________________________________________________
+
+5.- Delete an inscription : http://localhost:8000/api/inscriptions/{user_id}/{course_id}
+
+fetch('http://localhost:8000/api/inscriptions/{user_id}/{course_id}', {
+    method: 'DELETE',
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data)) 
+.catch(error => console.error('Error:', error));

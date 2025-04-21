@@ -1,0 +1,87 @@
+Endpoint for Comments: http://localhost:8000/api/comments
+
+______________________________________________________
+
+1.- Get all comments: http://localhost:8000/api/comments
+
+fetch('http://localhost:8000/api/comments', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Comments:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+2.- Get comment from a specific resource: http://localhost:8000/api/comments/resources/{resource_id}
+
+fetch('http://localhost:8000/api/comments/resources/{resource_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Comments:', data))
+.catch(error => console.log('Error:', error));
+
+______________________________________________________
+
+2.- Get comment from a specific resource: http://localhost:8000/api/comments/user/{user_id}
+
+fetch('http://localhost:8000/api/comments/user/{user_id}', {
+    method: 'GET',
+}).then(reponse => response->json())
+.then(data => console.log('Comments:', data))
+.catch(error => console.log('Error:', error));
+______________________________________________________
+
+4.- Create new comment: http://localhost:8000/api/comments
+
+const comment = {
+    user_id: '',
+    resource_id: '',
+    response_id: '', (nullable)
+    comment: ''
+}
+
+fetch('http://localhost:8000/api/comments', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(comment)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Comment posted:', data);
+    } else {
+        console.log('Error posting comment:', data.message);
+    }
+})
+.catch(error => console.error('Error:', error));
+
+______________________________________________________
+
+5.- Update a comment: http://localhost:8000/api/comments/{comment_id}
+
+const updateComment = {
+    comment: ''
+};
+
+fetch('http://localhost:8000/api/comments/{comment_id}', {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updateComment)
+})
+.then(response => response.json())
+.then(data => console.log('Response:', data))
+.catch(error => console.error('Error:', error));
+
+______________________________________________________
+
+6.- Delete a comment: http://localhost:8000/api/comments/{comment_id}
+
+fetch('http://localhost:8000/api/comments/{comment_id}', {
+    method: 'DELETE',
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data))
+.catch(error => console.error('Error:', error));
