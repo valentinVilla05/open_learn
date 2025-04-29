@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
+// Control to login/register animation
 const isSignUp = ref(false)
 
 const switchToSignUp = () => {
@@ -209,9 +210,9 @@ h2 {
    position: relative;
    width: 100%;
    height: 2.5em;
-   background: linear-gradient(to right, #2196f3, #e91e63);
+   background: linear-gradient(to right, #8EC8EC, #6eb19b);
    box-shadow: 0 2px 10px rgba(0, 0, 0, .4);
-   font-size: 1em;
+   font-size: 1em;   
    color: #fff;
    font-weight: 500;
    cursor: pointer;

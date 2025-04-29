@@ -7,8 +7,10 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject; // Import the JWTSubject interface
 
-class User extends Authenticatable
+
+class User extends Authenticatable implements JWTSubject // Implement the JWTSubject interface
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
@@ -101,5 +103,16 @@ class User extends Authenticatable
     }
     public function scopeTeachers($query){
         return $query->where('rol', 'teacher');
+    }
+
+    // Required methods for JWT authentication
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 
 
 class UserController extends Controller
@@ -17,14 +16,15 @@ class UserController extends Controller
             "password" => "required"
         ]);
 
-        if (!Auth::attempt($data)) {
-            return response()->json([['message' => 'Invalid email or password'], 401]);
+        if (!$token = auth('api')->attempt($data)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-        $user = Auth::user();
-        $auth_token = $user->createToken('auth_token')->plainTextToken; // We create the token 
-        return response()->json(['message' => 'Login successful', 
-        'token_type:' => 'Bearer', 
-        'auth_token' => $auth_token], 200);
+    
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60
+        ]);
     }
 
     public function showAllUsers()

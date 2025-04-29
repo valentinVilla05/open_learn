@@ -7,7 +7,6 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ResourceController;
-use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserTestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,23 +20,25 @@ Route::get('/user', function (Request $request) {
 
 // Endpoint Auth
 Route::post('/login', [UserController::class, 'login']); // Login
+Route::post('/register', [UserController::class, 'createUser']); // Create a new user
+
 
 //Endpoint Users
 Route::get('/users', [UserController::class, 'showAllUsers']); // Get all users
 Route::get('/users/{id}', [UserController::class, 'showUserById']); // Get a user by ID
-Route::post('/users', [UserController::class, 'createUser']); // Create a new user
 Route::put('/users/{id}', [UserController::class, 'updateUser']); // Update a user by ID
 Route::delete('/users/{id}', [UserController::class, 'deleteUser']); // Delete a user by ID
 
 // Endpoint Courses
 Route::get('/courses', [CourseController::class, 'showAllCourses']); // Everyone can see the courses
-Route::get('/courses/{id}', [CourseController::class, 'getCourseById']); // Everyone can an especific course
-// For creating, editing and deleting a course we need to be atohorized as an admin
-//Route::middleware(['auth:sanctum'])->group(function () {
+Route::get('/courses/{id}', [CourseController::class, 'getCourseById']); // Everyone can see a specific course
+
+// Protected course modification routes
+Route::middleware(['auth:api', 'is_admin'])->group(function () {
     Route::post('/courses', [CourseController::class, 'createCourse']);
     Route::delete('/courses/{id}', [CourseController::class, 'deleteCourse']);
     Route::put('/courses/{id}', [CourseController::class, 'updateCourse']);
-//});
+});
 
 // Endpoint Resources
 Route::get('/resources', [ResourceController::class, 'showAllResources']); // Get all resources
