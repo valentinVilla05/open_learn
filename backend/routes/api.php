@@ -26,8 +26,10 @@ Route::post('/register', [UserController::class, 'createUser']); // Create a new
 //Endpoint Users
 Route::get('/users', [UserController::class, 'showAllUsers']); // Get all users
 Route::get('/users/{id}', [UserController::class, 'showUserById']); // Get a user by ID
-Route::put('/users/{id}', [UserController::class, 'updateUser']); // Update a user by ID
-Route::delete('/users/{id}', [UserController::class, 'deleteUser']); // Delete a user by ID
+Route::middleware(['auth:api', 'is_admin'])->group(function () {
+    Route::put('/users/{id}', [UserController::class, 'updateUser']); // Update a user by ID
+    Route::delete('/users/{id}', [UserController::class, 'deleteUser']); // Delete a user by ID
+});
 
 // Endpoint Courses
 Route::get('/courses', [CourseController::class, 'showAllCourses']); // Everyone can see the courses
@@ -43,17 +45,24 @@ Route::middleware(['auth:api', 'is_admin'])->group(function () {
 // Endpoint Resources
 Route::get('/resources', [ResourceController::class, 'showAllResources']); // Get all resources
 Route::get('/resources/{courseId}', [ResourceController::class, 'showResourceByCourseId']); // Get resources from a specific course
-Route::post('/resources', [ResourceController::class, 'createResource']); // Create a new resource
-Route::put('/resources/{id}', [ResourceController::class, 'updateResource']); // Update a resource
-Route::delete('/resources/{id}', [ResourceController::class, 'deleteResource']); // Delete a resource
+// Only teachers can manage the resources
+Route::middleware(['auth:api', 'is_teacher'])->group(function () {
+    Route::post('/resources', [ResourceController::class, 'createResource']); // Create a new resource
+    Route::put('/resources/{id}', [ResourceController::class, 'updateResource']); // Update a resource
+    Route::delete('/resources/{id}', [ResourceController::class, 'deleteResource']); // Delete a resource
+});
 
 // Endpoint Comments
 Route::get('/comments', [CommentController::class, 'showAllComments']); // Get all comments
 Route::get('/comments/resource/{resource_id}', [CommentController::class, 'showCommentsByResource']); // Get comments from a specific resource
 Route::get('/comments/user/{user_id}', [CommentController::class, 'showCommentByUserId']); // Get comments from a specific user
-Route::post('/comments', [CommentController::class, 'createComment']); // Create a new comment
-Route::put('/comments/{id}', [CommentController::class, 'updateComment']); // Update a comment
-Route::delete('/comments/{id}', [CommentController::class, 'deleteComment']); // Delete a comment
+Route::middleware(['auth:api'])->group(function () {
+    Route::post('/comments', [CommentController::class, 'createComment']); // Create a new comment
+    Route::middleware(['auth:api', 'author_comment'])->group(function () {
+        Route::put('/comments/{id}', [CommentController::class, 'updateComment']); // Update a comment
+        Route::delete('/comments/{id}', [CommentController::class, 'deleteComment']); // Delete a comment
+    });
+});
 
 // Endpoint Inscription
 Route::get('/inscriptions/user/{user_id}', [InscriptionController::class, 'getCoursesFromUser']); // Get all courses from a user
@@ -65,13 +74,13 @@ Route::delete('/inscriptions/{user_id}/{course_id}', [InscriptionController::cla
 Route::get('/exams', [ExamController::class, 'getAllExams']); // Get all exams
 Route::get('/exams/course/{course_id}', [ExamController::class, 'getExamsFromCourse']); // Get all exams from a course
 Route::post('/exams', [ExamController::class, 'createExam']); // Create a new exam
-Route::put('/exams/{id}', [ExamController::class,'updateExam']); // Update an exam
+Route::put('/exams/{id}', [ExamController::class, 'updateExam']); // Update an exam
 Route::delete('/exams/{id}', [ExamController::class, 'deleteExam']); // Delete an exam
 
 // Endpoint Questions
 Route::get('/questions', [QuestionController::class, 'showAllQuestions']); // Get all questions
 Route::get('/questions/exam/{exam_id}', [QuestionController::class, 'showQuestionsFromExam']); // Get all questions from an exam
-Route::post('/questions', [QuestionController::class,'createQuestion']); // Create a new question
+Route::post('/questions', [QuestionController::class, 'createQuestion']); // Create a new question
 Route::put('/questions/{id}', [QuestionController::class, 'updateQuestion']); // Update a question
 Route::delete('/questions/{id}', [QuestionController::class, 'deleteQuestion']); // Delete a question
 
