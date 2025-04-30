@@ -33,7 +33,7 @@ Route::middleware(['auth:api', 'is_admin'])->group(function () {
 
 // Endpoint Courses
 Route::get('/courses', [CourseController::class, 'showAllCourses']); // Everyone can see the courses
-Route::get('/courses/{id}', [CourseController::class, 'getCourseById']); // Everyone can see a specific course
+Route::get('/courses/{id}', [CourseController::class, 'getCourseById']); // See a specific course
 
 // Protected course modification routes
 Route::middleware(['auth:api', 'is_admin'])->group(function () {
@@ -73,16 +73,20 @@ Route::delete('/inscriptions/{user_id}/{course_id}', [InscriptionController::cla
 // Endpoint Exams 
 Route::get('/exams', [ExamController::class, 'getAllExams']); // Get all exams
 Route::get('/exams/course/{course_id}', [ExamController::class, 'getExamsFromCourse']); // Get all exams from a course
-Route::post('/exams', [ExamController::class, 'createExam']); // Create a new exam
-Route::put('/exams/{id}', [ExamController::class, 'updateExam']); // Update an exam
-Route::delete('/exams/{id}', [ExamController::class, 'deleteExam']); // Delete an exam
+Route::middleware(['auth:api', 'is_teacher'])->group(function () {
+    Route::post('/exams', [ExamController::class, 'createExam']); // Create a new exam
+    Route::put('/exams/{id}', [ExamController::class, 'updateExam']); // Update an exam
+    Route::delete('/exams/{id}', [ExamController::class, 'deleteExam']); // Delete an exam
+});
 
 // Endpoint Questions
 Route::get('/questions', [QuestionController::class, 'showAllQuestions']); // Get all questions
 Route::get('/questions/exam/{exam_id}', [QuestionController::class, 'showQuestionsFromExam']); // Get all questions from an exam
-Route::post('/questions', [QuestionController::class, 'createQuestion']); // Create a new question
-Route::put('/questions/{id}', [QuestionController::class, 'updateQuestion']); // Update a question
-Route::delete('/questions/{id}', [QuestionController::class, 'deleteQuestion']); // Delete a question
+Route::middleware(['auth:api', 'is_teacher'])->group(function () {
+    Route::post('/questions', [QuestionController::class, 'createQuestion']); // Create a new question
+    Route::put('/questions/{id}', [QuestionController::class, 'updateQuestion']); // Update a question
+    Route::delete('/questions/{id}', [QuestionController::class, 'deleteQuestion']); // Delete a question
+});
 
 // Endpont Answers
 Route::get('/answers', [UserTestController::class, 'showAllAnswers']); // Get all answers
