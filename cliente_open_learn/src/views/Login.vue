@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { owlPasswordImages } from './images'
 
 // Control to login/register animation
 const isSignUp = ref(false)
@@ -12,6 +13,33 @@ const switchToSignIn = () => {
    isSignUp.value = false
 }
 
+const image = ref(owlPasswordImages[0]);
+
+const handlePasswordFocus = () => {
+   setTimeout(() => {
+      image.value = owlPasswordImages[0];
+   }, 150);
+   setTimeout(() => {
+      image.value = owlPasswordImages[1];
+   }, 300);
+   setTimeout(() => {
+      image.value = owlPasswordImages[2];
+   }, 400);
+};
+
+const handlePasswordBlur = () => {
+   setTimeout(() => {
+      image.value = owlPasswordImages[2];
+   }, 150);
+   setTimeout(() => {
+      image.value = owlPasswordImages[1];
+   }, 250);
+   setTimeout(() => {
+      image.value = owlPasswordImages[0];
+   }, 300);
+};
+
+
 </script>
 
 <template>
@@ -19,13 +47,15 @@ const switchToSignIn = () => {
       <!-- Login Form -->
       <div class="form-wrapper sign-up">
          <form>
-            <h2>Login</h2>
+            <h2 class="text-center fw-bold mb-4">Welcome back!</h2>
+            <img class="logo img-fluid mx-auto d-block mb-3" :src="image" alt="Logo" />
             <div class="input-group">
                <input type="text" name="email" required />
                <label for="email">Email</label>
             </div>
             <div class="input-group">
-               <input type="password" name="password" required />
+               <input type="password" name="password" required @focus="handlePasswordFocus"
+                  @blur="handlePasswordBlur" />
                <label for="password">Password</label>
             </div>
             <button type="submit" class="btn">Log in</button>
@@ -164,7 +194,7 @@ body {
 }
 
 h2 {
-   font-size: 1.875em;
+   font-size: 2em;
    color: #555;
    text-align: center;
 }
@@ -212,7 +242,7 @@ h2 {
    height: 2.5em;
    background: linear-gradient(to right, #8EC8EC, #6eb19b);
    box-shadow: 0 2px 10px rgba(0, 0, 0, .4);
-   font-size: 1em;   
+   font-size: 1em;
    color: #fff;
    font-weight: 500;
    cursor: pointer;
@@ -236,5 +266,10 @@ h2 {
    color: #e91e63;
    text-decoration: none;
    font-weight: 600;
+}
+
+/* Logo */
+.logo {
+   max-width: 200px;
 }
 </style>
