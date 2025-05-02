@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { owlPasswordImages } from './images'
+import router from '@/router'
 
 // Control to login/register animation
 const isSignUp = ref(false)
@@ -13,6 +14,7 @@ const switchToSignIn = () => {
    isSignUp.value = false
 }
 
+// Control to password animation
 const image = ref(owlPasswordImages[0]);
 
 const handlePasswordFocus = () => {
@@ -39,26 +41,57 @@ const handlePasswordBlur = () => {
    }, 300);
 };
 
+// Logic for login
+
+const emailLogin = ref("");
+const passwordLogin = ref("");
+
+function login() {
+   const loginData = {
+      email: emailLogin.value,
+      password: passwordLogin.value
+   };
+
+   fetch('http://localhost:8000/api/login', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(loginData)
+   })
+      .then(response => response.json())
+      .then(data => {
+         if (data.access_token) {
+            console.log('Login exitoso:', data);
+            // Save the token session
+            sessionStorage.setItem('access_token', data.access_token);
+            router.push('/');
+         } else {
+            console.log('Error de login:', data.error);
+         }
+      })
+      .catch(error => console.error('Error:', error));
+}
 
 </script>
 
 <template>
-   <div class="wrapper" :class="isSignUp ? 'animate signUp' : 'animate signIn'">
+   <div class="wrapper position-relative" :class="isSignUp ? 'animate signUp' : 'animate signIn'">
       <!-- Login Form -->
-      <div class="form-wrapper sign-up">
+      <div class="form-wrapper sign-up position-absolute d-flex justify-content-center align-items-center w-100 h-100">
          <form>
             <h2 class="text-center fw-bold mb-4">Welcome back!</h2>
             <img class="logo img-fluid mx-auto d-block mb-3" :src="image" alt="Logo" />
-            <div class="input-group">
-               <input type="text" name="email" required />
+            <div class="input-group position-relative">
+               <input type="text" v-model="emailLogin" name="email" required />
                <label for="email">Email</label>
             </div>
-            <div class="input-group">
-               <input type="password" name="password" required @focus="handlePasswordFocus"
-                  @blur="handlePasswordBlur" />
+            <div class="input-group position-relative">
+               <input type="password" name="password" required @focus="handlePasswordFocus" @blur="handlePasswordBlur"
+                  v-model="passwordLogin" />
                <label for="password">Password</label>
             </div>
-            <button type="submit" class="btn">Log in</button>
+            <button type="submit" class="btn position-relative w-100" @click.prevent="login">Log in</button>
             <div class="signUp-link">
                <p>Don't have an account?
                   <a href="#" @click.prevent="switchToSignUp">Sign Up</a>
@@ -68,22 +101,22 @@ const handlePasswordBlur = () => {
       </div>
 
       <!-- Register Form -->
-      <div class="form-wrapper sign-in">
+      <div class="form-wrapper sign-in position-absolute d-flex justify-content-center align-items-center w-100 h-100">
          <form>
             <h2>Sign Up</h2>
-            <div class="input-group">
+            <div class="input-group position-relative">
                <input type="text" name="username" required />
                <label for="username">Username</label>
             </div>
-            <div class="input-group">
+            <div class="input-group position-relative">
                <input type="email" name="email" required />
                <label for="email">Email</label>
             </div>
-            <div class="input-group">
+            <div class="input-group position-relative">
                <input type="password" name="password" required />
                <label for="password">Password</label>
             </div>
-            <button type="submit" class="btn">Register</button>
+            <button type="submit" class="btn position-relative w-100">Register</button>
             <div class="signIn-link">
                <p>Already have an account?
                   <a href="#" @click.prevent="switchToSignIn">Sign In</a>
@@ -111,20 +144,13 @@ body {
 }
 
 .wrapper {
-   position: relative;
    width: 25em;
    height: 31.25em;
 }
 
 .form-wrapper {
-   position: absolute;
    top: 0;
    left: 0;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   width: 100%;
-   height: 100%;
    background: #fff;
    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
 }
@@ -200,7 +226,7 @@ h2 {
 }
 
 .input-group {
-   position: relative;
+
    width: 20em;
    margin: 1em 0;
 }
@@ -237,8 +263,6 @@ h2 {
 }
 
 .btn {
-   position: relative;
-   width: 100%;
    height: 2.5em;
    background: linear-gradient(to right, #8EC8EC, #6eb19b);
    box-shadow: 0 2px 10px rgba(0, 0, 0, .4);

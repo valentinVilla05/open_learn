@@ -1,4 +1,12 @@
 <script setup>
+import { ref } from 'vue';
+
+// Emit to close session
+const emit = defineEmits(['session-closed']);
+
+const props = defineProps({
+    userAuth: Object
+});
 
 </script>
 <template>
@@ -20,7 +28,7 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto text-center">
                         <li class="nav-item">
-                            <RouterLink class="nav-link" to="/sobreNosotros">Quienes Somos</RouterLink>
+                            <RouterLink class="nav-link" to="/about">Quienes Somos</RouterLink>
                         </li>
                         <li class="nav-item">
                             <RouterLink class="nav-link" to="/login" v-if="!userAuth">Iniciar Sesión</RouterLink>

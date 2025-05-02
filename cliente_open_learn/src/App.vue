@@ -1,14 +1,29 @@
 <script setup>
 import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+import router from '@/router';
+import { ref } from 'vue';
+
+const session = ref(sessionStorage.getItem('sessionID') || null);
+
+function updateDataSession(user) {
+  session.value = user;
+  if (user) {
+    sessionStorage.setItem('sessionID', JSON.stringify(user));
+    router.push("/home");
+  } else {
+    sessionStorage.removeItem('sessionID');
+  }
+}
 
 </script>
 
 <template>
   <div class="layout">
-    <Header :userAuth="session" @session-closed="updateDataSesion" />
+    <Header :userAuth="session" @session-closed="updateDataSession" />
 
     <main class="content">
-      <RouterView @sessionStarted="updateDataSesion" :userAuth="session" />
+      <RouterView @sessionStarted="updateDataSession" :userAuth="session" />
     </main>
 
     <Footer />
