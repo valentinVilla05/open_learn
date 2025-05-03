@@ -1,12 +1,24 @@
 <script setup>
 import { ref } from 'vue';
+import router from '@/router';
 
 // Emit to close session
 const emit = defineEmits(['session-closed']);
 
 const props = defineProps({
-    userAuth: Object
+    userAuth: {
+        type: Object, // Change de value from String to Object
+        required: false // Optional
+    }
 });
+
+function logOut() {
+    // Emit the event to close the session
+    emit('session-closed', null);
+
+    // Clear session storage
+    sessionStorage.removeItem('acces_token');
+}
 
 </script>
 <template>
@@ -39,23 +51,19 @@ const props = defineProps({
                     <div class="dropdown ms-3" v-if="userAuth">
                         <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
                             id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="/favicon.png" alt="Perfil" class="img-fluid me-2"
-                                style="max-width: 60px; height: auto;">
+                            <img src="/profile_icon.png" alt="Perfil" class="img-fluid me-2"
+                                style="max-width: 180px; height: auto;">
                             <span class="visually-hidden">Abrir menú de usuario</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
                             <li>
-                                <RouterLink class="dropdown-item"></RouterLink>
-                            </li>
-                            <li ">
-                                <RouterLink class=" dropdown-item">
-                                </RouterLink>
+                                <RouterLink class=" dropdown-item" to="/">AAAAAA</RouterLink>
                             </li>
                             <li>
-                                <RouterLink class="dropdown-item" to="/cliente"></RouterLink>
+                                <RouterLink class="dropdown-item" to="/">EEEEEEEE</RouterLink>
                             </li>
                             <li>
-                                <a class="dropdown-item text-danger" @click="logOut">Cerrar Sesión</a>
+                                <a class="dropdown-item text-danger" @click="logOut">Log out</a>
                             </li>
                         </ul>
                     </div>
@@ -68,5 +76,28 @@ const props = defineProps({
 <style scoped>
 header {
     background-color: #8EC8EC;
+}
+
+#dropdownMenuButton1 {
+    border: 0px;
+    background-color: #8EC8EC;
+    height: 4em;
+}
+/* Estilos del menú desplegable */
+.dropdown-menu {
+    font-size: 1.1rem;
+    min-width: 180px;
+}
+
+.dropdown-item {
+    padding: 10px;
+}
+.dropdown-item:hover {
+    background-color: rgb(199, 231, 241);
+    color: black;
+}
+.dropdown-item:active {
+    background-color: lightgray;
+    color: black;
 }
 </style>

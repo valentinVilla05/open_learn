@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { owlPasswordImages } from './images'
 import router from '@/router'
+import Swal from 'sweetalert2'
 
 // Control to login/register animation
 const isSignUp = ref(false)
@@ -41,37 +42,111 @@ const handlePasswordBlur = () => {
    }, 300);
 };
 
-// Logic for login
-
 const emailLogin = ref("");
 const passwordLogin = ref("");
+const loguedUser = ref(null);
+const wrongLoginData = ref(false);
+const validData = ref(false);
+const error_login_message = ref("");
+const emailRegEx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-function login() {
-   const loginData = {
-      email: emailLogin.value,
-      password: passwordLogin.value
-   };
 
-   fetch('http://localhost:8000/api/login', {
-      method: 'POST',
-      headers: {
-         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(loginData)
-   })
-      .then(response => response.json())
-      .then(data => {
-         if (data.access_token) {
-            console.log('Login exitoso:', data);
-            // Save the token session
-            sessionStorage.setItem('access_token', data.access_token);
-            router.push('/');
-         } else {
-            console.log('Error de login:', data.error);
-         }
-      })
-      .catch(error => console.error('Error:', error));
+// Function to validate the form data
+function validateData() {
+   if (emailLogin.value.length === 0 || passwordLogin.value.length === 0) {
+      error_login_message.value = "The fields cannot be empty";
+      wrongLoginData.value = true;
+      validData.value = false;
+   } else if (!emailRegEx.test(emailLogin.value)) {
+      error_login_message.value = "That's not a valid email";
+      wrongLoginData.value = true;
+      validData.value = false;
+   } else {
+      error_login_message.value = "";
+      wrongLoginData.value = false;
+      validData.value = true;
+   }
 }
+
+// Function to get the user information
+function getUser(token) {
+   fetch('http://localhost:8000/api/user', {
+      method: 'GET',
+      headers: {
+         'Authorization': `Bearer ${token}`,
+         'Accept': 'application/json'
+      }
+   })
+      .then(async response => {
+         if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || "Error fetching user data");
+         }
+         const data = await response.json();
+         console.log(data);
+         loguedUser.value = data;
+      })
+      .catch(error => {
+         console.error('Error fetching user:', error.message);
+         error_login_message.value = "Unable to get user data.";
+         wrongLoginData.value = true;
+      });
+}
+
+const emit = defineEmits(["sessionStarted"]) // Declare the emit of log in
+
+// Function to log in the user
+async function login() {
+    const loginData = {
+        email: emailLogin.value,
+        password: passwordLogin.value,
+    };
+
+    try {
+        const response = await fetch('http://localhost:8000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loginData),
+        });
+
+        const data = await response.json();
+
+        if (data.access_token) {
+            // Save the token session
+            await getUser(data.access_token); // Wait for the user data to be fetched
+
+            emit("sessionStarted", data.access_token);
+
+            router.push('/'); // Redirect to the home page
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                },
+            });
+
+            Toast.fire({
+                icon: "success",
+                title: loguedUser.value ? `Welcome ${loguedUser.value.name}!` : "Welcome!",
+            });
+        } else {
+            // Show an error message
+            error_login_message.value = "Invalid email or password";
+            wrongLoginData.value = true;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 
 </script>
 
@@ -81,17 +156,19 @@ function login() {
       <div class="form-wrapper sign-up position-absolute d-flex justify-content-center align-items-center w-100 h-100">
          <form>
             <h2 class="text-center fw-bold mb-4">Welcome back!</h2>
-            <img class="logo img-fluid mx-auto d-block mb-3" :src="image" alt="Logo" />
+            <img class="logoLogin img-fluid mx-auto d-block mb-3" :src="image" alt="Logo" />
             <div class="input-group position-relative">
-               <input type="text" v-model="emailLogin" name="email" required />
+               <input type="email" v-model="emailLogin" @input="validateData" name="email" required />
                <label for="email">Email</label>
             </div>
             <div class="input-group position-relative">
                <input type="password" name="password" required @focus="handlePasswordFocus" @blur="handlePasswordBlur"
-                  v-model="passwordLogin" />
+                  v-model="passwordLogin" @input="validateData" />
                <label for="password">Password</label>
             </div>
-            <button type="submit" class="btn position-relative w-100" @click.prevent="login">Log in</button>
+            <p style="color: red;" v-if="wrongLoginData">{{ error_login_message }}</p>
+            <button type="submit" class="btn position-relative w-100" :disabled="!validData" @click.prevent="login">Log
+               in</button>
             <div class="signUp-link">
                <p>Don't have an account?
                   <a href="#" @click.prevent="switchToSignUp">Sign Up</a>
@@ -104,6 +181,7 @@ function login() {
       <div class="form-wrapper sign-in position-absolute d-flex justify-content-center align-items-center w-100 h-100">
          <form>
             <h2>Sign Up</h2>
+            <img class="logoSignUp img-fluid mx-auto d-block mb-3" src="/signup.png" alt="Logo" />
             <div class="input-group position-relative">
                <input type="text" name="username" required />
                <label for="username">Username</label>
@@ -152,6 +230,7 @@ body {
    top: 0;
    left: 0;
    background: #fff;
+   border-radius: 5px;
    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
 }
 
@@ -293,7 +372,11 @@ h2 {
 }
 
 /* Logo */
-.logo {
+.logoLogin {
    max-width: 200px;
+}
+
+.logoSignUp {
+   max-width: 100px;
 }
 </style>

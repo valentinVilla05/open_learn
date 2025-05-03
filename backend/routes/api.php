@@ -16,7 +16,7 @@ use App\Http\Controllers\CourseController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware('auth:api');
 
 // Endpoint Auth
 Route::post('/login', [UserController::class, 'login']); // Login

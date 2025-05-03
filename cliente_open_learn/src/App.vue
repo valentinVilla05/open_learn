@@ -10,7 +10,7 @@ function updateDataSession(user) {
   session.value = user;
   if (user) {
     sessionStorage.setItem('sessionID', JSON.stringify(user));
-    router.push("/home");
+    router.push("/");
   } else {
     sessionStorage.removeItem('sessionID');
   }
