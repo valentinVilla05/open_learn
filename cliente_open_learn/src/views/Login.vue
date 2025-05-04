@@ -97,57 +97,132 @@ const emit = defineEmits(["sessionStarted"]) // Declare the emit of log in
 
 // Function to log in the user
 async function login() {
-    const loginData = {
-        email: emailLogin.value,
-        password: passwordLogin.value,
-    };
+   const loginData = {
+      email: emailLogin.value,
+      password: passwordLogin.value,
+   };
 
-    try {
-        const response = await fetch('http://localhost:8000/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+   try {
+      const response = await fetch('http://localhost:8000/api/login', {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(loginData),
+      });
+
+      const data = await response.json();
+
+      if (data.access_token) {
+         // Save the token session
+         await getUser(data.access_token); // Wait for the user data to be fetched
+
+         emit("sessionStarted", data.access_token);
+
+         router.push('/'); // Redirect to the home page
+
+         const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+               toast.onmouseenter = Swal.stopTimer;
+               toast.onmouseleave = Swal.resumeTimer;
             },
-            body: JSON.stringify(loginData),
-        });
+         });
 
-        const data = await response.json();
-
-        if (data.access_token) {
-            // Save the token session
-            await getUser(data.access_token); // Wait for the user data to be fetched
-
-            emit("sessionStarted", data.access_token);
-
-            router.push('/'); // Redirect to the home page
-
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                },
-            });
-
-            Toast.fire({
-                icon: "success",
-                title: loguedUser.value ? `Welcome ${loguedUser.value.name}!` : "Welcome!",
-            });
-        } else {
-            // Show an error message
-            error_login_message.value = "Invalid email or password";
-            wrongLoginData.value = true;
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
+         Toast.fire({
+            icon: "success",
+            title: loguedUser.value ? `Welcome ${loguedUser.value.name}!` : "Welcome!",
+         });
+      } else {
+         // Show an error message
+         error_login_message.value = "Invalid email or password";
+         wrongLoginData.value = true;
+      }
+   } catch (error) {
+      console.error('Error:', error);
+   }
 }
 
+// Logic to sign up the user
 
+const nameUserSignUp = ref("");
+const emailUserSignUp = ref("");
+const passwordUserSignUp = ref("");
+const wrongSignUpData = ref(false);
+const errorSignUpmessage = ref("");
+const validDataSignUp = ref(false);
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#?!$%^&*\-+_]).{8,}$/;
+
+// We get the users from teh db to validate if the email is already in use
+
+const emailList = ref([]);
+
+async function getUsers() {
+   fetch('http://localhost:8000/api/users', {
+      method: 'GET',
+   }).then(reponse => reponse.json())
+      .then(data => emailList.value = data)
+      .catch(error => console.log('Error:', error));
+}
+getUsers();
+
+function validateSignUpData() {
+   if (nameUserSignUp.value.length === 0 || emailUserSignUp.value.length === 0 || passwordUserSignUp.value.length === 0) {
+      errorSignUpmessage.value = "The fields cannot be empty";
+      wrongSignUpData.value = true;
+      validDataSignUp.value = false;
+   } else if (!emailRegEx.test(emailUserSignUp.value)) {
+      errorSignUpmessage.value = "That's not a valid email";
+      wrongSignUpData.value = true;
+      validDataSignUp.value = false;
+   } else if (emailList.value.some(user => user.email === emailUserSignUp.value)) {
+      errorSignUpmessage.value = "That email is already in use";
+      wrongSignUpData.value = true;
+      validDataSignUp.value = false;
+   } else if (!passwordRegex.test(passwordUserSignUp.value)) {
+      errorSignUpmessage.value = "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character(@#?!$%^&*-+_)";
+      wrongSignUpData.value = true;
+      validDataSignUp.value = false;
+   } else {
+      errorSignUpmessage.value = "";
+      wrongSignUpData.value = false;
+      validDataSignUp.value = true;
+   }
+}
+
+async function signUp() {
+   const userData = {
+      name: nameUserSignUp.value,
+      email: emailUserSignUp.value,
+      password: passwordUserSignUp.value,
+   }
+
+   fetch('http://localhost:8000/api/register', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+   })
+      .then(response => response.json())
+      .then(data => {
+         // Show a success message
+         Swal.fire({
+            icon: 'success',
+            title: 'User created successfully!',
+            text: 'You can now log in.',
+         });
+
+         // Switch to the login form
+         switchToSignIn();
+      })
+      .catch(error => console.error('Error:', error));
+}
 </script>
 
 <template>
@@ -183,18 +258,24 @@ async function login() {
             <h2>Sign Up</h2>
             <img class="logoSignUp img-fluid mx-auto d-block mb-3" src="/signup.png" alt="Logo" />
             <div class="input-group position-relative">
-               <input type="text" name="username" required />
+               <input type="text" name="username" v-model="nameUserSignUp" @input="validateSignUpData" required />
                <label for="username">Username</label>
             </div>
             <div class="input-group position-relative">
-               <input type="email" name="email" required />
+               <input type="email" name="email" v-model="emailUserSignUp" @input="validateSignUpData" required />
                <label for="email">Email</label>
             </div>
             <div class="input-group position-relative">
-               <input type="password" name="password" required />
+               <input type="password" name="password" v-model="passwordUserSignUp" @input="validateSignUpData"
+                  required />
                <label for="password">Password</label>
             </div>
-            <button type="submit" class="btn position-relative w-100">Register</button>
+            <div class="input-group position-relative">
+               <p style="color: red; font-size: small*1.25" class="me-3 ms-3" v-if="wrongSignUpData">{{
+                  errorSignUpmessage }}</p>
+            </div>
+            <button type="submit" class="btn position-relative w-100" :disabled="!validDataSignUp"
+               @click.prevent="signUp">Register</button>
             <div class="signIn-link">
                <p>Already have an account?
                   <a href="#" @click.prevent="switchToSignIn">Sign In</a>
@@ -222,13 +303,14 @@ body {
 }
 
 .wrapper {
-   width: 25em;
-   height: 31.25em;
+   width: 27em;
+   min-height: 40em;
 }
 
 .form-wrapper {
    top: 0;
    left: 0;
+   height: 40em;
    background: #fff;
    border-radius: 5px;
    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
@@ -373,10 +455,10 @@ h2 {
 
 /* Logo */
 .logoLogin {
-   max-width: 200px;
+   max-width: 15em;
 }
 
 .logoSignUp {
-   max-width: 100px;
+   max-width: 9em;
 }
 </style>

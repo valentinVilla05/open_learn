@@ -26,8 +26,8 @@ function logOut() {
         <div class="container d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
                 <!-- Logo -->
-                <img src="/logo.png" alt="Logo" class="img-fluid" style="max-width: 60px;">
-                <h1 class="mb-0 ms-3">OpenLearn</h1>
+                <RouterLink to="/"><img src="/logo.png" alt="Logo" class="img-fluid" style="max-width: 60px;"></RouterLink>
+                <RouterLink to="/" class="text-decoration-none"><h1 class="mb-0 ms-3 text-decoration-none">OpenLearn </h1></RouterLink>
             </div>
 
             <!-- Menú de Navegación -->
@@ -39,11 +39,11 @@ function logOut() {
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto text-center">
-                        <li class="nav-item">
-                            <RouterLink class="nav-link" to="/about">Quienes Somos</RouterLink>
+                        <li class="nav-item ">
+                            <RouterLink class="nav-link rounded-2 fs-6 fw-bold me-5" to="/about">About us</RouterLink>
                         </li>
                         <li class="nav-item">
-                            <RouterLink class="nav-link" to="/login" v-if="!userAuth">Iniciar Sesión</RouterLink>
+                            <RouterLink class="nav-link fs-6 fw-bold ms-5 border border-2 rounded-2" to="/login" v-if="!userAuth">Log in</RouterLink>
                         </li>
                     </ul>
 
@@ -77,7 +77,15 @@ function logOut() {
 header {
     background-color: #8EC8EC;
 }
-
+h1 {
+    color: white;
+}
+.nav-link {
+    color: white;
+}
+.nav-link:hover {
+    background-color: #7db0cf;
+}
 #dropdownMenuButton1 {
     border: 0px;
     background-color: #8EC8EC;
