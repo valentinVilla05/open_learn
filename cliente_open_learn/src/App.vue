@@ -9,7 +9,7 @@ const session = ref(sessionStorage.getItem('sessionID') || null);
 function updateDataSession(user) {
   session.value = user;
   if (user) {
-    sessionStorage.setItem('sessionID', JSON.stringify(user));
+    sessionStorage.setItem('sessionID', user);
     router.push("/");
   } else {
     sessionStorage.removeItem('sessionID');

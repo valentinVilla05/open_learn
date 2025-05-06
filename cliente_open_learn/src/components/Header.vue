@@ -7,7 +7,7 @@ const emit = defineEmits(['session-closed']);
 
 const props = defineProps({
     userAuth: {
-        type: Object, // Change de value from String to Object
+        type: String,
         required: false // Optional
     }
 });
@@ -52,7 +52,7 @@ function logOut() {
                         <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
                             id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/profile_icon.png" alt="Perfil" class="img-fluid me-2"
-                                style="max-width: 180px; height: auto;">
+                                style="max-width: 60px; height: auto;">
                             <span class="visually-hidden">Abrir menú de usuario</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">

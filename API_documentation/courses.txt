@@ -6,17 +6,17 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/courses', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Courses:', data))
 .catch(error => console.log('Error:', error));
 
 ______________________________________________________
 
-2.- Get an User by ID: http://localhost:8000/api/courses/{course_id}
+2.- Get a course by ID: http://localhost:8000/api/courses/{course_id}
 
 fetch('http://localhost:8000/api/courses/{course_id}', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Course:', data))
 .catch(error => console.log('Error:', error));
 

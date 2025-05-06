@@ -68,6 +68,7 @@ function validateData() {
    }
 }
 
+
 // Function to get the user information
 function getUser(token) {
    fetch('http://localhost:8000/api/user', {
@@ -213,13 +214,20 @@ async function signUp() {
       .then(data => {
          // Show a success message
          Swal.fire({
-            icon: 'success',
-            title: 'User created successfully!',
-            text: 'You can now log in.',
+            imageUrl: '/new_user.png',
+            imageWidth: 200,
+            imageHeight: 150,
+            title: 'Your account has been created successfully!',
+            text: 'Welcome to Open Learn!',
+            confirmButtonText: 'Start to learn!',
+         }).then(() => {
+            // Log in with the account created
+            emailLogin.value = emailUserSignUp.value;
+            passwordLogin.value = passwordUserSignUp.value;
+            login();
          });
 
-         // Switch to the login form
-         switchToSignIn();
+
       })
       .catch(error => console.error('Error:', error));
 }
@@ -461,4 +469,5 @@ h2 {
 .logoSignUp {
    max-width: 9em;
 }
+
 </style>
