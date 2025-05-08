@@ -234,80 +234,79 @@ async function signUp() {
 </script>
 
 <template>
-   <div class="wrapper position-relative" :class="isSignUp ? 'animate signUp' : 'animate signIn'">
-      <!-- Login Form -->
-      <div class="form-wrapper sign-up position-absolute d-flex justify-content-center align-items-center w-100 h-100">
-         <form>
-            <h2 class="text-center fw-bold mb-4">Welcome back!</h2>
-            <img class="logoLogin img-fluid mx-auto d-block mb-3" :src="image" alt="Logo" />
-            <div class="input-group position-relative">
-               <input type="email" v-model="emailLogin" @input="validateData" name="email" required />
-               <label for="email">Email</label>
-            </div>
-            <div class="input-group position-relative">
-               <input type="password" name="password" required @focus="handlePasswordFocus" @blur="handlePasswordBlur"
-                  v-model="passwordLogin" @input="validateData" />
-               <label for="password">Password</label>
-            </div>
-            <p style="color: red;" v-if="wrongLoginData">{{ error_login_message }}</p>
-            <button type="submit" class="btn position-relative w-100" :disabled="!validData" @click.prevent="login">Log
-               in</button>
-            <div class="signUp-link">
-               <p>Don't have an account?
-                  <a href="#" @click.prevent="switchToSignUp">Sign Up</a>
-               </p>
-            </div>
-         </form>
-      </div>
+   <div class="content w-100 d-flex justify-content-center align-items-center">
+      <div class="wrapper position-relative mt-5" :class="isSignUp ? 'animate signUp' : 'animate signIn'">
+         <!-- Login Form -->
+         <div
+            class="form-wrapper sign-up position-absolute d-flex justify-content-center align-items-center border border-3 w-100 h-100">
+            <form>
+               <h2 class="text-center fw-bold mb-4">Welcome back!</h2>
+               <img class="logoLogin img-fluid mx-auto d-block mb-3" :src="image" alt="Logo" />
+               <div class="input-group position-relative">
+                  <input type="email" v-model="emailLogin" @input="validateData" name="email" required />
+                  <label for="email">Email</label>
+               </div>
+               <div class="input-group position-relative">
+                  <input type="password" name="password" required @focus="handlePasswordFocus"
+                     @blur="handlePasswordBlur" v-model="passwordLogin" @input="validateData" />
+                  <label for="password">Password</label>
+               </div>
+               <p style="color: red;" v-if="wrongLoginData">{{ error_login_message }}</p>
+               <button type="submit" class="btn position-relative w-100" :disabled="!validData"
+                  @click.prevent="login">Log
+                  in</button>
+               <div class="signUp-link">
+                  <p>Don't have an account?
+                     <a href="#" @click.prevent="switchToSignUp">Sign Up</a>
+                  </p>
+               </div>
+            </form>
+         </div>
 
-      <!-- Register Form -->
-      <div class="form-wrapper sign-in position-absolute d-flex justify-content-center align-items-center w-100 h-100">
-         <form>
-            <h2>Sign Up</h2>
-            <img class="logoSignUp img-fluid mx-auto d-block mb-3" src="/signup.png" alt="Logo" />
-            <div class="input-group position-relative">
-               <input type="text" name="username" v-model="nameUserSignUp" @input="validateSignUpData" required />
-               <label for="username">Username</label>
-            </div>
-            <div class="input-group position-relative">
-               <input type="email" name="email" v-model="emailUserSignUp" @input="validateSignUpData" required />
-               <label for="email">Email</label>
-            </div>
-            <div class="input-group position-relative">
-               <input type="password" name="password" v-model="passwordUserSignUp" @input="validateSignUpData"
-                  required />
-               <label for="password">Password</label>
-            </div>
-            <div class="input-group position-relative">
-               <p style="color: red; font-size: small*1.25" class="me-3 ms-3" v-if="wrongSignUpData">{{
-                  errorSignUpmessage }}</p>
-            </div>
-            <button type="submit" class="btn position-relative w-100" :disabled="!validDataSignUp"
-               @click.prevent="signUp">Register</button>
-            <div class="signIn-link">
-               <p>Already have an account?
-                  <a href="#" @click.prevent="switchToSignIn">Sign In</a>
-               </p>
-            </div>
-         </form>
+         <!-- Register Form -->
+         <div
+            class="form-wrapper sign-in position-absolute d-flex justify-content-center align-items-center w-100 h-100 border border-3">
+            <form>
+               <h2>Sign Up</h2>
+               <img class="logoSignUp img-fluid mx-auto d-block mb-3" src="/signup.png" alt="Logo" />
+               <div class="input-group position-relative">
+                  <input type="text" name="username" v-model="nameUserSignUp" @input="validateSignUpData" required />
+                  <label for="username">Username</label>
+               </div>
+               <div class="input-group position-relative">
+                  <input type="email" name="email" v-model="emailUserSignUp" @input="validateSignUpData" required />
+                  <label for="email">Email</label>
+               </div>
+               <div class="input-group position-relative">
+                  <input type="password" name="password" v-model="passwordUserSignUp" @input="validateSignUpData"
+                     required />
+                  <label for="password">Password</label>
+               </div>
+               <div class="input-group position-relative">
+                  <p style="color: red; font-size: small*1.25" class="me-3 ms-3" v-if="wrongSignUpData">{{
+                     errorSignUpmessage }}</p>
+               </div>
+               <button type="submit" class="btn position-relative w-100" :disabled="!validDataSignUp"
+                  @click.prevent="signUp">Register</button>
+               <div class="signIn-link">
+                  <p>Already have an account?
+                     <a href="#" @click.prevent="switchToSignIn">Sign In</a>
+                  </p>
+               </div>
+            </form>
+         </div>
       </div>
    </div>
 </template>
 <style scoped>
-* {
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
-}
-
-body {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   min-height: 100vh;
-   background: linear-gradient(#2196f3, #e91e63);
-   overflow: hidden;
-
+.content {
+   background: radial-gradient(circle at 0% 0%, #8EC8EC 80%, transparent 50%),
+      radial-gradient(circle at 70% 70%, #DCFFC8 20%, transparent 50%),
+      radial-gradient(circle at 80% 20%, #FF9FB2 20%, transparent 50%),
+      radial-gradient(circle at 20% 80%, #FCDB77 20%, transparent 50%),
+      radial-gradient(circle at 50% 50%, #6EB183 25%, transparent 50%);
+   background-color: #8EC8EC;
+   background-blend-mode: lighten;
 }
 
 .wrapper {
@@ -319,7 +318,7 @@ body {
    top: 0;
    left: 0;
    height: 40em;
-   background: #fff;
+   background: #fafdf8;
    border-radius: 5px;
    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
 }
@@ -395,7 +394,6 @@ h2 {
 }
 
 .input-group {
-
    width: 20em;
    margin: 1em 0;
 }
@@ -469,5 +467,4 @@ h2 {
 .logoSignUp {
    max-width: 9em;
 }
-
 </style>

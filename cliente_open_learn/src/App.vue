@@ -22,7 +22,7 @@ function updateDataSession(user) {
   <div class="layout">
     <Header :userAuth="session" @session-closed="updateDataSession" />
 
-    <main class="content">
+    <main class="content d-flex flex-column justify-content-start align-items-center">
       <RouterView @sessionStarted="updateDataSession" :userAuth="session" />
     </main>
 
@@ -46,9 +46,7 @@ body {
   overflow: hidden;
   /* Evita que Vue cree un scroll dentro del div */
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  
 }
 
 .layout {

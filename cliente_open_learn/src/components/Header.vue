@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import router from '@/router';
+import { useRoute } from 'vue-router';
 
 // Emit to close session
 const emit = defineEmits(['session-closed']);
@@ -20,17 +21,29 @@ function logOut() {
     sessionStorage.removeItem('acces_token');
 }
 
+const route = useRoute();
+
+const navItems = [
+  { name: 'Home', path: '/' },
+  { name: 'Catalog', path: '/catalog' },
+  { name: 'My academy', path: '/my_academy' },
+  { name: 'About', path: '/about' }
+];
+
 </script>
 <template>
     <header class="text-white p-3">
         <div class="container d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
-                <!-- Logo -->
-                <RouterLink to="/"><img src="/logo.png" alt="Logo" class="img-fluid" style="max-width: 60px;"></RouterLink>
-                <RouterLink to="/" class="text-decoration-none"><h1 class="mb-0 ms-3 text-decoration-none">OpenLearn </h1></RouterLink>
+                <!-- Logo / Home button -->
+                <RouterLink to="/"><img src="/logo.png" alt="Logo" class="img-fluid" style="max-width: 40px;">
+                </RouterLink>
+                <RouterLink to="/" class="text-decoration-none">
+                    <h1 class="mb-0 ms-3 text-decoration-none">OpenLearn </h1>
+                </RouterLink>
             </div>
 
-            <!-- Menú de Navegación -->
+            <!-- Navegation menu -->
             <nav class="navbar navbar-expand-md navbar-light">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,25 +52,29 @@ function logOut() {
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto text-center">
-                        <li class="nav-item ">
-                            <RouterLink class="nav-link rounded-2 fs-6 fw-bold me-5" to="/about">About us</RouterLink>
+                        <li v-for="(item, i) in navItems" :key="i" class="nav-item position-relative">
+                            <RouterLink :to="item.path" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5"
+                                :class="{ active: $route.path === item.path }">
+                                {{ item.name }}
+                            </RouterLink>
                         </li>
                         <li class="nav-item">
-                            <RouterLink class="nav-link fs-6 fw-bold ms-5 border border-2 rounded-2" to="/login" v-if="!userAuth">Log in</RouterLink>
+                            <RouterLink class="nav-link fs-6 fw-bold ms-5 border border-2 rounded-2" to="/login"
+                                v-if="!userAuth">Log in</RouterLink>
                         </li>
                     </ul>
 
-                    <!-- Menú de usuario -->
+                    <!-- Profile menu -->
                     <div class="dropdown ms-3" v-if="userAuth">
                         <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
                             id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/profile_icon.png" alt="Perfil" class="img-fluid me-2"
-                                style="max-width: 60px; height: auto;">
-                            <span class="visually-hidden">Abrir menú de usuario</span>
+                                style="max-width: 50px; height: auto;">
+                            <span class="visually-hidden">Open personal menu</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
                             <li>
-                                <RouterLink class=" dropdown-item" to="/">AAAAAA</RouterLink>
+                                <RouterLink class="dropdown-item" to="/">My account</RouterLink>
                             </li>
                             <li>
                                 <RouterLink class="dropdown-item" to="/">EEEEEEEE</RouterLink>
@@ -77,20 +94,19 @@ function logOut() {
 header {
     background-color: #8EC8EC;
 }
+
 h1 {
     color: white;
 }
-.nav-link {
+.nav-link{
     color: white;
 }
-.nav-link:hover {
-    background-color: #7db0cf;
-}
 #dropdownMenuButton1 {
-    border: 0px;
+    border: 0;
     background-color: #8EC8EC;
     height: 4em;
 }
+
 /* Estilos del menú desplegable */
 .dropdown-menu {
     font-size: 1.1rem;
@@ -98,14 +114,51 @@ h1 {
 }
 
 .dropdown-item {
-    padding: 10px;
+    padding: 0.625em;
 }
+
 .dropdown-item:hover {
     background-color: rgb(199, 231, 241);
     color: black;
 }
+
 .dropdown-item:active {
     background-color: lightgray;
     color: black;
+}
+
+.router-link-active.nav-link {
+    position: relative;
+    background-color: #7db0cf;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+    
+}
+
+.nav-underline-link {
+  color: white;
+  transition: color 0.3s ease;
+}
+.router-link-active.nav-link{
+    color: white;
+}
+.nav-underline-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0px;
+  width: 0%;
+  height: 4px;
+  background-color: white;
+  transition: width 0.4s ease;
+  border-radius: 2px;
+}
+
+.nav-underline-link.active::after {
+  width: 100%;
+}
+
+.nav-underline-link:hover::after {
+  width: 100%;
 }
 </style>
