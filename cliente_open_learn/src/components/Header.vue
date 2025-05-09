@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
 
@@ -13,6 +13,57 @@ const props = defineProps({
     }
 });
 
+// Check if the token is present and valid
+async function validateToken() {
+    if (!props.userAuth) return;
+
+    try {
+        const response = await fetch('http://localhost:8000/api/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${props.userAuth}`,
+                'Accept': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            logOut(); // Define or import this function
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "It seems that your session has expired.",
+                confirmButtonText: 'Go to log in',
+            }).then(() => {
+                router.push('/login'); // Redirect to login page
+            });
+            throw new Error(errorData.message || 'Error fetching user data');
+        }
+
+        // Token is valid; you can proceed here if needed
+    } catch (error) {
+        console.error('Error fetching user:', error.message);
+    }
+}
+
+// Periodic validation function
+let validationInterval = null;
+
+// Start validating the token on mount
+onMounted(() => {
+    validateToken();  // Validate once when the component is mounted
+    // Set interval to validate token every 5 minutes (300,000 ms)
+    validationInterval = setInterval(validateToken, 300000);
+});
+
+// Clean up the interval on component unmount
+onBeforeUnmount(() => {
+    if (validationInterval) {
+        clearInterval(validationInterval);
+    }
+});
+
+
 function logOut() {
     // Emit the event to close the session
     emit('session-closed', null);
@@ -24,10 +75,10 @@ function logOut() {
 const route = useRoute();
 
 const navItems = [
-  { name: 'Home', path: '/' },
-  { name: 'Catalog', path: '/catalog' },
-  { name: 'My academy', path: '/my_academy' },
-  { name: 'About', path: '/about' }
+    { name: 'Home', path: '/' },
+    { name: 'Catalog', path: '/catalog' },
+    { name: 'My academy', path: '/my_academy' },
+    { name: 'About', path: '/about' }
 ];
 
 </script>
@@ -53,7 +104,8 @@ const navItems = [
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto text-center">
                         <li v-for="(item, i) in navItems" :key="i" class="nav-item position-relative">
-                            <RouterLink :to="item.path" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5"
+                            <RouterLink :to="item.path"
+                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5"
                                 :class="{ active: $route.path === item.path }">
                                 {{ item.name }}
                             </RouterLink>
@@ -98,9 +150,11 @@ header {
 h1 {
     color: white;
 }
-.nav-link{
+
+.nav-link {
     color: white;
 }
+
 #dropdownMenuButton1 {
     border: 0;
     background-color: #8EC8EC;
@@ -132,33 +186,35 @@ h1 {
     background-color: #7db0cf;
     border-radius: 0.5rem;
     transition: background-color 0.3s ease;
-    
+
 }
 
 .nav-underline-link {
-  color: white;
-  transition: color 0.3s ease;
+    color: white;
+    transition: color 0.3s ease;
 }
-.router-link-active.nav-link{
+
+.router-link-active.nav-link {
     color: white;
 }
+
 .nav-underline-link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0px;
-  width: 0%;
-  height: 4px;
-  background-color: white;
-  transition: width 0.4s ease;
-  border-radius: 2px;
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0px;
+    width: 0%;
+    height: 4px;
+    background-color: white;
+    transition: width 0.4s ease;
+    border-radius: 2px;
 }
 
 .nav-underline-link.active::after {
-  width: 100%;
+    width: 100%;
 }
 
 .nav-underline-link:hover::after {
-  width: 100%;
+    width: 100%;
 }
 </style>

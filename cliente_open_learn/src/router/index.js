@@ -5,6 +5,7 @@ import About from '../views/About.vue'
 import Catalog from '@/views/Catalog.vue'
 import Certificates from '@/views/Academy.vue'
 import Course from '@/views/Course.vue'
+import MyAccount from '@/views/MyAccount.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: About,
+    },
+    {
+      path: '/myaccount',
+      name: 'myaccount',
+      component: MyAccount,
     }
   ],
 })

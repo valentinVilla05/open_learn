@@ -109,6 +109,5 @@ getUser(props.userAuth); // Call the function to get the user
     border: none;
     padding: 1em 1em ;
     border-radius: 5px;
-    cursor: pointer;
 }
 </style>
