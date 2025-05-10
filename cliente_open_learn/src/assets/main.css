@@ -4,3 +4,8 @@
     --swal2-confirm-button-border-radius: 5px; /* Bordes redondeados */
     --swal2-confirm-button-color: white; /* Color del texto */
 }
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}

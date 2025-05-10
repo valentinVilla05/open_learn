@@ -35,7 +35,7 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/users', {
     method: 'GET',
-}).then(reponse => response.json())
+}).then(response => response.json())
 .then(data => console.log('Users:', data))
 .catch(error => console.log('Error:', error));
 ______________________________________________________
@@ -44,7 +44,7 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/users/{user_id}', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('User:', data))
 .catch(error => console.log('Error:', error));
 ______________________________________________________
@@ -77,7 +77,8 @@ ______________________________________________________
 
 5.- Update the rol of an user: http://localhost:8000/api/users/{user_id}
 
-const updatedRole = {
+const updatedUser = {
+    name: '',
     rol: 'admin/teacher/student'
 };
 
@@ -86,7 +87,7 @@ fetch('http://localhost:8000/api/users/{user_id}', {
     headers: {
         'Content-Type': 'application/json'
     },
-    body: JSON.stringify(updatedRole)
+    body: JSON.stringify(updatedUser)
 })
 .then(response => response.json())
 .then(data => console.log('Response:', data))

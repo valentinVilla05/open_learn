@@ -64,6 +64,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
 
             $data = $request->validate([
+                'name' => 'nullable|string',
                 'rol' => 'nullable|string|in:admin,teacher,student',
             ]);
 

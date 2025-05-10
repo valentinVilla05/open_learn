@@ -6,6 +6,9 @@ import Catalog from '@/views/Catalog.vue'
 import Certificates from '@/views/Academy.vue'
 import Course from '@/views/Course.vue'
 import MyAccount from '@/views/MyAccount.vue'
+import UserManagement from '@/views/UserManagement.vue'
+import CourseManagement from '@/views/CourseManagement.vue'
+import ControlPanel from '@/views/ControlPanel.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +47,21 @@ const router = createRouter({
       path: '/myaccount',
       name: 'myaccount',
       component: MyAccount,
+    },
+    {
+      path: '/controlPanel',
+      name: 'controlPanel',
+      component: ControlPanel,
+    },
+    {
+      path: '/controlPanel/userManagement',
+      name: 'userManagement',
+      component: UserManagement,
+    },
+    {
+      path: '/controlPanel/courseManagement',
+      name: 'courseManagement',
+      component: CourseManagement,
     }
   ],
 })

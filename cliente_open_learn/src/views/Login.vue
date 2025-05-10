@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { owlPasswordImages } from './images'
+import { owlPasswordImages } from '../utils/images'
 import router from '@/router'
 import Swal from 'sweetalert2'
 

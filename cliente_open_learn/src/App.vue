@@ -36,15 +36,12 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  /* Oculta cualquier desbordamiento lateral */
   height: 100%;
-  /* Asegura que el body tenga altura completa */
 }
 
 .content {
   flex: 1;
   overflow: hidden;
-  /* Evita que Vue cree un scroll dentro del div */
   height: 100vh;
   
 }
@@ -53,7 +50,6 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  /* El contenedor ocupa toda la altura de la pantalla */
 }
 
 footer {
