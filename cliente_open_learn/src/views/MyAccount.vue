@@ -1,23 +1,13 @@
 <script setup>
 import { ref, reactive, watch } from 'vue';
-import { formatDate } from '@/utils/commonFunctions';
+import { formatDate } from '@/utils/formatDate';
 import Swal from 'sweetalert2';
-import { validateToken } from '@/utils/validateToken';
-
-
-const emit = defineEmits(['session-closed']);
  
 const props = defineProps({
   userAuth: {
         type: String,
         required: false,
     },
-});
-
-const userAuth = ref(props.userAuth);
-
-const { logout } = validateToken(userAuth, () => {
-  emit('session-closed', null);
 });
 
 const loguedUser = ref(null);

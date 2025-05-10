@@ -1,27 +1,78 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
-import { validateToken } from '@/utils/validateToken';
 import router from '@/router';
 import { useRoute } from 'vue-router';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2'; // Import SweetAlert2 for confirmation messages
 
-
+// Emit to close session
 const emit = defineEmits(['session-closed']);
 
 const props = defineProps({
     userAuth: {
         type: String,
-        required: false,
-    },
+        required: false // Optional
+    }
 });
 
-const userAuth = ref(props.userAuth);
+// Check if the token is present and valid
+async function validateToken() {
+    if (!props.userAuth) return;
 
-const { logout } = validateToken(userAuth, () => {
+    try {
+        const response = await fetch('http://localhost:8000/api/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${props.userAuth}`,
+                'Accept': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            logOut(); // Define or import this function
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "It seems that your session has expired.",
+                confirmButtonText: 'Go to log in',
+            }).then(() => {
+                router.push('/login'); // Redirect to login page
+            });
+            throw new Error(errorData.message || 'Error fetching user data');
+        }
+
+        // Token is valid; you can proceed here if needed
+    } catch (error) {
+        console.error('Error fetching user:', error.message);
+    }
+}
+
+// Periodic validation function
+let validationInterval = null;
+
+// Start validating the token on mount
+onMounted(() => {
+    validateToken();  // Validate once when the component is mounted
+    // Set interval to validate token every 5 minutes (300,000 ms)
+    validationInterval = setInterval(validateToken, 300000);
+});
+
+// Clean up the interval on component unmount
+onBeforeUnmount(() => {
+    if (validationInterval) {
+        clearInterval(validationInterval);
+    }
+});
+
+
+function logOut() {
+    // Emit the event to close the session
     emit('session-closed', null);
-});
 
-const userLogued = ref(null);
+    // Clear session storage
+    sessionStorage.removeItem('acces_token');
+    router.push('/'); // Redirect to home page
+}
 
 const route = useRoute();
 
@@ -77,11 +128,10 @@ const navItems = [
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
                             <li>
-                                <RouterLink class="dropdown-item" to="/myaccount">My account</RouterLink>
+                                <RouterLink class="dropdown-item" to="/">My account</RouterLink>
                             </li>
                             <li>
-                                <RouterLink class="dropdown-item" v-if="userLogued && userLogued.rol === 'admin'"
-                                    to="/controlPanel">Control Panel</RouterLink>
+                                <RouterLink class="dropdown-item" to="/">EEEEEEEE</RouterLink>
                             </li>
                             <li>
                                 <a class="dropdown-item text-danger" @click="logOut">Log out</a>
@@ -136,7 +186,7 @@ h1 {
 .router-link-active.nav-link {
     position: relative;
     background-color: #7db0cf;
-    border-radius: 0.6rem;
+    border-radius: 0.5rem;
     transition: background-color 0.3s ease;
 
 }
