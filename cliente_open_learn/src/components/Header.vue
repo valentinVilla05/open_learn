@@ -131,7 +131,7 @@ const navItems = [
                                 <RouterLink class="dropdown-item" to="/">My account</RouterLink>
                             </li>
                             <li>
-                                <RouterLink class="dropdown-item" to="/">EEEEEEEE</RouterLink>
+                                <RouterLink class="dropdown-item" to="/controlPanel">Control Panel</RouterLink>
                             </li>
                             <li>
                                 <a class="dropdown-item text-danger" @click="logOut">Log out</a>

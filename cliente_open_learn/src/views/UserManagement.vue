@@ -146,7 +146,20 @@ function previousPage() {
 }
 </script>
 <template>
-    <div class="tab-pane fade show active table-responsive w-75 border shadow mt-5" id="home-tab-pane" role="tabpanel"
+    <div class="w-75 text-start ms-5">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-5">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <RouterLink to="/" class="text-decoration-none text-">Home</RouterLink>
+                </li>
+                <li class="breadcrumb-item">
+                    <RouterLink to="/controlPanel" class="text-decoration-none text-">Control Panel</RouterLink>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">User Management</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="tab-pane fade show active table-responsive w-75 border shadow mt-3" id="home-tab-pane" role="tabpanel"
         aria-labelledby="home-tab" tabindex="0">
         <table class="table table-striped table-hover align-middle p-4" id="userTable">
             <thead>

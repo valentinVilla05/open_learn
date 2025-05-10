@@ -11,7 +11,6 @@ function getAllCourses() {
     }).then(response => response.json())
         .then(data => {
             allCourses.value = data
-            console.log('All courses:', allCourses.value); // Log all courses
         })
         .catch(error => console.log('Error:', error));
 }
@@ -48,7 +47,6 @@ async function getUser(token) {
 
         const data = await response.json();
         loguedUser.value = data; // Update the logged user with the data received
-        console.log('Logged user:', loguedUser.value); // Log the logged user
 
     } catch (error) {
         console.error('Error fetching user:', error.message);
@@ -62,30 +60,35 @@ getUser(props.userAuth); // Call the function to get the user
 
 <template>
     <div class="container mt-5">
-        <!-- Main container with the courses list -->
         <main class="row row-cols-1 row-cols-md-3 g-4">
-            <!-- Every course is a card -->
             <div class="col" v-for="course in allCourses" :key="course.id">
-                <div class="card h-100">
+                <div class="card h-100 d-flex flex-column">
                     <img :src="course.image" class="card-img-top" alt="Course image">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ course.title }}</h5>
-                        <p class="card-text">{{ course.description }}</p>
-                        <p class="card-text"><small class="text-body-secondary">Duración: {{ course.duration }}</small>
-                        </p>
-                        <motion.button class="goCourseButton" :whileHover="{ scale: 1.05 }" :transition="{ duration: 0.5 }">
-                            <RouterLink class="text-decoration-none text-white" v-if="loguedUser" :to="{ name: 'course', params: { course_id: course.id } }">Learn about this!</RouterLink>
-                            <RouterLink class="text-decoration-none text-white" v-else to="/login">Login to learn about this</RouterLink>
-                        </motion.button>
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2">
+                            <h5 class="card-title">{{ course.title }}</h5>
+                            <p class="card-text">{{ course.description }}</p>
+                            <p class="card-text">
+                                <small class="text-body-secondary">Duración: {{ course.duration }}</small>
+                            </p>
+                        </div>
+                        <!-- Push this div to the bottom of the card body -->
+                        <div class="d-flex justify-content-center align-items-center mt-auto">
+                            <motion.button class="goCourseButton" :whileHover="{ scale: 1.05 }"
+                                :transition="{ duration: 0.5 }">
+                                <RouterLink class="text-decoration-none text-white" v-if="loguedUser"
+                                    :to="{ name: 'course', params: { course_id: course.id } }">Learn about this!
+                                </RouterLink>
+                                <RouterLink class="text-decoration-none text-white" v-else to="/login">Login to learn
+                                    about this</RouterLink>
+                            </motion.button>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
-        <!-- Aside with filters -->
-        <aside>
-            <!-- Future filters could be added here -->
-        </aside>
     </div>
+
 </template>
 
 <style scoped>
@@ -103,11 +106,16 @@ getUser(props.userAuth); // Call the function to get the user
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
 .goCourseButton {
     background-color: #6EB183;
     color: white;
     border: none;
-    padding: 1em 1em ;
+    padding: 1em 1em;
     border-radius: 5px;
+}
+
+p {
+    margin-block: 1lh;
 }
 </style>

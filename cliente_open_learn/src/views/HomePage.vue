@@ -39,7 +39,6 @@ async function getUser(token) {
     // We get the courses of the logged user
     getCoursesFromUser(loguedUser.value.id); // Call getCourses with the user id
   } catch (error) {
-    console.error('Error fetching user:', error.message);
     loguedUser.value = null; // If there is an error, set the logged user to null
   }
 }
@@ -53,7 +52,6 @@ function getAllCourses() {
   }).then(response => response.json())
     .then(data => {
       allCourses.value = data
-      console.log('All courses:', allCourses.value); // Log all courses
     })
     .catch(error => console.log('Error:', error));
 }
@@ -76,7 +74,6 @@ function getCoursesFromUser(user_id) {
   }).then(response => response.json())
     .then(data => {
       userCourses.value = data
-      console.log('Courses:', userCourses.value); // Log the courses of the logged user
       // Get the information from that courses
       const coursesIdsFromUser = userCourses.value.map(course => course.course_id); // Get the ids of the courses
       // Now filter the courses with that ids
