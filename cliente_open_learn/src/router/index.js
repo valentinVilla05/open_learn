@@ -9,6 +9,7 @@ import MyAccount from '@/views/MyAccount.vue'
 import UserManagement from '@/views/UserManagement.vue'
 import CourseManagement from '@/views/CourseManagement.vue'
 import ControlPanel from '@/views/ControlPanel.vue'
+import CourseCreator from '@/views/CourseCreator.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +63,11 @@ const router = createRouter({
       path: '/controlPanel/courseManagement',
       name: 'courseManagement',
       component: CourseManagement,
+    },
+    {
+      path: '/controlPanel/courseCreator',
+      name: 'courseCreator',
+      component: CourseCreator
     }
   ],
 })

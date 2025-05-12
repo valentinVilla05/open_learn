@@ -267,7 +267,7 @@ async function signUp() {
          <div
             class="form-wrapper sign-in position-absolute d-flex justify-content-center align-items-center w-100 h-100 border border-3">
             <form>
-               <h2>Sign Up</h2>
+               <h2 class="text-center fw-bold mb-4">Sign Up</h2>
                <img class="logoSignUp img-fluid mx-auto d-block mb-3" src="/signup.png" alt="Logo" />
                <div class="input-group position-relative">
                   <input type="text" name="username" v-model="nameUserSignUp" @input="validateSignUpData" required />

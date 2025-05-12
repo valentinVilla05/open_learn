@@ -90,7 +90,7 @@ getAllCourses(); // Call getAllCourses when the component is mounted
     <h2 class="mt-5">Hey {{ loguedUser.name }}, are you ready to keep learning?</h2>
     <main class="container border p-3 mb-5 bg-body rounded h-100">
       <!-- Carrousel with the user's courses -->
-      <div v-if="userCourses.length > 0" id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+      <div v-if="userCourses.length > 0" id="carouselExampleAutoplaying" class="carousel slide " data-bs-ride="carousel" data-bs-interval="2000">
         <div class="carousel-inner w-100 overflow-hidden">
           <div class="carousel-item active">
             <div class="h-100 d-flex flex-column justify-content-center align-items-center">

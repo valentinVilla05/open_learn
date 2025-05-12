@@ -6,7 +6,8 @@ import Swal from 'sweetalert2';
 import { motion } from 'motion-v';
 import { userAuth } from '@/utils/userAuth';
 
-//En caso de acceder sin estar logueado te redirige a Login;
+const emit = defineEmits(['sessionStarted']);
+
 const props = defineProps({
     userAuth: {
         type: String,
@@ -67,9 +68,9 @@ async function getData() {
     }
 }
 
-onMounted(getData); // Utilizamos onMounted para que cargue los datos una vez se haya cargado los componentes;
+onMounted(getData); 
 
-// Función para actualizar el Rol de un usuario;
+// Function to update the Rol
 function updateRol(user_id, rol) {
     fetch(`http://localhost:8000/api/users/${user_id}`, {
         method: 'PUT',
@@ -125,7 +126,7 @@ function deleteUser(user_id) {
 /////// User Pagination ////////
 ////////////////////////////////
 let currentPage = ref(1);
-let usersPerPage = 6;
+let usersPerPage = 10;
 let totalPages = computed(() => Math.ceil(users.value.length / usersPerPage));
 
 let paginatedUsers = computed(() => {
@@ -212,17 +213,15 @@ function previousPage() {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">¿Está seguro que quiere borrar este usuario?</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Are you sure you want to erase this user?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    El usuario <b>{{ selectedUser?.name }}</b> con el ID: <b>{{ selectedUser?.id }}</b> será eliminado
-                    permanentemente.
+                    The user <b>{{ selectedUser?.name }}</b> with ID: <b>{{ selectedUser?.id }}</b> will be erased permanently.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" @click="deleteUser(selectedUser?.id)">Eliminar
-                        usuario</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @click="deleteUser(selectedUser?.id)">Delete user.</button>
                 </div>
             </div>
         </div>

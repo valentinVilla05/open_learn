@@ -23,7 +23,9 @@ function updateDataSession(user) {
     <Header :userAuth="session" @session-closed="updateDataSession" />
 
     <main class="content d-flex flex-column justify-content-start align-items-center">
-      <RouterView @sessionStarted="updateDataSession" :userAuth="session" />
+      <RouterView v-slot="{ Component }">
+        <component :is="Component" :userAuth="session" @sessionStarted="updateDataSession" />
+      </RouterView>
     </main>
 
     <Footer />
@@ -43,7 +45,7 @@ body {
   flex: 1;
   overflow: hidden;
   height: 100vh;
-  
+
 }
 
 .layout {

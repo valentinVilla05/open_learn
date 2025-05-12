@@ -31,7 +31,7 @@ async function validateToken() {
             const errorData = await response.json();
             logOut(); // Define or import this function
             Swal.fire({
-                icon: "error",
+                imageUrl: '/lost_conecction.png',
                 title: "Oops...",
                 text: "It seems that your session has expired.",
                 confirmButtonText: 'Go to log in',
@@ -128,7 +128,7 @@ const navItems = [
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
                             <li>
-                                <RouterLink class="dropdown-item" to="/">My account</RouterLink>
+                                <RouterLink class="dropdown-item" to="/myAccount">My account</RouterLink>
                             </li>
                             <li>
                                 <RouterLink class="dropdown-item" to="/controlPanel">Control Panel</RouterLink>

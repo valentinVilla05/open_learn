@@ -1,11 +1,21 @@
 :root {
-    --swal2-confirm-button-background-color: rgb(98, 155, 190); /* Color de fondo */
-    --swal2-confirm-button-hover-background-color: #6ea7ca; /* Color al pasar el mouse */
-    --swal2-confirm-button-border-radius: 5px; /* Bordes redondeados */
-    --swal2-confirm-button-color: white; /* Color del texto */
+    --swal2-confirm-button-background-color: rgb(98, 155, 190);
+    /* Color de fondo */
+    --swal2-confirm-button-hover-background-color: #6ea7ca;
+    /* Color al pasar el mouse */
+    --swal2-confirm-button-border-radius: 5px;
+    /* Bordes redondeados */
+    --swal2-confirm-button-color: white;
+    /* Color del texto */
 }
-*{
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: "Parkinsans", sans-serif;
+    font-optical-sizing: auto;
+}
+p{
+    margin-block: 1lh;
 }
