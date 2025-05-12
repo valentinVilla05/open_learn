@@ -160,6 +160,7 @@ function previousPage() {
             </ol>
         </nav>
     </div>
+    <h2 class="w-75 text-start text-muted">Active users in OpenLearn <span class="badge text-bg-secondary rounded-5">{{ users.length + 1 }}</span></h2>
     <div class="tab-pane fade show active table-responsive w-75 border shadow mt-3" id="home-tab-pane" role="tabpanel"
         aria-labelledby="home-tab" tabindex="0">
         <table class="table table-striped table-hover align-middle p-4" id="userTable">
@@ -266,7 +267,15 @@ function previousPage() {
     border: 1px solid black;
 }
 
+.page-item.active .page-link {
+    border: #73BBE7;
+    background-color: #8EC8EC;
+}
+
 motion-tr {
     transform-origin: center;
+}
+.badge{
+    background: linear-gradient(rgb(220, 255, 200),rgba(110, 177, 131, 0.7), rgb(220, 255, 200)) !important;
 }
 </style>

@@ -84,17 +84,16 @@ function getTeacher() {
     })
         .then(response => response.json())
         .then(data => {
-            teacherList.value = data.filter(teacher => teacher.rol === 'teacher');
-            console.log(teacherList.value);
+            teacherList.value = data.filter(teacher => teacher.rol === 'teacher'); // Filter the users by rol == teacher
         })
         .catch(error => console.log('Error:', error));
 }
 getTeacher();
 
-let modalAssign = null;
+let modalUpdate = null;
 const selectedCourse = ref(null);
 
-const updateCourse = ref({
+const updateDataCourse = ref({
     teacher_id: '',
     title: '',
     description: '',
@@ -105,9 +104,33 @@ const updateCourse = ref({
     duration: ''
 });
 
+function updateCourse(course_id) {
+    fetch(`http://localhost:8000/api/courses/${course_id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${props.userAuth}`,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(updateDataCourse.value)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Response:', data)
+            getCourses();
+            Swal.fire({
+                title: "Course updated!",
+                text: "The course information has been updated succesfully!",
+                icon: "success"
+            });
+            modalUpdate.hide();
+        })
+        .catch(error => console.error('Error:', error));
+}
+
 onMounted(() => {
-    const modalElement = document.getElementById("modalAssign");
-    modalAssign = new Modal(modalElement);
+    const modalElement = document.getElementById("modalUpdate");
+    modalUpdate = new Modal(modalElement);
 
 })
 
@@ -120,16 +143,16 @@ function openModal(course_id) {
         );
         teacherName.value = foundTeacher ? foundTeacher.name : 'Unknown';
 
-        updateCourse.value.teacher_id = selectedCourse.value.id;
-        updateCourse.value.title = selectedCourse.value.title;
-        updateCourse.value.description = selectedCourse.value.description;
-        updateCourse.value.privacy = selectedCourse.value.privacy;
-        updateCourse.value.image = selectedCourse.value.image;
-        updateCourse.value.max_students = selectedCourse.value.max_students;
-        updateCourse.value.subject = selectedCourse.value.subject;
-        updateCourse.value.duration = selectedCourse.value.duration;
+        updateDataCourse.value.teacher_id = selectedCourse.value.id;
+        updateDataCourse.value.title = selectedCourse.value.title;
+        updateDataCourse.value.description = selectedCourse.value.description;
+        updateDataCourse.value.privacy = selectedCourse.value.privacy;
+        updateDataCourse.value.image = selectedCourse.value.image;
+        updateDataCourse.value.max_students = selectedCourse.value.max_students;
+        updateDataCourse.value.subject = selectedCourse.value.subject;
+        updateDataCourse.value.duration = selectedCourse.value.duration;
 
-        modalAssign.show();
+        modalUpdate.show();
     } else {
         console.error('Curso no encontrado para ID:', course_id);
     }
@@ -187,7 +210,7 @@ function previousPage() {
                         <div>
                             <h2 class="card-title">{{ course.title }}</h2>
                             <h6 class="card-title">Duration: {{ course.duration }}</h6>
-                            <h6 class="card-title">Teacher: {{ course.teacher_id }}</h6>
+                            <h6 class="card-title">Teacher: {{ teacherList.find(teacher => teacher.id == course.teacher_id)?.name || 'No assigned' }}</h6>
                             <p class="card-text">
                                 {{ (course.description).slice(0, 75) }}...
                             </p>
@@ -221,7 +244,7 @@ function previousPage() {
     </main>
 
     <!-- Modal to edit course information -->
-    <div class="modal fade" id="modalAssign" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -230,58 +253,58 @@ function previousPage() {
                 </div>
                 <div class="modal-body">
                     <h2>Course information:</h2>
-                    <div class="container w-100 h-75 border d-flex justify-content-center align-items-center flex-column mt-3">
+                    <div
+                        class="container w-100 h-75 border d-flex justify-content-center align-items-center flex-column mt-3">
                         <div class="input-group mt-3 position-relative">
                             <label class="input-group-text" for="title">Title: </label>
-                            <input type="text" name="title" class="form-control" v-model="updateCourse.title"
-                             />
+                            <input type="text" name="title" class="form-control" v-model="updateDataCourse.title" />
                         </div>
 
                         <div class="input-group mt-3 position-relative">
                             <label class="input-group-text" for="teacher">Teacher:</label>
-                            <input type="text" name="teacher" class="form-control" :value="teacherName">
-                            <input hidden type="text" name="teacher" class="form-control" v-model="updateCourse.teacher_id">
+                            <select name="teacher" class="form-control" v-model="updateDataCourse.teacher_id"
+                                :value="updateDataCourse.teacher_id">
+                                <option v-for="teacher in teacherList" :key="teacher.id" :value="teacher.id">
+                                    {{ teacher.name }}</option>
+                            </select>
                         </div>
 
                         <div class="input-group mt-3 position-relative h-auto">
                             <label class="input-group-text" for="description">Description: </label>
                             <textarea type="text" name="description" class="form-control"
-                                v-model="updateCourse.description"/>
+                                v-model="updateDataCourse.description" />
                         </div>
 
                         <div class="input-group mt-3 position-relative">
                             <label class="input-group-text" for="privacy">Privacy: </label>
-                            <select name="privacy" class="form-control"
-                                v-model="updateCourse.privacy">
+                            <select name="privacy" class="form-control" v-model="updateDataCourse.privacy">
                                 <option value="public">Public</option>
                                 <option value="private">Private</option>
-                            </select>   
+                            </select>
                         </div>
                         <div class="input-group mt-3 position-relative">
                             <label class="input-group-text" for="image">Image: </label>
-                            <input type="text" name="image" class="form-control"
-                                v-model="updateCourse.image">
+                            <input type="text" name="image" class="form-control" v-model="updateDataCourse.image">
                         </div>
                         <div class="input-group mt-3 position-relative">
                             <label class="input-group-text" for="max_students">Max. Students: </label>
                             <input type="text" name="max_students" class="form-control"
-                                v-model="updateCourse.max_students">
+                                v-model="updateDataCourse.max_students">
                         </div>
                         <div class="input-group mt-3 position-relative">
                             <label class="input-group-text" for="subject">Subject: </label>
-                            <input type="text" name="subject" class="form-control"
-                                v-model="updateCourse.subject">
+                            <input type="text" name="subject" class="form-control" v-model="updateDataCourse.subject">
                         </div>
                         <div class="input-group mt-3 mb-3 position-relative">
                             <label class="input-group-text" for="max_students">Duration: </label>
-                            <input type="text" name="duration" class="form-control"
-                                v-model="updateCourse.duration">
+                            <input type="text" name="duration" class="form-control" v-model="updateDataCourse.duration">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" @click="updateCourse(selectedCourse.id)">Save
+                        changes</button>
                 </div>
             </div>
         </div>

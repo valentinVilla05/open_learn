@@ -38,7 +38,9 @@ const courseData = {
 fetch('http://localhost:8000/api/courses', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(courseData)
 })
@@ -70,7 +72,9 @@ const updateCourse = {
 fetch('http://localhost:8000/api/courses/{course_id}', {
     method: 'PUT',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(updateCourse)
 })
@@ -83,6 +87,11 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/courses', {
     method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
+    },
 })
 .then(response => response.json())
 .then(data => console.log('Respuesta:', data))

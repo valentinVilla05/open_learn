@@ -40,7 +40,9 @@ const newCalification = {
 fetch('http://localhost:8000/api/califications', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(newCalification)
 })

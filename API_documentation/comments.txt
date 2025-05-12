@@ -42,7 +42,9 @@ const comment = {
 fetch('http://localhost:8000/api/comments', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(comment)
 })
@@ -67,7 +69,9 @@ const updateComment = {
 fetch('http://localhost:8000/api/comments/{comment_id}', {
     method: 'PUT',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(updateComment)
 })
@@ -81,6 +85,11 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/comments/{comment_id}', {
     method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
+    },
 })
 .then(response => response.json())
 .then(data => console.log('Respuesta:', data))

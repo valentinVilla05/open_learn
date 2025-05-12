@@ -23,7 +23,7 @@ const props = defineProps({
         </nav>
     </div>
     <div class="container w-100 h-100 d-flex flex-row justify-content-evenly mt-5">
-        <motion.div class="card w-50 ms-5 me-5 shadow" :while-hover="{ scale: 1.15 }">
+        <motion.div class="card w-50 ms-5 me-5 shadow" :while-hover="{ scale: 1.10 }">
             <img src="/courseManagement.png" class="card-img-top" alt="User management">
             <div class="card-body">
                 <h5 class="card-title">Courses Management</h5>
@@ -34,7 +34,7 @@ const props = defineProps({
             </div>
         </motion.div>
 
-        <motion.div class="card w-50 ms-5 me-5 shadow" :while-hover="{ scale: 1.15 }">
+        <motion.div class="card w-50 ms-5 me-5 shadow" :while-hover="{ scale: 1.10 }">
             <img src="/userManagement.png" class="card-img-top" alt="User management">
             <div class="card-body">
                 <h5 class="card-title">User Management</h5>
@@ -46,7 +46,7 @@ const props = defineProps({
         </motion.div>
     </div>
     <div class="container w-100 h-100 d-flex flex-row justify-content-evenly mt-5">
-        <motion.div class="card w-50 ms-5 me-5 shadow" :while-hover="{ scale: 1.15 }">
+        <motion.div class="card w-50 ms-5 me-5 shadow" :while-hover="{ scale: 1.10 }">
             <img src="/courseCreator.png" class="card-img-top" alt="Course creator">
             <div class="card-body">
                 <h5 class="card-title">Course creator</h5>
@@ -71,5 +71,8 @@ p {
 }
 .btn {
     background-color: #FCDB77;
+}
+.btn:hover {
+    background-color: #ffe8a2;
 }
 </style>

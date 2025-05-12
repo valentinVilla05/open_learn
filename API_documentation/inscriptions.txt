@@ -30,7 +30,9 @@ const newInscription = {
 fetch('http://localhost:8000/api/inscriptions', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(userData)
 })
@@ -49,6 +51,11 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/inscriptions/{user_id}/{course_id}', {
     method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
+    },
 })
 .then(response => response.json())
 .then(data => console.log('Respuesta:', data)) 

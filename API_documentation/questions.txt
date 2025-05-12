@@ -34,7 +34,9 @@ const newQuestion = {
 fetch('http://localhost:8000/api/questions', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(userData)
 })
@@ -63,7 +65,9 @@ const updatedRole = {
 fetch('http://localhost:8000/api/questions/{user_id}', {
     method: 'PUT',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(updatedRole)
 })
@@ -76,6 +80,11 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/questions/{question_id}', {
     method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
+    },
 })
 .then(response => response.json())
 .then(data => console.log('Respuesta:', data))

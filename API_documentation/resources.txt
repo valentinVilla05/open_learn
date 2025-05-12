@@ -33,7 +33,9 @@ const resourceData = {
 fetch('http://localhost:8000/api/resources', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(resourceData)
 })
@@ -61,7 +63,9 @@ const updateResource = {
 fetch('http://localhost:8000/api/resources/{resource_id}', {
     method: 'PUT',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
     },
     body: JSON.stringify(updateResource)
 })
@@ -73,6 +77,11 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/resources', {
     method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.userAuth}`,
+        'Accept': 'application/json',
+    },
 })
 .then(response => response.json())
 .then(data => console.log('Respuesta:', data))

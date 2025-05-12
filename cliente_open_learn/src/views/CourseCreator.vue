@@ -1,11 +1,80 @@
 <script setup>
+import { ref } from 'vue';
+import Swal from 'sweetalert2';
 
 const emit = defineEmits(['sessionStarted']);
+const props = defineProps({
+    userAuth: {
+        type: String,
+        required: false // Optional
+    }
+});
 
+const validImage = ref(true);
+const courseData = ref({
+    teacher_id: '',
+    title: '',
+    description: '',
+    privacy: '',
+    image: '',
+    max_students: '',
+    subject: '',
+    duration: ''
+});
+
+function cleanForm() {
+    courseData.value.title = '';
+    courseData.value.description = '';
+    courseData.value.teacher_id = '';
+    courseData.value.subject = '';
+    courseData.value.max_students = '';
+    courseData.value.image = '';
+    courseData.value.privacy = '';
+    courseData.value.duration = '';
+}
+
+const teacherList = ref([]) // Get all the teachers
+
+function getTeacher() {
+    fetch('http://localhost:8000/api/users', {
+        method: 'GET',
+    })
+        .then(response => response.json())
+        .then(data => {
+            teacherList.value = data.filter(teacher => teacher.rol === 'teacher');
+            console.log(teacherList.value);
+        })
+        .catch(error => console.log('Error:', error));
+}
+getTeacher();
+
+function createCourse() {
+    fetch('http://localhost:8000/api/courses', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${props.userAuth}`,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(courseData.value)
+    })
+        .then(response => response.json())
+        .then(data => {
+            Swal.fire({
+                title: "Course created!",
+                text: "The course has been created!",
+                icon: "success"
+            }).then(() => {
+                cleanForm(); // Clean the inputs
+            });
+        })
+        .catch(error => console.error('Error:', error));
+
+}
 </script>
 <template>
     <div class="w-75 text-start ms-5">
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-5">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
                     <RouterLink to="/" class="text-decoration-none">Home</RouterLink>
@@ -17,6 +86,112 @@ const emit = defineEmits(['sessionStarted']);
             </ol>
         </nav>
     </div>
+    <div class="container">
+        <h2 class="text-center">Create a new course:</h2>
+        <div
+            class="container shadow rounded w-50 h-75 border d-flex justify-content-center align-items-center flex-column mt-3">
+            <div class="input-group mt-3 position-relative">
+                <label class="input-group-text" for="title">Title:*</label>
+                <input type="text" name="title" placeholder="Example: HTML5 & CSS3" class="form-control"
+                    v-model="courseData.title" />
+            </div>
 
+            <div class="input-group mt-3 position-relative">
+                <label class="input-group-text" for="teacher">Teacher:*</label>
+                <select name="teacher" class="form-control" v-model="courseData.teacher_id">
+                    <option v-for="teacher in teacherList" :key="teacher.id" :value="teacher.id">{{ teacher.name }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="input-group mt-3 position-relative h-auto">
+                <label class="input-group-text" for="description">Description:*</label>
+                <textarea type="text" name="description" placeholder="Learn everything about..." class="form-control"
+                    v-model="courseData.description" />
+            </div>
+
+            <div class="input-group mt-3 mb-3 position-relative">
+                <label class="input-group-text" for="privacy">Privacy:*</label>
+                <select name="privacy" class="form-control" v-model="courseData.privacy">
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
+                </select>
+            </div>
+            <div class="w-100 d-flex flex-column align-items-center justify-content-center">
+                <div class="imageContainer w-100 d-flex justify-content-center">
+                    <img v-if="courseData.image" :src="courseData.image" @load="validImage = true"
+                        @error="validImage = false" class="image w-100" alt="Course image" v-show="validImage" />
+
+                    <div v-if="!validImage || !courseData.image"
+                        class="w-100 mt-3 d-flex flex-column align-items-center">
+                        <img src="/lens.png" style="max-width: 2.5em;" alt="select an image">
+                        <p class="text-muted">
+                            {{ courseData.image && !validImage ? 'Invalid image URL' : 'Write an image URL below' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="input-group position-relative">
+                    <label class="input-group-text" for="image">Image: </label>
+                    <input type="url" name="image" placeholder="https://example.com" class="form-control"
+                        v-model="courseData.image">
+                </div>
+            </div>
+            <div class="input-group mt-3 position-relative">
+                <label class="input-group-text" for="max_students">Max. Students:*</label>
+                <input type="number" min="1" name="max_students" class="form-control" v-model="courseData.max_students">
+            </div>
+            <div class="input-group mt-3 position-relative">
+                <label class="input-group-text" for="subject">Subject:*</label>
+                <input type="text" name="subject" placeholder="Example: Frontend" class="form-control"
+                    v-model="courseData.subject">
+            </div>
+            <div class="input-group mt-3 mb-3 position-relative">
+                <label class="input-group-text" for="max_students">Duration: </label>
+                <input type="text" name="duration" class="form-control" v-model="courseData.duration" >
+                <input class="form-control" value="hours" readonly>
+            </div>
+            <div class="w-100 d-flex justify-content-between">
+                <button class="btn buttonClean p-2 m-2" @click="cleanForm">
+                    Clean data
+                </button>
+                <button class="btn buttonCreate p-2 m-2" @click="createCourse">
+                    Create
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
-<style scoped></style>
+<style scoped>
+.imageContainer {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1em;
+    background-color: #f8f9fa;
+    margin-bottom: 1em;
+    width: 100%;
+    max-width: 500px;
+}
+
+
+.image {
+    width: 50%;
+    height: 20em;
+    object-fit: cover;
+}
+
+.buttonClean {
+    background-color: #FCDB77;
+}
+
+.buttonClean:hover {
+    background-color: #ffe8a2;
+}
+
+.buttonCreate {
+    background-color: #6EB183;
+}
+
+.buttonCreate:hover {
+    background-color: #97cea8;
+}
+</style>
