@@ -200,6 +200,7 @@ function previousPage() {
     </div>
 
     <main class="container rounded shadow p-3">
+        <h2 class="w-75 text-start text-muted">Active courses in OpenLearn <span class="badge text-bg-secondary rounded-5">{{ courses.length }}</span></h2>
         <div class="card mb-5" v-for="course in paginatedCourses" :key="course.id">
             <div class="row g-2">
                 <div class="col-12 col-md-3 image d-flex align-items-center justify-content-center">
@@ -346,5 +347,9 @@ function previousPage() {
 
 #asignCourse {
     background-color: #FCDB77;
+}
+
+.badge{
+    background: linear-gradient(rgb(220, 255, 200),rgba(110, 177, 131, 0.7), rgb(220, 255, 200)) !important;
 }
 </style>

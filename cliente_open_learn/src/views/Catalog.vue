@@ -11,6 +11,8 @@ function getAllCourses() {
     }).then(response => response.json())
         .then(data => {
             allCourses.value = data
+            // Filter the public courses
+            allCourses.value = allCourses.value.filter(course => course.privacy === 'public');
         })
         .catch(error => console.log('Error:', error));
 }

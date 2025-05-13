@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 
 const emit = defineEmits(['sessionStarted']);
@@ -10,7 +10,6 @@ const props = defineProps({
     }
 });
 
-const validImage = ref(true);
 const courseData = ref({
     teacher_id: '',
     title: '',
@@ -71,6 +70,51 @@ function createCourse() {
         .catch(error => console.error('Error:', error));
 
 }
+
+// Input validation
+const validPrivacy = ref(false);
+const validTeacher = ref(false);
+const validImage = ref(null);
+const validForm = ref(null);
+
+
+// Image Validation
+async function isImageUrl(url) {
+    // Try a fetch to the image url
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        const contentType = response.headers.get('Content-Type');
+        const isValid = contentType && contentType.startsWith('image/');
+        validImage.value = isValid;
+        return isValid; // If the url is a valid image, return valid
+    } catch (error) {
+        validImage.value = false;
+        return false;
+    }
+}
+
+// Control the state of the image url everytime
+watch(() => courseData.value.image, (newUrl) => {
+    if (newUrl) {
+        isImageUrl(newUrl);
+    } else {
+        validImage.value = null;
+    }
+});
+
+watchEffect(() => {
+    validPrivacy.value = courseData.value.privacy === 'public' || courseData.value.privacy === 'private';
+    validTeacher.value = teacherList.value.some(teacher => teacher.id === courseData.value.teacher_id);
+
+    const allFieldsFilled = courseData.value.title.trim() !== '' &&
+        courseData.value.description.trim() !== '' &&
+        courseData.value.subject.trim() !== '' &&
+        courseData.value.max_students !== '' &&
+        !isNaN(courseData.value.max_students) &&
+        Number(courseData.value.max_students) > 0;
+
+    validForm.value = validPrivacy.value && validTeacher.value && allFieldsFilled;
+});
 </script>
 <template>
     <div class="w-75 text-start ms-5">
@@ -119,26 +163,30 @@ function createCourse() {
             </div>
             <div class="w-100 d-flex flex-column align-items-center justify-content-center">
                 <div class="imageContainer w-100 d-flex justify-content-center">
-                    <img v-if="courseData.image" :src="courseData.image" @load="validImage = true"
-                        @error="validImage = false" class="image w-100" alt="Course image" v-show="validImage" />
 
-                    <div v-if="!validImage || !courseData.image"
+                    <!-- Imagen válida -->
+                    <img v-if="validImage" :src="courseData.image" class="image w-100" alt="Course image" />
+
+                    <!-- Imagen inválida o vacía -->
+                    <div v-if="validImage === false || !courseData.image"
                         class="w-100 mt-3 d-flex flex-column align-items-center">
-                        <img src="/lens.png" style="max-width: 2.5em;" alt="select an image">
+                        <img src="/lens.png" style="max-width: 2.5em;" alt="select an image" />
                         <p class="text-muted">
                             {{ courseData.image && !validImage ? 'Invalid image URL' : 'Write an image URL below' }}
                         </p>
                     </div>
                 </div>
-                <div class="input-group position-relative">
+
+                <div class="input-group position-relative mt-3">
                     <label class="input-group-text" for="image">Image: </label>
-                    <input type="url" name="image" placeholder="https://example.com" class="form-control"
-                        v-model="courseData.image">
+                    <input type="url" name="image" id="image" v-model="courseData.image"
+                        placeholder="https://example.com/image.jpg" class="form-control" />
                 </div>
             </div>
             <div class="input-group mt-3 position-relative">
                 <label class="input-group-text" for="max_students">Max. Students:*</label>
-                <input type="number" min="1" name="max_students" class="form-control" v-model="courseData.max_students">
+                <input type="number" min="1" name="max_students" class="form-control" v-model="courseData.max_students"
+                >
             </div>
             <div class="input-group mt-3 position-relative">
                 <label class="input-group-text" for="subject">Subject:*</label>
@@ -147,14 +195,14 @@ function createCourse() {
             </div>
             <div class="input-group mt-3 mb-3 position-relative">
                 <label class="input-group-text" for="max_students">Duration: </label>
-                <input type="text" name="duration" class="form-control" v-model="courseData.duration" >
+                <input type="number" name="duration" class="form-control" v-model="courseData.duration">
                 <input class="form-control" value="hours" readonly>
             </div>
             <div class="w-100 d-flex justify-content-between">
                 <button class="btn buttonClean p-2 m-2" @click="cleanForm">
                     Clean data
                 </button>
-                <button class="btn buttonCreate p-2 m-2" @click="createCourse">
+                <button class="btn buttonCreate p-2 m-2" @click="createCourse" :disabled="!validForm">
                     Create
                 </button>
             </div>

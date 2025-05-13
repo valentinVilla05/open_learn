@@ -57,8 +57,11 @@ onMounted(() => {
         </aside>
 
         <!-- Mensaje de carga mientras se obtienen los datos -->
-        <div v-else class="text-center mt-5 w-100">
-            <p class="text-muted">Loading course route...</p>
+        <div v-else class="text-center w-100">
+            <img src="/noData.png" class="w-25" alt="no data">
+            <p class="fs-3">This course doesn't exist yet.</p>
+            <p>But you can enjoy many other courses</p>
+            <RouterLink to="/catalog" class="btn">Go to catalog</RouterLink>
         </div>
     </main>
 </template>
@@ -81,5 +84,11 @@ p{
     border: 4px solid var(--divider);
     border-top-color: #ff0088;
     will-change: transform;
+}
+.btn {
+    background-color: #FCDB77;
+}
+.btn:hover {
+    background-color: #ffe8a2;
 }
 </style>

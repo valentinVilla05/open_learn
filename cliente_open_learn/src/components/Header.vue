@@ -1,8 +1,9 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref , watch} from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2'; // Import SweetAlert2 for confirmation messages
+import { userAuth } from '@/utils/userAuth';
 
 // Emit to close session
 const emit = defineEmits(['session-closed']);
@@ -13,6 +14,8 @@ const props = defineProps({
         required: false // Optional
     }
 });
+
+const userToken = ref(props.userAuth);
 
 // Check if the token is present and valid
 async function validateToken() {
@@ -66,22 +69,15 @@ onBeforeUnmount(() => {
 
 
 function logOut() {
-    // Emit the event to close the session
     emit('session-closed', null);
-
-    // Clear session storage
     sessionStorage.removeItem('acces_token');
-    router.push('/'); // Redirect to home page
+    userToken.value = null; // ← actualización reactiva
+    router.push('/');
 }
 
-const route = useRoute();
-
-const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Catalog', path: '/catalog' },
-    { name: 'My academy', path: '/my_academy' },
-    { name: 'About', path: '/about' }
-];
+watch(() => props.userAuth, (newVal) => {
+    userToken.value = newVal;
+});
 
 </script>
 <template>
@@ -105,21 +101,26 @@ const navItems = [
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto text-center">
-                        <li v-for="(item, i) in navItems" :key="i" class="nav-item position-relative">
-                            <RouterLink :to="item.path"
-                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5"
-                                :class="{ active: $route.path === item.path }">
-                                {{ item.name }}
-                            </RouterLink>
+                        <li class="nav-item position-relative">
+                            <RouterLink to="/" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">Home</RouterLink>
+                        </li>
+                        <li class="nav-item position-relative">
+                            <RouterLink to="/catalog" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">Catalog</RouterLink>
+                        </li>
+                        <li class="nav-item position-relative">
+                            <RouterLink v-show="userToken" to="/my_academy" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">My Academy</RouterLink>
+                        </li>
+                        <li class="nav-item position-relative">
+                            <RouterLink to="/about" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">About</RouterLink>
                         </li>
                         <li class="nav-item">
                             <RouterLink class="nav-link fs-6 fw-bold ms-5 border border-2 rounded-2" to="/login"
-                                v-if="!userAuth">Log in</RouterLink>
+                                v-if="!userToken">Log in</RouterLink>
                         </li>
                     </ul>
 
                     <!-- Profile menu -->
-                    <div class="dropdown ms-3" v-if="userAuth">
+                    <div class="dropdown ms-3" v-if="userToken">
                         <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
                             id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/profile_icon.png" alt="Perfil" class="img-fluid me-2"
