@@ -2,7 +2,7 @@ Endpoints for Calification: http://localhost:8000/api/certificates
 
 ______________________________________________________
 
-1.- Get all Calification from user: http://localhost:8000/api/certificates/user/{user_id}
+1.- Get all certificates from user: http://localhost:8000/api/certificates/user/{user_id}
 
 fetch('http://localhost:8000/api/certificates/user/{user_id}', {
     method: 'GET',

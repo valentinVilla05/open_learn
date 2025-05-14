@@ -28,6 +28,19 @@ function updateDataSession(user) {
       </RouterView>
     </main>
 
+    <div class="toast show position-fixed bottom-0 end-0 mb-3 me-5 w-25 d-none d-sm-block" role="alert"
+      aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+      <div class="toast-header d-flex justify-content-end align-items-start">
+        <button type="button" class="btn-close mt-2" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body position-relative text-center">
+        <a href="/faq" class="d-block w-100 text-decoration-none position-relative" style="cursor: pointer;"><span
+            class="toast-text d-block">Need help?</span> </a>
+        <img src="/help.png" class="w-100" alt="help" />
+
+      </div>
+    </div>
+
     <Footer />
   </div>
 </template>
@@ -52,6 +65,35 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.toast {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  max-width: 15em;
+  z-index: 1055;
+}
+
+.button {
+  background-color: white;
+}
+
+.toast-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+.toast-body {
+  padding: 0 !important;
+}
+
+.toast-text {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: black;
+  font-size: 1.2em;
 }
 
 footer {

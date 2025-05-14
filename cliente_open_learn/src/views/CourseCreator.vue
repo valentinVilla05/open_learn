@@ -48,6 +48,12 @@ function getTeacher() {
 getTeacher();
 
 function createCourse() {
+    courseData.value.max_students = Number(courseData.value.max_students);
+    courseData.value.duration = String(courseData.value.duration) + " horas";
+    if (courseData.value.image === '') {
+        courseData.value.image = null;
+    }
+    console.log(courseData.value)
     fetch('http://localhost:8000/api/courses', {
         method: 'POST',
         headers: {
@@ -185,8 +191,7 @@ watchEffect(() => {
             </div>
             <div class="input-group mt-3 position-relative">
                 <label class="input-group-text" for="max_students">Max. Students:*</label>
-                <input type="number" min="1" name="max_students" class="form-control" v-model="courseData.max_students"
-                >
+                <input type="number" min="1" name="max_students" class="form-control" v-model="courseData.max_students">
             </div>
             <div class="input-group mt-3 position-relative">
                 <label class="input-group-text" for="subject">Subject:*</label>

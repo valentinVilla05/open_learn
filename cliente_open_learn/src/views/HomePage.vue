@@ -1,12 +1,14 @@
 <script setup>
 import { motion } from 'motion-v';
 import { ref, watch, onMounted } from 'vue';
+import { Toast } from 'bootstrap';
 
+const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
   userAuth: {
     type: String,
-    required: false,
-  },
+    required: false // Optional
+  }
 });
 
 // Variable to contain the logged-in user
@@ -83,6 +85,13 @@ function getCoursesFromUser(user_id) {
 
 }
 getAllCourses(); // Call getAllCourses when the component is mounted
+onMounted(() => {
+  const toastEl = document.querySelector('.toast');
+  if (toastEl) {
+    const bsToast = new Toast(toastEl);
+    bsToast.show(); // Esto no es obligatorio si ya tienes `.show` en el HTML, pero es útil si quieres controlarlo por JS
+  }
+});
 </script>
 
 <template>
@@ -90,7 +99,8 @@ getAllCourses(); // Call getAllCourses when the component is mounted
     <h2 class="mt-5">Hey {{ loguedUser.name }}, are you ready to keep learning?</h2>
     <main class="container border p-3 mb-5 bg-body rounded h-100">
       <!-- Carrousel with the user's courses -->
-      <div v-if="userCourses.length > 0" id="carouselExampleAutoplaying" class="carousel slide " data-bs-ride="carousel" data-bs-interval="2000">
+      <div v-if="userCourses.length > 0" id="carouselExampleAutoplaying" class="carousel slide " data-bs-ride="carousel"
+        data-bs-interval="2000">
         <div class="carousel-inner w-100 overflow-hidden">
           <div class="carousel-item active">
             <div class="h-100 d-flex flex-column justify-content-center align-items-center">
@@ -154,17 +164,34 @@ getAllCourses(); // Call getAllCourses when the component is mounted
     <h2 class="mt-5">Log in to enjoy all the content from OpenLearn!</h2>
   </div>
 
+  
 </template>
 
 <style scoped>
 .card {
-  width: 81em; 
-  height: 15em; 
-  overflow: hidden; 
+  width: 81em;
+  height: 15em;
+  overflow: hidden;
 }
+
 .card img {
   height: 15em;
-  object-fit: cover; 
-  object-position: center; 
+
+  .toast {
+    background-color: transparent !important;
+    /* Elimina el fondo blanco */
+    box-shadow: none !important;
+    /* Elimina la sombra del toast */
+    border: none !important;
+    /* Elimina cualquier borde */
+  }
+
+  .toast-header {
+    background-color: transparent !important;
+    border-bottom: none !important;
+  }
+
+  object-fit: cover;
+  object-position: center;
 }
 </style>

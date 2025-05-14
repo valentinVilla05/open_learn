@@ -3,7 +3,13 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { motion } from 'motion-v';
 
-
+const emit = defineEmits(['sessionStarted']);
+const props = defineProps({
+    userAuth: {
+        type: String,
+        required: false // Optional
+    }
+});
 
 // Get the actual course
 const route = useRoute();
@@ -24,22 +30,37 @@ onMounted(() => {
 });
 </script>
 <template>
-    <main class="container d-flex flex-column flex-md-row justify-content-between align-items-start mt-4 shadow-lg p-4 rounded text-black">
+    <div class="w-75 text-start ms-1 mt-2">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <RouterLink to="/" class="text-decoration-none">Home</RouterLink>
+                </li>
+                <li class="breadcrumb-item">
+                    <RouterLink to="/catalog" class="text-decoration-none text-">Catalog</RouterLink>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ course?.title }}</li>
+            </ol>
+        </nav>
+    </div>
+    <main
+        class="container d-flex flex-column flex-md-row justify-content-between align-items-start mt-2 shadow-lg p-4 rounded text-black">
         <!-- Sección principal -->
         <div v-if="course" class="content w-75 w-md-75">
             <!-- Imagen de fondo con título -->
-            <div class="h-auto d-flex flex-column align-items-center justify-content-center text-white rounded" :style="{
-                backgroundImage: `url(${course.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                minHeight: '20em'
-            }">
-                <h1 class=" text-black text-shadow text-center">{{ course.title }}</h1>
+            <div class="banner h-auto d-flex flex-column align-items-center justify-content-center text-white rounded"
+                :style="{
+                    backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.0)), url(${course.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    minHeight: '20em'
+                }">
+                <h1 class="courseTittle p-3 rounded-5 text-shadow text-center">{{ course.title }}</h1>
             </div>
 
             <!-- Description -->
-             <p class="mt-2 fs-6">
+            <p class="mt-2 fs-6">
                 <strong class="fs-5 text-muted">Description:</strong> {{ course?.description }}
             </p>
             <p class="mt-4 fs-6">
@@ -66,8 +87,13 @@ onMounted(() => {
     </main>
 </template>
 <style scoped>
-p{
+p {
     margin-block: 1lh;
+}
+
+.courseTittle {
+    color: white;
+    backdrop-filter: blur(8px);
 }
 .container {
     display: flex;
@@ -85,9 +111,11 @@ p{
     border-top-color: #ff0088;
     will-change: transform;
 }
+
 .btn {
     background-color: #FCDB77;
 }
+
 .btn:hover {
     background-color: #ffe8a2;
 }

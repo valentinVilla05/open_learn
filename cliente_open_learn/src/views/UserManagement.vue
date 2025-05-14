@@ -16,7 +16,6 @@ const props = defineProps({
 });
 
 // Get the user data;
-
 const loguedUser = ref(null);
 
 onMounted(async () => {

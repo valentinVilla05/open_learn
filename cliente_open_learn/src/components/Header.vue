@@ -185,8 +185,9 @@ h1 {
 }
 
 .router-link-active.nav-link {
+    color: rgb(75, 75, 75) !important;
     position: relative;
-    background-color: #7db0cf;
+    background-color: #62B2E4;
     border-radius: 0.5rem;
     transition: background-color 0.3s ease;
 
