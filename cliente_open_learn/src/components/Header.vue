@@ -4,6 +4,7 @@ import router from '@/router';
 import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2'; // Import SweetAlert2 for confirmation messages
 import { userAuth } from '@/utils/userAuth';
+import { motion } from 'motion-v';
 
 // Emit to close session
 const emit = defineEmits(['session-closed']);
@@ -101,9 +102,9 @@ watch(() => props.userAuth, (newVal) => {
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto text-center">
-                        <li class="nav-item position-relative">
+                        <motion.li class="nav-item position-relative"  :while-hover="{ scale: 1.10 }">
                             <RouterLink to="/" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">Home</RouterLink>
-                        </li>
+                        </motion.li>
                         <li class="nav-item position-relative">
                             <RouterLink to="/catalog" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">Catalog</RouterLink>
                         </li>
@@ -191,6 +192,10 @@ h1 {
     border-radius: 0.5rem;
     transition: background-color 0.3s ease;
 
+}
+.nav-link:hover{
+    background-color: #73BBE7 !important;
+    border-radius: 5px;
 }
 
 .nav-underline-link {

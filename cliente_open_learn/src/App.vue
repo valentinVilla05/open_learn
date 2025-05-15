@@ -2,7 +2,7 @@
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import router from '@/router';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const session = ref(sessionStorage.getItem('sessionID') || null);
 
@@ -16,6 +16,15 @@ function updateDataSession(user) {
   }
 }
 
+onMounted(() => {
+  const toastEl = document.querySelector('.toast');
+  if (toastEl) {
+    const toast = new bootstrap.Toast(toastEl, {
+      autohide: false
+    });
+    toast.show();
+  }
+});
 </script>
 
 <template>
@@ -34,8 +43,9 @@ function updateDataSession(user) {
         <button type="button" class="btn-close mt-2" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
       <div class="toast-body position-relative text-center">
-        <a href="/faq" class="d-block w-100 text-decoration-none position-relative" style="cursor: pointer;"><span
-            class="toast-text d-block">Need help?</span> </a>
+        <span class="toast-text d-block">Need help?</span>
+        <RouterLink to="/faq" class="w-100 text-decoration-none position-relative" style="cursor: pointer;">
+          Click me!</RouterLink>
         <img src="/help.png" class="w-100" alt="help" />
 
       </div>

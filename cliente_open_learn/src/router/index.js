@@ -10,6 +10,8 @@ import UserManagement from '@/views/UserManagement.vue'
 import CourseManagement from '@/views/CourseManagement.vue'
 import ControlPanel from '@/views/ControlPanel.vue'
 import CourseCreator from '@/views/CourseCreator.vue'
+import Faq from '@/views/Faq.vue'
+import Resource from '@/views/Resource.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +42,11 @@ const router = createRouter({
       component: Certificates,
     },
     {
+      path: '/course/:course_id/resource/:resource_id',
+      name: 'resource',
+      component: Resource
+    },
+    {
       path: '/about',
       name: 'about',
       component: About,
@@ -68,6 +75,11 @@ const router = createRouter({
       path: '/controlPanel/courseCreator',
       name: 'courseCreator',
       component: CourseCreator
+    },
+    {
+      path: '/faq',
+      name: 'frequentQuestion',
+      component: Faq
     }
   ],
 })

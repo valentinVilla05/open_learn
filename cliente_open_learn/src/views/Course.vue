@@ -1,7 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { userAuth } from '@/utils/userAuth';
 import { motion } from 'motion-v';
+import Swal from 'sweetalert2';
+import CoursesResources from '@/components/CoursesResources.vue';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -11,31 +14,127 @@ const props = defineProps({
     }
 });
 
+const loguedUser = ref(null);
+
 // Get the actual course
 const route = useRoute();
 const courseId = route.params.course_id;
 const course = ref(null); // Variable to store the course data
+const userCoursesList = ref([]);
+const isEnrrolled = ref(false)
+const capacityCompleted = ref(false)
+
+const teacherList = ref([]) // Get all the teachers
+const teacherName = ref(null);
+const teacherAssigned = ref(null);
+
+const newInscription = ref({
+    user_id: '',
+    course_id: ''
+})
 
 // Get the course data
 function getCourse(courseId) {
-    fetch(`http://localhost:8000/api/courses/${courseId}`, {
+    return fetch(`http://localhost:8000/api/courses/${courseId}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => course.value = data)
         .catch(error => console.log('Error:', error));
 }
 
-onMounted(() => {
-    getCourse(courseId); // Call the function to get the course data
+function getInscriptions(user_id) {
+    return fetch(`http://localhost:8000/api/inscriptions/user/${user_id}`, {
+        method: 'GET',
+    }).then(response => response.json())
+        .then(data => userCoursesList.value = data)
+        .catch(error => console.log('Error:', error));
+}
+
+
+
+async function getTeacher() {
+    return fetch('http://localhost:8000/api/users', {
+        method: 'GET',
+    })
+        .then(response => response.json())
+        .then(data => {
+            teacherList.value = data.filter(teacher => teacher.rol === 'teacher'); // Filter the users by rol == teacher
+        })
+        .catch(error => console.log('Error:', error));
+}
+
+async function checkCapacity(course_id) {
+    const usersEnrolled = ref(null);
+
+    await fetch(`http://localhost:8000/api/inscriptions/course/${course_id}`, {
+        method: 'GET',
+    }).then(response => response.json())
+        .then(data => {
+            usersEnrolled.value = data;
+            if ((usersEnrolled.value).length + 1 <= course.value.max_students) {
+                capacityCompleted.value = false;
+            } else capacityCompleted.value = true;
+        }
+        )
+        .catch(error => console.log('Error:', error));
+
+
+}
+
+function enrrollUser(course_id, user_id) {
+    // Check if the capacity is now completed
+    if (!capacityCompleted.value) {
+        newInscription.value.user_id = user_id;
+        newInscription.value.course_id = course_id;
+
+        fetch('http://localhost:8000/api/inscriptions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${props.userAuth}`,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(newInscription.value)
+        })
+            .then(response => response.json())
+            .then(data => {
+                Swal.fire({
+                    title: "Inscription registered!",
+                    text: "Enjoy with all the content!",
+                    icon: "success"
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    } else console.log("WUAAAAAAAAAAAAAAAA")
+}
+
+onMounted(async () => {
+    await getTeacher()
+    const user = await userAuth(props.userAuth);
+    if (user) {
+        loguedUser.value = user;
+        await getInscriptions(user.id); // Wait for inscription
+    }
+
+    await getCourse(courseId); // Wait for course
+
+    // Solo si ambos están listos:
+    if (loguedUser.value && course.value) {
+        isEnrrolled.value = userCoursesList.value.some(
+            inscription => inscription.course_id == course.value.id
+        );
+    }
+    teacherName.value = teacherList.value.find(teacher => { teacher.name == course.value.teacher_id; return teacher.name });
+    teacherAssigned.value = String(course.value.teacher_id) === String(loguedUser.value.id);
+    checkCapacity(courseId)
+
 });
+
 </script>
 <template>
     <div class="w-75 text-start ms-1 mt-2">
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <RouterLink to="/" class="text-decoration-none">Home</RouterLink>
-                </li>
                 <li class="breadcrumb-item">
                     <RouterLink to="/catalog" class="text-decoration-none text-">Catalog</RouterLink>
                 </li>
@@ -45,9 +144,9 @@ onMounted(() => {
     </div>
     <main
         class="container d-flex flex-column flex-md-row justify-content-between align-items-start mt-2 shadow-lg p-4 rounded text-black">
-        <!-- Sección principal -->
+        <!-- Main Section -->
         <div v-if="course" class="content w-75 w-md-75">
-            <!-- Imagen de fondo con título -->
+            <!-- Image with background title -->
             <div class="banner h-auto d-flex flex-column align-items-center justify-content-center text-white rounded"
                 :style="{
                     backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.0)), url(${course.image})`,
@@ -56,23 +155,45 @@ onMounted(() => {
                     backgroundRepeat: 'no-repeat',
                     minHeight: '20em'
                 }">
-                <h1 class="courseTittle p-3 rounded-5 text-shadow text-center">{{ course.title }}</h1>
+                <div class="courseTittle w-100 p-3 rounded-5 text-shadow text-start">
+                    <h1>{{ course.title }}</h1>
+                    <p class="mt-2 fs-6">
+                        {{ course?.description }}
+                    </p>
+                    <p class="mt-4 fs-6"><img src="/clock.png"></img> <small>{{ course?.duration }}</small></p>
+                    <div class="mx-2 d-flex justify-content-between align-content-center">
+                        <p v-if="isEnrrolled" class="text-success mt-2">
+                            You're already enrolled in this course
+                        </p>
+                        <p v-else-if="capacityCompleted">
+                            Sorry, this course is already completed.
+                        </p>
+                        <button v-else-if="loguedUser && !isEnrrolled" class="enrollButton rounded p-2 border border-0"
+                            @click="enrrollUser(course.id, loguedUser.id)">
+                            Enroll
+                        </button>
+                        <RouterLink v-else-if="!loguedUser" to="/login" class="btn">Log in to acces to
+                            all the content!</RouterLink>
+                        <RouterLink to="" class="btn" v-if="teacherAssigned">Manage this course</RouterLink>
+                    </div>
+
+                </div>
+            </div>
+            <CoursesResources v-if="isEnrrolled" :course_id="courseId"></CoursesResources>
+            <div v-else>
+
             </div>
 
-            <!-- Description -->
-            <p class="mt-2 fs-6">
-                <strong class="fs-5 text-muted">Description:</strong> {{ course?.description }}
-            </p>
-            <p class="mt-4 fs-6">
-                <strong class="fs-5 text-muted">Duration:</strong> {{ course?.duration }}
-            </p>
         </div>
 
-        <!-- Barra lateral (aside) -->
+        <!-- Aside -->
         <aside v-if="course" class="sidebar p-4 shadow rounded w-45 w-md-35 h-auto d-flex flex-column">
             <h4 class="">Additional information:</h4>
             <ul class="list-unstyled">
-                <li class="mb-3 fs-6 text-muted"><strong>Active students:</strong> {{ course?.max_students }}</li>
+                <li class="mb-3 fs-6 text-muted"><strong>Teacher for this course:</strong> {{ teacherName?.name }}</li>
+                <li class="mb-3 fs-6 text-muted"><strong>Max. students:</strong> {{ course?.max_students }}</li>
+                <li class="mb-3 fs-6 text-muted"><strong>Subject of this course:</strong> {{ course?.subject }}</li>
+                <li class="mb-3 fs-6 text-muted"><strong>Course's privacy:</strong> {{ course?.privacy }}</li>
                 <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
             </ul>
         </aside>
@@ -95,6 +216,7 @@ p {
     color: white;
     backdrop-filter: blur(8px);
 }
+
 .container {
     display: flex;
     justify-content: center;
@@ -103,13 +225,9 @@ p {
     border-radius: 8px;
 }
 
-.spinner {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 4px solid var(--divider);
-    border-top-color: #ff0088;
-    will-change: transform;
+
+.enrollButton {
+    background-color: #6EB183;
 }
 
 .btn {
@@ -118,5 +236,6 @@ p {
 
 .btn:hover {
     background-color: #ffe8a2;
+    color: black;
 }
 </style>
