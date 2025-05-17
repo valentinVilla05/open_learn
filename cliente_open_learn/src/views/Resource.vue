@@ -87,13 +87,4 @@ getCourseName(courseId)
 p {
     margin-block: 1lh;
 }
-
-.btn {
-    background-color: #FCDB77;
-}
-
-.btn:hover {
-    background-color: #ffe8a2;
-    color: black;
-}
 </style>

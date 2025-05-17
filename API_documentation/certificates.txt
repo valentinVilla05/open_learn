@@ -6,7 +6,7 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/certificates/user/{user_id}', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Certificates:', data))
 .catch(error => console.log('Error:', error));
 ______________________________________________________
@@ -15,6 +15,6 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/certificates/{user_id}/{course_id}', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Certificates:', data))
 .catch(error => console.log('Error:', error));

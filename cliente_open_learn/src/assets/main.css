@@ -19,3 +19,11 @@
 p{
     margin-block: 1lh;
 }
+.btn {
+    background-color: #FCDB77 !important;
+}
+
+.btn:hover {
+    background-color: #ffe8a2 !important;
+    color: black !important;
+}

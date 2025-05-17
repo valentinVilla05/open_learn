@@ -5,6 +5,7 @@ import { userAuth } from '@/utils/userAuth';
 import { motion } from 'motion-v';
 import Swal from 'sweetalert2';
 import CoursesResources from '@/components/CoursesResources.vue';
+import CoursesExam from '@/components/CoursesExam.vue';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -23,9 +24,6 @@ const course = ref(null); // Variable to store the course data
 const userCoursesList = ref([]);
 const isEnrrolled = ref(false);
 const capacityCompleted = ref(false);
-const courseExam = ref(null);
-const califications = ref(null);
-
 const teacherList = ref([]) // Get all the teachers
 const teacherName = ref(null);
 const teacherAssigned = ref(null);
@@ -52,8 +50,6 @@ function getInscriptions(user_id) {
         .catch(error => console.log('Error:', error));
 }
 
-
-
 async function getTeacher() {
     return fetch('http://localhost:8000/api/users', {
         method: 'GET',
@@ -79,10 +75,9 @@ async function checkCapacity(course_id) {
         }
         )
         .catch(error => console.log('Error:', error));
-
-
 }
 
+// Create an inscription
 function enrrollUser(course_id, user_id) {
     // Check if the capacity is now completed
     if (!capacityCompleted.value) {
@@ -110,30 +105,7 @@ function enrrollUser(course_id, user_id) {
     } else console.log("WUAAAAAAAAAAAAAAAA")
 }
 
-function getExams(course_id) {
-    fetch(`http://localhost:8000/api/exams/course/${course_id}`, {
-        method: 'GET',
-    }).then(response => response.json())
-        .then(data => {
-            courseExam.value = data
-            console.log(courseExam.value)
-        })
-        .catch(error => console.log('Error:', error));
-}
-function getCalification(user_id, exam_id) {
-    fetch(`http://localhost:8000/api/califications/user/${user_id}`, {
-        method: 'GET',
-    }).then(response => response.json())
-        .then(data => {
-            califications.value = data
-            califications.value = califications.value.find(calif => calif.user_id == user_id && calif.exam_id == exam_id)
 
-        })
-        .catch(error => console.log('Error:', error));
-
-    return califications.value?.calification;
-
-}
 onMounted(async () => {
     await getTeacher()
     const user = await userAuth(props.userAuth);
@@ -141,16 +113,13 @@ onMounted(async () => {
         loguedUser.value = user;
         await getInscriptions(user.id); // Wait for inscription
     }
-
     await getCourse(courseId); // Wait for course
-
 
     // Solo si ambos están listos:
     if (loguedUser.value && course.value) {
         isEnrrolled.value = userCoursesList.value.some(
             inscription => inscription.course_id == course.value.id
         );
-        getExams(courseId)
     }
     teacherName.value = teacherList.value.find(teacher => { teacher.name == course.value.teacher_id; return teacher.name });
     teacherAssigned.value = String(course.value.teacher_id) === String(loguedUser.value.id);
@@ -209,7 +178,7 @@ onMounted(async () => {
             </div>
             <CoursesResources v-if="isEnrrolled" :course_id="courseId"></CoursesResources>
             <div v-else>
-
+                <!-- Maybe blur the content or just an image -->
             </div>
 
         </div>
@@ -226,34 +195,11 @@ onMounted(async () => {
                     <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
                 </ul>
             </div>
-            <div class="mx-2 my-4 w-100 d-flex flex-column align-items-center justify-content-center">
-                <div class="w-75 fs-5 text-center">
-                    <p class="mb-1">Course's exam:</p>
-                    <hr class="my-1">
-                </div>
-                <div v-if="courseExam?.length > 0">
-                    <p class="mx-3">You can try the FinalHoot when you feel prepared, remember there's no hurry</p>
-                    <section v-for="exam in courseExam" :key="exam.id">
-                        <motion.div class="exam w-100 m-2 d-flex flex-row border shadow rounded align-items-center"
-                            :while-hover="{ scale: 1.05 }">
-                            <div class="d-flex align-items-center border-end border-3">
-                                <img class="mx-2" style="min-height: fit-content; min-width: 2em;" src="/exam.png"
-                                    alt="link">
-                            </div>
-                            <p class="m-3 fw-bold">{{ exam.title }}</p>
-                            <div class="d-flex flex-column align-items-center justify-content-center border-start">
-                                <p class="ms-3 fw-bold">Calification</p>
-                                <p>{{ getCalification(loguedUser.id, exam.id) || "Not done" }}</p>
-                            </div>
-                        </motion.div>
-                    </section>
-                </div>
-                <p v-else class="mx-3">The FinalHoot is not prepared yet. Keep getting yourself ready for when it comes</p>
-            </div>
+            <CoursesExam :course_id="courseId" :user_id="loguedUser.id" v-show="isEnrrolled"></CoursesExam>
         </aside>
 
 
-        <!-- Mensaje de carga mientras se obtienen los datos -->
+        <!-- Message if there is no data -->
         <div v-else class="text-center w-100">
             <img src="/noData.png" class="w-25" alt="no data">
             <p class="fs-3">This course doesn't exist yet.</p>
@@ -287,14 +233,5 @@ p {
 
 .enrollButton {
     background-color: #6EB183;
-}
-
-.btn {
-    background-color: #FCDB77;
-}
-
-.btn:hover {
-    background-color: #ffe8a2;
-    color: black;
 }
 </style>

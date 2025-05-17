@@ -69,10 +69,4 @@ p {
     object-position: center;
     background-color: #DCFFC8;
 }
-.btn {
-    background-color: #FCDB77;
-}
-.btn:hover {
-    background-color: #ffe8a2;
-}
 </style>

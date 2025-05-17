@@ -122,7 +122,7 @@ watch(() => props.userAuth, (newVal) => {
 
                     <!-- Profile menu -->
                     <div class="dropdown ms-3" v-if="userToken">
-                        <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
+                        <button class="btn-secondary dropdown-toggle d-flex align-items-center" type="button"
                             id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/profile_icon.png" alt="Perfil" class="img-fluid me-2"
                                 style="max-width: 50px; height: auto;">
