@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const emit = defineEmits(['sessionStarted']);
@@ -51,7 +51,7 @@ getCourseName(courseId)
                     <RouterLink to="/catalog" class="text-decoration-none text-">Catalog</RouterLink>
                 </li>
                 <li class="breadcrumb-item" aria-current="page">
-                    <RouterLink :to="{ name: 'course', params: { course_id: courseData?.id }}"
+                    <RouterLink :to="{ name: 'course', params: { course_id: courseData?.id } }"
                         class="text-decoration-none">{{ courseData?.title }}</RouterLink>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
@@ -60,5 +60,40 @@ getCourseName(courseId)
             </ol>
         </nav>
     </div>
+    <main class="container shadow border rounded w-100 m-3">
+        <h2 class="my-3">{{ resourceData?.name }}</h2>
+        <p>{{ resourceData?.description }}</p>
+        <div v-if="resourceData?.type == 'video'">
+            <p class="">Link to resource: <a :href="resourceData?.url" target="_blank">{{ resourceData?.url }}</a></p>
+            <iframe class="w-100" style="height: 30em;" :src="resourceData?.url" title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+        <div v-else>
+            <p class="">Link to resource: <a :href="resourceData?.url" target="_blank">{{ resourceData?.url }}</a></p>
+            <div class="ratio ratio-4x3">
+                <iframe :src="resourceData?.url" type="application/pdf" />
+            </div>
+        </div>
+
+        <div class="m-3">
+            <RouterLink :to="{ name: 'course', params: { course_id: courseId } }" class="btn">Go back to course
+            </RouterLink>
+        </div>
+    </main>
 </template>
-<style scoped></style>
+<style scoped>
+p {
+    margin-block: 1lh;
+}
+
+.btn {
+    background-color: #FCDB77;
+}
+
+.btn:hover {
+    background-color: #ffe8a2;
+    color: black;
+}
+</style>

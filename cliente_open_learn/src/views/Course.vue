@@ -21,8 +21,10 @@ const route = useRoute();
 const courseId = route.params.course_id;
 const course = ref(null); // Variable to store the course data
 const userCoursesList = ref([]);
-const isEnrrolled = ref(false)
-const capacityCompleted = ref(false)
+const isEnrrolled = ref(false);
+const capacityCompleted = ref(false);
+const courseExam = ref(null);
+const califications = ref(null);
 
 const teacherList = ref([]) // Get all the teachers
 const teacherName = ref(null);
@@ -108,6 +110,30 @@ function enrrollUser(course_id, user_id) {
     } else console.log("WUAAAAAAAAAAAAAAAA")
 }
 
+function getExams(course_id) {
+    fetch(`http://localhost:8000/api/exams/course/${course_id}`, {
+        method: 'GET',
+    }).then(response => response.json())
+        .then(data => {
+            courseExam.value = data
+            console.log(courseExam.value)
+        })
+        .catch(error => console.log('Error:', error));
+}
+function getCalification(user_id, exam_id) {
+    fetch(`http://localhost:8000/api/califications/user/${user_id}`, {
+        method: 'GET',
+    }).then(response => response.json())
+        .then(data => {
+            califications.value = data
+            califications.value = califications.value.find(calif => calif.user_id == user_id && calif.exam_id == exam_id)
+
+        })
+        .catch(error => console.log('Error:', error));
+
+    return califications.value?.calification;
+
+}
 onMounted(async () => {
     await getTeacher()
     const user = await userAuth(props.userAuth);
@@ -118,11 +144,13 @@ onMounted(async () => {
 
     await getCourse(courseId); // Wait for course
 
+
     // Solo si ambos están listos:
     if (loguedUser.value && course.value) {
         isEnrrolled.value = userCoursesList.value.some(
             inscription => inscription.course_id == course.value.id
         );
+        getExams(courseId)
     }
     teacherName.value = teacherList.value.find(teacher => { teacher.name == course.value.teacher_id; return teacher.name });
     teacherAssigned.value = String(course.value.teacher_id) === String(loguedUser.value.id);
@@ -185,18 +213,45 @@ onMounted(async () => {
             </div>
 
         </div>
-
         <!-- Aside -->
-        <aside v-if="course" class="sidebar p-4 shadow rounded w-45 w-md-35 h-auto d-flex flex-column">
-            <h4 class="">Additional information:</h4>
-            <ul class="list-unstyled">
-                <li class="mb-3 fs-6 text-muted"><strong>Teacher for this course:</strong> {{ teacherName?.name }}</li>
-                <li class="mb-3 fs-6 text-muted"><strong>Max. students:</strong> {{ course?.max_students }}</li>
-                <li class="mb-3 fs-6 text-muted"><strong>Subject of this course:</strong> {{ course?.subject }}</li>
-                <li class="mb-3 fs-6 text-muted"><strong>Course's privacy:</strong> {{ course?.privacy }}</li>
-                <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
-            </ul>
+        <aside v-if="course">
+            <div class="sidebar p-4 shadow rounded w-45 w-md-35 h-auto d-flex flex-column">
+                <h4 class="">Additional information:</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-3 fs-6 text-muted"><strong>Teacher for this course:</strong> {{ teacherName?.name }}
+                    </li>
+                    <li class="mb-3 fs-6 text-muted"><strong>Max. students:</strong> {{ course?.max_students }}</li>
+                    <li class="mb-3 fs-6 text-muted"><strong>Subject of this course:</strong> {{ course?.subject }}</li>
+                    <li class="mb-3 fs-6 text-muted"><strong>Course's privacy:</strong> {{ course?.privacy }}</li>
+                    <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
+                </ul>
+            </div>
+            <div class="mx-2 my-4 w-100 d-flex flex-column align-items-center justify-content-center">
+                <div class="w-75 fs-5 text-center">
+                    <p class="mb-1">Course's exam:</p>
+                    <hr class="my-1">
+                </div>
+                <div v-if="courseExam?.length > 0">
+                    <p class="mx-3">You can try the FinalHoot when you feel prepared, remember there's no hurry</p>
+                    <section v-for="exam in courseExam" :key="exam.id">
+                        <motion.div class="exam w-100 m-2 d-flex flex-row border shadow rounded align-items-center"
+                            :while-hover="{ scale: 1.05 }">
+                            <div class="d-flex align-items-center border-end border-3">
+                                <img class="mx-2" style="min-height: fit-content; min-width: 2em;" src="/exam.png"
+                                    alt="link">
+                            </div>
+                            <p class="m-3 fw-bold">{{ exam.title }}</p>
+                            <div class="d-flex flex-column align-items-center justify-content-center border-start">
+                                <p class="ms-3 fw-bold">Calification</p>
+                                <p>{{ getCalification(loguedUser.id, exam.id) || "Not done" }}</p>
+                            </div>
+                        </motion.div>
+                    </section>
+                </div>
+                <p v-else class="mx-3">The FinalHoot is not prepared yet. Keep getting yourself ready for when it comes</p>
+            </div>
         </aside>
+
 
         <!-- Mensaje de carga mientras se obtienen los datos -->
         <div v-else class="text-center w-100">
@@ -209,7 +264,11 @@ onMounted(async () => {
 </template>
 <style scoped>
 p {
-    margin-block: 1lh;
+    margin-block: 1lh
+}
+
+.exam {
+    background-color: rgb(231, 231, 231);
 }
 
 .courseTittle {
@@ -221,7 +280,7 @@ p {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px;
+    padding: 2.5em;
     border-radius: 8px;
 }
 

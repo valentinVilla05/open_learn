@@ -25,7 +25,6 @@ async function userAuth(token) {
         } else {
             validUser.value = true; // If the response is ok, set validUser to true
             loguedUser.value = await response.json(); // Store the logged user data
-            console.log(loguedUser.value);
             return loguedUser.value;
         }
     } catch (error) {

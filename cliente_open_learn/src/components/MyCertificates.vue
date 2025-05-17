@@ -8,8 +8,9 @@ const props = defineProps({
 });
 </script>
 <template>
+    <main class="">
 
-
+    </main>
 </template>
 <style scoped>
 

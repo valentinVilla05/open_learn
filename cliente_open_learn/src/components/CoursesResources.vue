@@ -34,7 +34,8 @@ getResources(props.course_id)
                 <img v-if="resource.type === 'document'" class="mx-2" style="min-height: fit-content; min-width: 2em;" src="/document_icon.png" alt="document">
                 <img v-if="resource.type === 'video'" class="mx-2" style="min-height: fit-content; min-width: 2em;" src="/video_icon.png" alt="video">
             </div>
-            <RouterLink :to="{ name: 'resource', params: { course_id: course_id, resource_id: resource.id } }"  class="text-black fw-bold m-3 text-decoration-none">{{ resource.name }}</RouterLink>
+            <p v-if="resource.type === 'link'"><a :href="resource.url" target="_blank" class="text-black fw-bold m-3 text-decoration-none">{{ resource.name }}</a></p>
+            <RouterLink v-else :to="{ name: 'resource', params: { course_id: course_id, resource_id: resource.id } }"  class="text-black fw-bold m-3 text-decoration-none">{{ resource.name }}</RouterLink>
         </motion.div>
     </section>
 </template>
