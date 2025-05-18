@@ -49,6 +49,7 @@ function getResources(course_id) {
 }
 
 function createResource() {
+    newResourceData.value.course_id = props.course_id;
     fetch('http://localhost:8000/api/resources', {
         method: 'POST',
         headers: {
@@ -60,11 +61,13 @@ function createResource() {
     })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success') {
-                console.log('Resource created:', data);
-            } else {
-                console.log('Error creating resource:', data.message);
-            }
+            Swal.fire({
+                imageUrl: "/addResource.png",
+                imageWidth: "15em",
+                title: "Resource created!",
+                text: "The resource was added to the course!",
+            });
+            getResources(props.course_id)
         })
         .catch(error => console.error('Error:', error));
 }
@@ -229,9 +232,9 @@ onMounted(() => {
             </div>
         </div>
         <div class="w-100 d-flex justify-content-between">
-            <button type="button" class="btn cancelButton" data-bs-dismiss="modal" @click="cleanForm(); addResouce = !addResouce">Close</button>
-            <button type="button" class="btn" @click="createResource()">Save
-                changes</button>
+            <button type="button" class="btn cancelButton" data-bs-dismiss="modal"
+                @click="cleanForm(); addResouce = !addResouce">Close</button>
+            <button type="button" class="btn" @click="createResource()">Create resource</button>
         </div>
     </div>
 
