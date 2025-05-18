@@ -1,14 +1,11 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref , watch} from 'vue';
 import router from '@/router';
-import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2'; // Import SweetAlert2 for confirmation messages
-import { userAuth } from '@/utils/userAuth';
 import { motion } from 'motion-v';
 
 // Emit to close session
 const emit = defineEmits(['session-closed']);
-
 const props = defineProps({
     userAuth: {
         type: String,
@@ -16,6 +13,7 @@ const props = defineProps({
     }
 });
 
+const loguedUser = ref(null);
 const userToken = ref(props.userAuth);
 
 // Check if the token is present and valid
@@ -26,26 +24,28 @@ async function validateToken() {
         const response = await fetch('http://localhost:8000/api/user', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${props.userAuth}`,
+                'Authorization': `Bearer ${userToken.value}`,
                 'Accept': 'application/json',
             },
         });
 
         if (!response.ok) {
             const errorData = await response.json();
-            logOut(); // Define or import this function
+            logOut();
             Swal.fire({
                 imageUrl: '/lost_conecction.png',
                 title: "Oops...",
                 text: "It seems that your session has expired.",
                 confirmButtonText: 'Go to log in',
             }).then(() => {
-                router.push('/login'); // Redirect to login page
+                router.push('/login');
             });
             throw new Error(errorData.message || 'Error fetching user data');
         }
 
-        // Token is valid; you can proceed here if needed
+        const userData = await response.json();
+        loguedUser.value = userData; 
+
     } catch (error) {
         console.error('Error fetching user:', error.message);
     }
@@ -59,6 +59,7 @@ onMounted(() => {
     validateToken();  // Validate once when the component is mounted
     // Set interval to validate token every 5 minutes (300,000 ms)
     validationInterval = setInterval(validateToken, 300000);
+
 });
 
 // Clean up the interval on component unmount
@@ -133,7 +134,7 @@ watch(() => props.userAuth, (newVal) => {
                                 <RouterLink class="dropdown-item" to="/myAccount">My account</RouterLink>
                             </li>
                             <li>
-                                <RouterLink class="dropdown-item" to="/controlPanel">Control Panel</RouterLink>
+                                <RouterLink class="dropdown-item" to="/controlPanel" v-if="loguedUser?.rol == 'admin'">Control Panel</RouterLink>
                             </li>
                             <li>
                                 <a class="dropdown-item text-danger" @click="logOut">Log out</a>

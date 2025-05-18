@@ -12,6 +12,7 @@ import ControlPanel from '@/views/ControlPanel.vue'
 import CourseCreator from '@/views/CourseCreator.vue'
 import Faq from '@/views/Faq.vue'
 import Resource from '@/views/Resource.vue'
+import Exam from '@/views/Exam.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +46,11 @@ const router = createRouter({
       path: '/course/:course_id/resource/:resource_id',
       name: 'resource',
       component: Resource
+    },
+    {
+      path: '/course/:course_id/finalhoot/:exam_id',
+      name: 'exam',
+      component: Exam
     },
     {
       path: '/about',

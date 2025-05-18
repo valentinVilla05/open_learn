@@ -70,7 +70,7 @@ onMounted(() => {
             <hr class="my-1">
         </div>
         <div v-if="courseExam?.length > 0">
-            <p class="mx-3">You can try the FinalHoot when you feel prepared, remember there's no hurry</p>
+            <p class="mx-4">You can try the FinalHoot when you feel prepared, remember there's no hurry</p>
             <section v-for="exam in courseExam" :key="exam.id" class="d-flex flex-column justify-content-center align-items-center">
                 <motion.div class="exam w-75 m-2 d-flex flex-row border shadow rounded align-items-center"
                     :while-hover="{ scale: 1.05 }">

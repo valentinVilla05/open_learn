@@ -170,10 +170,10 @@ watchEffect(() => {
             <div class="w-100 d-flex flex-column align-items-center justify-content-center">
                 <div class="imageContainer w-100 d-flex justify-content-center">
 
-                    <!-- Imagen válida -->
+                    <!-- Valid image -->
                     <img v-if="validImage" :src="courseData.image" class="image w-100" alt="Course image" />
 
-                    <!-- Imagen inválida o vacía -->
+                    <!-- Empty/Invalid image -->
                     <div v-if="validImage === false || !courseData.image"
                         class="w-100 mt-3 d-flex flex-column align-items-center">
                         <img src="/lens.png" style="max-width: 2.5em;" alt="select an image" />

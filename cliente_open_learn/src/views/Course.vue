@@ -121,7 +121,7 @@ onMounted(async () => {
             inscription => inscription.course_id == course.value.id
         );
     }
-    teacherName.value = teacherList.value.find(teacher => { teacher.name == course.value.teacher_id; return teacher.name });
+    teacherName.value = teacherList.value.find(teacher => String(teacher.id) === String(course.value.teacher_id));
     teacherAssigned.value = String(course.value.teacher_id) === String(loguedUser.value.id);
     checkCapacity(courseId)
 
@@ -159,7 +159,10 @@ onMounted(async () => {
                     </p>
                     <p class="mt-4 fs-6"><img src="/clock.png"></img> <small>{{ course?.duration }}</small></p>
                     <div class="mx-2 d-flex justify-content-between align-content-center">
-                        <p v-if="isEnrrolled" class="text-success mt-2">
+                        <p v-if="teacherAssigned" class="text-success mt-2">
+                            You are assigned to this course.
+                        </p>
+                        <p v-else-if="isEnrrolled" class="text-success mt-2">
                             You're already enrolled in this course
                         </p>
                         <p v-else-if="capacityCompleted">
@@ -171,12 +174,12 @@ onMounted(async () => {
                         </button>
                         <RouterLink v-else-if="!loguedUser" to="/login" class="btn">Log in to acces to
                             all the content!</RouterLink>
-                        <RouterLink to="" class="btn" v-if="teacherAssigned">Manage this course</RouterLink>
                     </div>
 
                 </div>
             </div>
-            <CoursesResources v-if="isEnrrolled" :course_id="courseId"></CoursesResources>
+            <CoursesResources v-if="isEnrrolled || teacherAssigned" :userAuth="props.userAuth" :course_id="courseId" :teacherAssigned="teacherAssigned">
+            </CoursesResources>
             <div v-else>
                 <!-- Maybe blur the content or just an image -->
             </div>
@@ -195,7 +198,7 @@ onMounted(async () => {
                     <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
                 </ul>
             </div>
-            <CoursesExam :course_id="courseId" :user_id="loguedUser.id" v-show="isEnrrolled"></CoursesExam>
+            <CoursesExam :course_id="courseId" :user_id="loguedUser.id" v-if="isEnrrolled"></CoursesExam>
         </aside>
 
 

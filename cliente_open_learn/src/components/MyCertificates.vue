@@ -57,12 +57,13 @@ onMounted(async () => {
         loguedUser.value = user;
         getCourses();
         getCertificates(loguedUser.value.id)
+        console.log(certificates.value)
     }
 });
 </script>
 <template>
     <main class="container">
-        <div class="card" style="width: 18rem;" v-for="certificate in certificates">
+        <div class="card" style="width: 18rem;" v-for="certificate in certificates" v-if="certificates != null">
             <img :src="courses?.find(course => course.id == certificate.course_id)?.image" class="card-img-top"
                 alt="Course image">
             <div class="card-body d-flex flex-column align-items-center justify-content-center">
