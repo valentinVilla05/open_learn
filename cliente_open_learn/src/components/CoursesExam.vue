@@ -8,6 +8,9 @@ const props = defineProps({
     },
     user_id: {
         type: Number
+    },
+    teacherAssigned: {
+        type: Boolean
     }
 });
 
@@ -94,8 +97,10 @@ onMounted(() => {
                 </div>
             </section>
         </div>
-        <p v-else class="mx-3">The FinalHoot is not prepared yet. Keep getting yourself ready for when it comes
-        </p>
+        <div v-else class="mx-3">
+        <p >The FinalHoot is not prepared yet. Keep getting yourself ready for when it comes</p>
+        <button v-if="teacherAssigned" class="btn">Create exam</button>
+        </div>
     </div>
 </template>
 <style scoped></style>

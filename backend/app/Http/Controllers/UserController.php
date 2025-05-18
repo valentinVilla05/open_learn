@@ -19,12 +19,28 @@ class UserController extends Controller
         if (!$token = auth('api')->attempt($data)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
+    }
+
+    // Function to refresh the token (for long sessions)
+    public function refresh()
+    {
+        try {
+            $newToken = auth('api')->refresh();
+
+            return response()->json([
+                'access_token' => $newToken,
+                'token_type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+            ]);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['error' => 'Invalid refresh token'], 401);
+        }
     }
 
     public function showAllUsers()

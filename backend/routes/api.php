@@ -21,6 +21,7 @@ Route::get('/user', function (Request $request) {
 // Endpoint Auth
 Route::post('/login', [UserController::class, 'login']); // Login
 Route::post('/register', [UserController::class, 'createUser']); // Create a new user
+Route::post('/refresh', [UserController::class, 'refresh']); // Refesh the user token
 
 
 //Endpoint Users

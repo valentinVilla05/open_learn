@@ -3,6 +3,8 @@ import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import router from '@/router';
 import { ref, onMounted } from 'vue';
+import Swal from 'sweetalert2';
+import { onBeforeUnmount } from 'vue';
 
 const session = ref(sessionStorage.getItem('sessionID') || null);
 
@@ -10,13 +12,82 @@ function updateDataSession(user) {
   session.value = user;
   if (user) {
     sessionStorage.setItem('sessionID', user);
-    router.push("/");
+    router.push('/');
   } else {
     sessionStorage.removeItem('sessionID');
   }
 }
 
+let validationInterval = null;
+
+async function tryRefreshToken() {
+  try {
+    const response = await fetch('http://localhost:8000/api/refresh', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${session.value}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) throw new Error('Refresh failed');
+
+    const data = await response.json();
+    session.value = data.sessionID;
+    sessionStorage.setItem('sessionID', data.sessionID);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function validateToken() {
+  if (!session.value) return;
+
+  try {
+    const response = await fetch('http://localhost:8000/api/user', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${session.value}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (response.status === 401) {
+      const refreshed = await tryRefreshToken();
+      if (refreshed) return validateToken(); // retry
+      else throw new Error('Session expired');
+    }
+  } catch (error) {
+    logOut();
+    Swal.fire({
+      imageUrl: '/lost_conecction.png',
+      title: "Oops...",
+      text: "It seems that your session has expired.",
+      confirmButtonText: 'Go to log in',
+    }).then(() => {
+      router.push('/login');
+    });
+  }
+}
+
+function startTokenValidationInterval() {
+  validateToken(); // Immediately on mount
+  validationInterval = setInterval(validateToken, 180000); // Every 3 mins
+}
+
+function stopTokenValidationInterval() {
+  if (validationInterval) clearInterval(validationInterval);
+}
+
+function logOut() {
+  updateDataSession(null); // clears session
+  router.push('/');
+}
+
 onMounted(() => {
+  startTokenValidationInterval();
+
   const toastEl = document.querySelector('.toast');
   if (toastEl) {
     const toast = new bootstrap.Toast(toastEl, {
@@ -25,6 +96,11 @@ onMounted(() => {
     toast.show();
   }
 });
+
+onBeforeUnmount(() => {
+  stopTokenValidationInterval();
+});
+
 </script>
 
 <template>

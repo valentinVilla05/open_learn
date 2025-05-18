@@ -1,86 +1,46 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref , watch} from 'vue';
+import { ref } from 'vue';
 import router from '@/router';
-import Swal from 'sweetalert2'; // Import SweetAlert2 for confirmation messages
+import Swal from 'sweetalert2';
 import { motion } from 'motion-v';
 
-// Emit to close session
 const emit = defineEmits(['session-closed']);
 const props = defineProps({
     userAuth: {
         type: String,
-        required: false // Optional
+        required: false
     }
 });
 
 const loguedUser = ref(null);
-const userToken = ref(props.userAuth);
 
-// Check if the token is present and valid
-async function validateToken() {
+// ⚠️ Opcional: si quieres seguir mostrando el nombre/rol del usuario, puedes mantener esta función:
+async function fetchUserData() {
     if (!props.userAuth) return;
 
     try {
         const response = await fetch('http://localhost:8000/api/user', {
-            method: 'GET',
             headers: {
-                'Authorization': `Bearer ${userToken.value}`,
-                'Accept': 'application/json',
-            },
+                'Authorization': `Bearer ${props.userAuth}`,
+                'Accept': 'application/json'
+            }
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            logOut();
-            Swal.fire({
-                imageUrl: '/lost_conecction.png',
-                title: "Oops...",
-                text: "It seems that your session has expired.",
-                confirmButtonText: 'Go to log in',
-            }).then(() => {
-                router.push('/login');
-            });
-            throw new Error(errorData.message || 'Error fetching user data');
+        if (response.ok) {
+            const data = await response.json();
+            loguedUser.value = data;
         }
-
-        const userData = await response.json();
-        loguedUser.value = userData; 
-
-    } catch (error) {
-        console.error('Error fetching user:', error.message);
+    } catch {
+        // No haces nada, porque App.vue ya gestiona errores de sesión
     }
 }
 
-// Periodic validation function
-let validationInterval = null;
-
-// Start validating the token on mount
-onMounted(() => {
-    validateToken();  // Validate once when the component is mounted
-    // Set interval to validate token every 5 minutes (300,000 ms)
-    validationInterval = setInterval(validateToken, 300000);
-
-});
-
-// Clean up the interval on component unmount
-onBeforeUnmount(() => {
-    if (validationInterval) {
-        clearInterval(validationInterval);
-    }
-});
-
+fetchUserData(); // Puedes llamarla al montar si quieres mostrar el usuario
 
 function logOut() {
     emit('session-closed', null);
-    sessionStorage.removeItem('acces_token');
-    userToken.value = null; // ← actualización reactiva
+    sessionStorage.removeItem('sessionID');
     router.push('/');
 }
-
-watch(() => props.userAuth, (newVal) => {
-    userToken.value = newVal;
-});
-
 </script>
 <template>
     <header class="text-white p-3">
@@ -103,26 +63,34 @@ watch(() => props.userAuth, (newVal) => {
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto text-center">
-                        <motion.li class="nav-item position-relative"  :while-hover="{ scale: 1.10 }">
-                            <RouterLink to="/" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">Home</RouterLink>
+                        <motion.li class="nav-item position-relative" :while-hover="{ scale: 1.10 }">
+                            <RouterLink to="/"
+                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">
+                                Home</RouterLink>
                         </motion.li>
                         <li class="nav-item position-relative">
-                            <RouterLink to="/catalog" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">Catalog</RouterLink>
+                            <RouterLink to="/catalog"
+                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">
+                                Catalog</RouterLink>
                         </li>
                         <li class="nav-item position-relative">
-                            <RouterLink v-show="userToken" to="/my_academy" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">My Academy</RouterLink>
+                            <RouterLink v-show="userAuth" to="/my_academy"
+                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">
+                                My Academy</RouterLink>
                         </li>
                         <li class="nav-item position-relative">
-                            <RouterLink to="/about" class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">About</RouterLink>
+                            <RouterLink to="/about"
+                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">
+                                About</RouterLink>
                         </li>
                         <li class="nav-item">
                             <RouterLink class="nav-link fs-6 fw-bold ms-5 border border-2 rounded-2" to="/login"
-                                v-if="!userToken">Log in</RouterLink>
+                                v-if="!userAuth">Log in</RouterLink>
                         </li>
                     </ul>
 
                     <!-- Profile menu -->
-                    <div class="dropdown ms-3" v-if="userToken">
+                    <div class="dropdown ms-3" v-if="userAuth">
                         <button class="btn-secondary dropdown-toggle d-flex align-items-center" type="button"
                             id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/profile_icon.png" alt="Perfil" class="img-fluid me-2"
@@ -134,7 +102,8 @@ watch(() => props.userAuth, (newVal) => {
                                 <RouterLink class="dropdown-item" to="/myAccount">My account</RouterLink>
                             </li>
                             <li>
-                                <RouterLink class="dropdown-item" to="/controlPanel" v-if="loguedUser?.rol == 'admin'">Control Panel</RouterLink>
+                                <RouterLink class="dropdown-item" to="/controlPanel" v-if="loguedUser?.rol == 'admin'">
+                                    Control Panel</RouterLink>
                             </li>
                             <li>
                                 <a class="dropdown-item text-danger" @click="logOut">Log out</a>
@@ -194,7 +163,8 @@ h1 {
     transition: background-color 0.3s ease;
 
 }
-.nav-link:hover{
+
+.nav-link:hover {
     background-color: #73BBE7 !important;
     border-radius: 5px;
 }

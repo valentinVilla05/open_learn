@@ -198,7 +198,7 @@ onMounted(async () => {
                     <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
                 </ul>
             </div>
-            <CoursesExam :course_id="courseId" :user_id="loguedUser.id" v-if="isEnrrolled"></CoursesExam>
+            <CoursesExam :course_id="courseId" :user_id="loguedUser.id" :teacherAssigned="teacherAssigned" v-if="isEnrrolled"></CoursesExam>
         </aside>
 
 
