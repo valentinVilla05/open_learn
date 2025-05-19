@@ -55,4 +55,22 @@ class CalificationController extends Controller
 
         return response()->json(['message' => 'Calification created succesfully'], 201);
     }
+    public function updateCalification(Request $request, $calification_id){
+
+        try {
+            $calification = Calification::findOrFail($calification_id);
+
+            $data = $request->validate([
+                'user_id' => 'required|integer',
+                'exam_id' => 'required|integer',
+                'calification' => 'required|numeric'
+            ]);
+
+            $calification->update($data);
+        
+            return response()->json(['message' => 'The calification was updated.'], 200); // Return the updated calification with a 200 status
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
 }

@@ -101,6 +101,7 @@ Route::get('/califications', [CalificationController::class, 'showAllCalificatio
 Route::get('/califications/user/{user_id}', [CalificationController::class, 'showCalificationsFromUser']); // Get all califications from an user 
 Route::get('/califications/exam/{exam_id}', [CalificationController::class, 'showCalificationsFromExam']); // Get all califications from an exam
 Route::post('/califications', [CalificationController::class, 'createCalification']); // Create a new calification
+Route::put('/califications/exam/{exam_id}',[CalificationController::class, 'updateCalification'] );
 
 // Endpoint Certificates
 Route::get('/certificates/user/{user_id}', [CertificateController::class, 'getAllCertificatesFromUser']); // Get all certificates from a user
