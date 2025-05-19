@@ -6,16 +6,16 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/answers', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Answers:', data))
 .catch(error => console.log('Error:', error));
 ______________________________________________________
 
-2.- Get all Answers from an exam: http://localhost:8000/api/answers/{user_id}/{course_id}
+2.- Get all Answers from an exam and an user: http://localhost:8000/api/answers/{user_id}/{exam_id}
 
-fetch('http://localhost:8000/api/answers/exam/{exam_id}', {
+fetch('http://localhost:8000/api/answers/{user_id}/{exam_id}', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Answers:', data))
 .catch(error => console.log('Error:', error));
 ______________________________________________________
@@ -53,7 +53,7 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/answers/{answer_id}', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Is correct?', data))
 .catch(error => console.log('Error:', error));
 ______________________________________________________
@@ -62,7 +62,7 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/answers/score/{user_id}/{exam_id}', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Score:', data))
 .catch(error => console.log('Error:', error));
 

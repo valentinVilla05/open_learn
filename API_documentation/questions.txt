@@ -6,7 +6,7 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/questions', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Questions:', data))
 .catch(error => console.log('Error:', error));
 ______________________________________________________
@@ -15,7 +15,7 @@ ______________________________________________________
 
 fetch('http://localhost:8000/api/questions/exam/{exam_id}', {
     method: 'GET',
-}).then(reponse => response->json())
+}).then(response => response.json())
 .then(data => console.log('Questions::', data))
 .catch(error => console.log('Error:', error));
 ______________________________________________________

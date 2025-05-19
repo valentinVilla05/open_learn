@@ -18,10 +18,11 @@ function updateDataSession(user) {
   }
 }
 
-let validationInterval = null;
+let validationInterval = null; // Declare the variable for the interval
 
 async function tryRefreshToken() {
   try {
+    // Fetch to the refresh endpoint 
     const response = await fetch('http://localhost:8000/api/refresh', {
       method: 'POST',
       headers: {
@@ -30,35 +31,43 @@ async function tryRefreshToken() {
       },
     });
 
+    // If the response is not succesfull, throw an error
     if (!response.ok) throw new Error('Refresh failed');
 
+    // Else, save update the token in the sessionStorage
     const data = await response.json();
     session.value = data.sessionID;
     sessionStorage.setItem('sessionID', data.sessionID);
-    return true;
+
+    return true; // Return the succes 
   } catch {
-    return false;
+    return false; // Return a false for error
   }
 }
 
 async function validateToken() {
+  // If there is no session, nothing happens
   if (!session.value) return;
 
   try {
+    // Try to get the user with the actual token
     const response = await fetch('http://localhost:8000/api/user', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${session.value}`,
+        'Authorization': `Bearer ${session.value}`, // Actual token
         'Accept': 'application/json',
       },
     });
 
+    // If token not valid then try to refresh
     if (response.status === 401) {
       const refreshed = await tryRefreshToken();
       if (refreshed) return validateToken(); // retry
       else throw new Error('Session expired');
     }
+    // If not is 401 then it supposed to be valid
   } catch (error) {
+    // In case of error log out and show a message to send the user to login
     logOut();
     Swal.fire({
       imageUrl: '/lost_conecction.png',
@@ -71,23 +80,25 @@ async function validateToken() {
   }
 }
 
+// Funciton to call thge token validation and set the interval
 function startTokenValidationInterval() {
   validateToken(); // Immediately on mount
   validationInterval = setInterval(validateToken, 180000); // Every 3 mins
 }
 
-function stopTokenValidationInterval() {
+function stopTokenValidationInterval() { // Stop the interval
   if (validationInterval) clearInterval(validationInterval);
 }
 
 function logOut() {
-  updateDataSession(null); // clears session
+  updateDataSession(null); // Clears session
   router.push('/');
 }
 
 onMounted(() => {
-  startTokenValidationInterval();
+  startTokenValidationInterval(); // Start the interval
 
+  // Logic for the toast (helper)
   const toastEl = document.querySelector('.toast');
   if (toastEl) {
     const toast = new bootstrap.Toast(toastEl, {
@@ -98,7 +109,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  stopTokenValidationInterval();
+  stopTokenValidationInterval(); // Stops the interval before unmount
 });
 
 </script>

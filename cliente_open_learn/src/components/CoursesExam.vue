@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { motion } from 'motion-v';
+import { RouterLink } from 'vue-router';
 
 const props = defineProps({
     course_id: {
@@ -80,7 +81,8 @@ onMounted(() => {
                     <div class="d-flex align-items-center justify-content-center border-end border-3 w-25">
                         <img class="mx-1" style="min-height: fit-content; min-width: 2em;" src="/exam.png" alt="link">
                     </div>
-                    <p class="m-3 w-50 fw-bold">{{ exam.title }}</p>
+                    <RouterLink v-if="calificationsMap[exam.id] < 5 || !calificationsMap[exam.id]" :to="{ name: 'exam', params: { course_id: props.course_id, exam_id: exam.id } }" class="m-3 w-50 fw-bold text-decoration-none text-black">{{ exam.title }}</RouterLink>
+                    <p v-else class="m-3 w-50 fw-bold text-decoration-none text-black">{{ exam.title }}</p>
                     <div
                         class="w-25 d-flex flex-column align-items-center justify-content-center border-start text-center">
                         <section>
