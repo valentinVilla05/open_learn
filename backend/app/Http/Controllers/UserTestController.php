@@ -55,10 +55,7 @@ class UserTestController extends Controller
             'is_correct' => $isCorrect
         ]);
 
-        return response()->json([
-            'message' => 'Your answer has been corrected',
-            'is_correct' => $isCorrect
-        ], 200);
+        return response()->json(['is_correct' => $isCorrect], 200);
 
     }
 
