@@ -34,7 +34,10 @@ class UserTestController extends Controller
             'user_answer' => 'nullable|string',
         ]);
         $userTest = UserTest::create($answer);
-        return response()->json("Your answer has been saved", 201);
+        return response()->json([
+            'message' => 'Your answer has been saved',
+            'answer' => $userTest // devuelve el objeto creado, que contiene el ID
+        ], 201);
     }
 
     public function correctAnswer(Request $request, $id)
