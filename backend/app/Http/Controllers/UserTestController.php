@@ -25,6 +25,16 @@ class UserTestController extends Controller
         return response()->json($answers, 200);
     }
 
+    public function getAnswerFromQuestion($user_id, $question_id) {
+        $answer = UserTest::where('user_id', $user_id)->where('question_id', $question_id)->get();
+
+        if($answer->isEmpty()){
+            return response()->json(['message' => 'This user hasnt answered this question yet'], 401);
+        }
+
+        return response()->json($answer, 200);
+    }
+
     public function createAnswer(Request $request)
     {
         $answer = $request->validate([
