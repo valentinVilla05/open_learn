@@ -14,6 +14,7 @@ const props = defineProps({
 })
 
 const route = useRoute();
+const course_id = route.params.course_id
 const exam_id = route.params.exam_id;
 const questionsList = ref({});
 const loguedUser = ref(props.loguedUser)
@@ -21,12 +22,17 @@ const currentQuestion = ref(0);
 const answered = ref(false);
 const userAnswer = ref(null);
 const answerState = ref(null);
+const calification = ref(null);
+const showCalification = ref(null)
+
 const newAnswer = ref({
   user_id: loguedUser?.value.id,
   question_id: '',
   exam_id: exam_id,
   user_answer: ''
 });
+
+
 
 // Get the questions of the exam
 function getQuestions(exam_id) {
@@ -41,11 +47,11 @@ function getQuestions(exam_id) {
 }
 
 function createAnswer(answer, question_id) {
-  // Si la pregunta actual ya ha sido respondida, no hacer nada
+  // If the answer has been answered, do nothing
   if (answered.value) {
     return;
   }
-  answered.value = true; // Marcar la pregunta actual como respondida
+  answered.value = true; // Mark the question as answered
 
   newAnswer.value.question_id = question_id
   newAnswer.value.user_answer = answer;
@@ -61,9 +67,10 @@ function createAnswer(answer, question_id) {
   })
     .then(response => response.json())
     .then(data => {
-      userAnswer.value = { user_answer: answer };
+      correctAnswer(data.answer.id)
+      userAnswer.value = { user_answer: answer }; // Save the data answer
 
-      // Mostrar estado inmediato mientras se corrige después
+      // Change inmediately the class of the answer
       const correct = questionsList.value[currentQuestion.value].correct_answer;
       answerState.value = answer === correct ? 'correct' : 'incorrect';
 
@@ -79,9 +86,9 @@ function correctAnswer(answer_id) {
   }).then(response => response.json())
     .then(data => {
       if (data.is_correct) {
-        answerState.value = "correct"
+        answerState.value = "correct" // Set the class as correct
       } else {
-        answerState.value = "incorrect"
+        answerState.value = "incorrect" // Set the class as incorrect
       }
     })
     .catch(error => {
@@ -89,20 +96,20 @@ function correctAnswer(answer_id) {
       return false;
     });
 }
-
+// Function to control and call the function to check if the answer is correct
 function checkQuestion(answer_id) {
   if (answered.value && answer_id) {
     correctAnswer(answer_id);
   }
 }
-
+// Function to check if the question has been answered by the user before
 async function hasAnswered(user_id, exam_id, question_id) {
   try {
     fetch(`http://localhost:8000/api/answers/${user_id}/${exam_id}/${question_id}`, {
       method: 'GET',
     }).then(response => response.json())
       .then(data => {
-        if (data) {
+        if (data) { // If is answered, then check it
           answered.value = true
           userAnswer.value = data.answer;
           checkQuestion(userAnswer.value.id);
@@ -142,7 +149,64 @@ const shuffledAnswers = computed(() => {
   return [];
 });
 
-// Watch para reiniciar el estado al cambiar de pregunta
+function createCalification(user_id, exam_id, calification) {
+
+  const newCalification = {
+    user_id: user_id,
+    exam_id: exam_id,
+    calification: calification
+  };
+
+  fetch('http://localhost:8000/api/califications', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${props.userAuth}`,
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(newCalification)
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Calification created', data);
+      showCalification.value = true;
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function getCalification(user_id, exam_id) {
+  fetch(`http://localhost:8000/api/answers/score/${user_id}/${exam_id}`, {
+    method: 'GET',
+  }).then(response => response.json())
+    .then(data => {
+      calification.value = data;
+      createCalification(loguedUser.value.id, exam_id, data)
+    })
+    .catch(error => console.log('Error:', error));
+}
+
+function seeCertificate(user_id, course_id) {
+  fetch(`http://localhost:8000/api/certificates/${user_id}/${course_id}`, {
+    method: 'GET',
+  })
+    .then(response => {
+      if (response.headers.get('content-type') === 'application/pdf') {
+        return response.blob();
+      }
+      return response.json(); // fallback in case it's JSON
+    })
+    .then(data => {
+      if (data instanceof Blob) {
+        const blobUrl = URL.createObjectURL(data);
+        window.open(blobUrl, '_blank');
+      } else {
+        console.log('Certificates:', data); // in case it's not a PDF
+      }
+    })
+    .catch(error => console.log('Error:', error));
+}
+ 
+// Watch to reset the values when the question change
 watch(currentQuestion, () => {
   userAnswer.value = null;
   answerState.value = null;
@@ -156,8 +220,8 @@ onMounted(() => {
 })
 </script>
 <template>
-  <div class="container d-flex flex-row p-4 justify-content-center align-items-center">
-    <section id="questionPanel" class="flex-grow-1 shadow-sm border rounded p-4 bg-white"
+  <div v-if="!showCalification" class="container w-100 d-flex flex-row p-4 justify-content-center align-items-center">
+    <section id="questionPanel" class="w-75 shadow-sm border rounded p-4"
       v-if="questionsList.length && questionsList[currentQuestion]">
       <h4 class="mb-4">Pregunta {{ currentQuestion + 1 }}</h4>
       <p class="fs-5 mb-4">{{ questionsList[currentQuestion].statement }}</p>
@@ -174,17 +238,22 @@ onMounted(() => {
         </motion.div>
       </div>
       <div class="d-flex justify-content-between">
-        <button class="btn border border-0" @click="currentQuestion -= 1" :disabled="currentQuestion == 0">
+        <button v-if="currentQuestion > 0" class="btn border border-0" @click="currentQuestion -= 1"
+          :disabled="currentQuestion == 0">
           Previous Question
         </button>
-        <button class="btn border border-0" @click="currentQuestion += 1;"
-          :disabled="currentQuestion == questionsList.length - 1">
+        <button v-if="currentQuestion < questionsList.length - 1" class="btn border border-0"
+          @click="currentQuestion += 1;" :disabled="currentQuestion == questionsList.length - 1">
           Next Question
+        </button>
+        <button v-if="currentQuestion >= questionsList.length - 1" class="getCalification btn"
+          @click="getCalification(loguedUser.id, exam_id)">
+          Get Calification
         </button>
       </div>
     </section>
 
-    <aside id="questionList" class="shadow-sm border rounded p-4" v-if="questionsList.length">
+    <aside id="questionList" class="ms-auto shadow-sm border rounded p-4" v-if="questionsList.length">
       <h6 class="mb-3">Listado de Preguntas</h6>
       <ul class="list-unstyled">
         <li v-for="(question, index) in questionsList" :key="index" class="mb-2">
@@ -194,6 +263,15 @@ onMounted(() => {
         </li>
       </ul>
     </aside>
+  </div>
+
+  <div v-if="showCalification" class="container w-100 d-flex flex-column p-4 justify-content-center align-items-center">
+    <h2>You got:</h2>
+    <p class="fs-3">{{ calification }}</p>
+    <p class="text-muted fs-4" v-if="calification < 5">Don't give up, you'll get it next time!</p>
+    <p class="text-muted fs-4" v-if="calification >= 5">Congratulations! You got the certificate!</p>
+    <button v-if="calification >= 5" @click="seeCertificate(loguedUser.id, course_id)">Click here to see it</button>
+    <small class="text-muted" v-if="calification >= 5">It will appear in yout certificates collections</small>
   </div>
 </template>
 
@@ -215,19 +293,16 @@ onMounted(() => {
   background-color: crimson;
 }
 
-/* La clase neutralAnswer ya no se aplicará dinámicamente en esta versión */
-/* .neutralAnswer{
-    background-color: rgb(203, 203, 203);
-} */
+.neutralAnswer {
+  background-color: rgb(203, 203, 203);
+}
 
-/* Clase para deshabilitar clicks */
 .disabled-click {
   pointer-events: none;
-  /* Evita eventos de clic */
+  /* Avoid the click */
   opacity: 0.7;
-  /* Opcional: hace que se vea un poco atenuado */
   cursor: not-allowed;
-  /* Cambia el cursor para indicar que no es clickeable */
+  /* Change the cursor */
 }
 
 .questionBoxUnanswered {
@@ -240,5 +315,9 @@ onMounted(() => {
 
 .questionBoxIncorrect {
   background-color: crimson;
+}
+
+.getCalification {
+  background-color: #FF9FB2 !important;
 }
 </style>

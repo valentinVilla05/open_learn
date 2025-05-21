@@ -90,12 +90,13 @@ Route::middleware(['auth:api', 'is_teacher'])->group(function () {
 });
 
 // Endpont Answers
+Route::get('/answers/score/{user_id}/{exam_id}', [UserTestController::class, 'getScore']); // Get the score of a user in an exam
 Route::get('/answers', [UserTestController::class, 'showAllAnswers']); // Get all answers
 Route::get('/answers/{user_id}/{exam_id}', [UserTestController::class, 'showAnswerFromUserAndExam']); // Get all answers from a user and an exam
 Route::get('/answers/{user_id}/{exam_id}/{question_id}', [UserTestController::class, 'getAnswerFromQuestion']); // Get if the user has answered the question
 Route::post('/answers', [UserTestController::class, 'createAnswer']); // Create a new answer
 Route::get('/answers/{id}', [UserTestController::class, 'correctAnswer']); // Correct an answer
-Route::get('/answers/score/{user_id}/{exam_id}', [UserTestController::class, 'getScore']); // Get the score of a user in an exam
+
 
 // Endpoint Califications
 Route::get('/califications', [CalificationController::class, 'showAllCalifications']); // Get all califications

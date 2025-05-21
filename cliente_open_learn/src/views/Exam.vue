@@ -72,7 +72,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-    <main class="container py-5 d-flex justify-content-center align-items-center min-vh-100">
+    <main class="container py-5 d-flex justify-content-center align-items-center">
         <!-- Alert before exam -->
         <div v-if="!startedExam" class="card shadow-lg p-4 text-center w-50">
             <img src="/alert_exam.png" alt="alert" class="mx-auto mb-3" style="width: 6em;">

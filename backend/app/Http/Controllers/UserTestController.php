@@ -25,10 +25,11 @@ class UserTestController extends Controller
         return response()->json($answers, 200);
     }
 
-    public function getAnswerFromQuestion($user_id, $exam_id, $question_id ) {
+    public function getAnswerFromQuestion($user_id, $exam_id, $question_id)
+    {
         $answer = UserTest::where('user_id', $user_id)->where('exam_id', $exam_id)->where('question_id', $question_id)->first();
 
-        if(!$answer){
+        if (!$answer) {
             return response()->json(false, 404);
         }
 
@@ -46,7 +47,7 @@ class UserTestController extends Controller
         $userTest = UserTest::create($answer);
         return response()->json([
             'message' => 'Your answer has been saved',
-            'answer' => $userTest 
+            'answer' => $userTest
         ], 201);
     }
 
@@ -71,17 +72,24 @@ class UserTestController extends Controller
 
     public function getScore($user_id, $exam_id)
     {
-        // We get the answers from the user and the exam
         $totalQuestions = Question::where('exam_id', $exam_id)->count();
-        $answers = UserTest::where('user_id', $user_id)->where('exam_id', $exam_id)->get();
 
-        // Check if there are answers
+        if ($totalQuestions === 0) {
+            return response()->json(['message' => 'No questions found in this exam'], 404);
+        }
+
+        $answers = UserTest::where('user_id', $user_id)
+            ->where('exam_id', $exam_id)
+            ->get();
+
         if ($answers->isEmpty()) {
             return response()->json(['message' => 'There are no answers in this exam from this user'], 404);
         }
+
         $correctAnswers = $answers->where('is_correct', true)->count();
         $totalScore = round(($correctAnswers / $totalQuestions) * 10, 2);
 
         return response()->json($totalScore, 200);
     }
+
 }
