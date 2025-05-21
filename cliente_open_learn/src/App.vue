@@ -22,7 +22,6 @@ let validationInterval = null; // Declare the variable for the interval
 
 async function tryRefreshToken() {
   try {
-    // Fetch to the refresh endpoint 
     const response = await fetch('http://localhost:8000/api/refresh', {
       method: 'POST',
       headers: {
@@ -31,17 +30,13 @@ async function tryRefreshToken() {
       },
     });
 
-    // If the response is not succesfull, throw an error
     if (!response.ok) throw new Error('Refresh failed');
 
-    // Else, save update the token in the sessionStorage
     const data = await response.json();
-    session.value = data.sessionID;
-    sessionStorage.setItem('sessionID', data.sessionID);
-
-    return true; // Return the succes 
+    updateDataSession(data.sessionID);
+    return true;
   } catch {
-    return false; // Return a false for error
+    return false;
   }
 }
 
@@ -91,8 +86,9 @@ function stopTokenValidationInterval() { // Stop the interval
 }
 
 function logOut() {
-  updateDataSession(null); // Clears session
-  router.push('/');
+  stopTokenValidationInterval();
+  updateDataSession(null);
+
 }
 
 onMounted(() => {

@@ -25,14 +25,14 @@ class UserTestController extends Controller
         return response()->json($answers, 200);
     }
 
-    public function getAnswerFromQuestion($user_id, $question_id) {
-        $answer = UserTest::where('user_id', $user_id)->where('question_id', $question_id)->get();
+    public function getAnswerFromQuestion($user_id, $exam_id, $question_id ) {
+        $answer = UserTest::where('user_id', $user_id)->where('exam_id', $exam_id)->where('question_id', $question_id)->first();
 
-        if($answer->isEmpty()){
-            return response()->json(['message' => 'This user hasnt answered this question yet'], 401);
+        if(!$answer){
+            return response()->json(false, 404);
         }
 
-        return response()->json($answer, 200);
+        return response()->json(['answered' => true, 'answer' => $answer], 200);
     }
 
     public function createAnswer(Request $request)
@@ -46,7 +46,7 @@ class UserTestController extends Controller
         $userTest = UserTest::create($answer);
         return response()->json([
             'message' => 'Your answer has been saved',
-            'answer' => $userTest // devuelve el objeto creado, que contiene el ID
+            'answer' => $userTest 
         ], 201);
     }
 

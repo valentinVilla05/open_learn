@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue';
 import { userAuth } from '@/utils/userAuth';
 import QuestionsExam from '@/components/QuestionsExam.vue';
+import Swal from 'sweetalert2';
+
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -95,7 +97,7 @@ onMounted(async () => {
             <p class="text-muted">Focus and good luck — make Gilbert proud!</p>
         </div>
 
-        <QuestionsExam v-if="doingExam" :loguedUser="loguedUser"></QuestionsExam>
+        <QuestionsExam v-if="doingExam" :loguedUser="loguedUser" :userAuth="props.userAuth"></QuestionsExam>
 
     </main>
 
