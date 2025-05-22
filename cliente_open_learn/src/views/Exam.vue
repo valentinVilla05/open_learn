@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { userAuth } from '@/utils/userAuth';
+import { useRoute } from 'vue-router';
 import QuestionsExam from '@/components/QuestionsExam.vue';
 import Swal from 'sweetalert2';
 
@@ -13,6 +14,8 @@ const props = defineProps({
     }
 });
 
+const route = useRoute();
+const exam_id = route.params.exam_id;
 const loguedUser = ref(null);
 const startedExam = ref(false);
 const loadingDiv = ref(false)
@@ -46,10 +49,26 @@ function loadQuestions() {
     }, 1000);
 }
 
+// Before start the exam, we delete every answer that the user has made
+function deleteAnswer(user_id, exam_id) {
+    fetch(`http://localhost:8000/api/answers/${user_id}/${exam_id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${props.userAuth}`,
+            'Accept': 'application/json',
+        },
+    })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
+}
+
 onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
         loguedUser.value = user;
+        deleteAnswer(loguedUser.value.id, exam_id)
     } else {
         Swal.fire({
             icon: "error",

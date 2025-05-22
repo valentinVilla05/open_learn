@@ -88,7 +88,7 @@ onMounted(() => {
                         <section>
                             <p class="fw-bold">Calification</p>
                             <p :class="getCalificationClass(calificationsMap[exam.id])">
-                                {{ calificationsMap[exam.id] || "Not done" }}
+                                {{ calificationsMap[exam.id] !== undefined ? calificationsMap[exam.id] : "Not done" }}
                             </p>
                         </section>
                     </div>

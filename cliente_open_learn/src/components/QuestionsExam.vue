@@ -175,11 +175,15 @@ function createCalification(user_id, exam_id, calification) {
 }
 
 function getCalification(user_id, exam_id) {
+  localStorage.removeItem('exam_status')
   fetch(`http://localhost:8000/api/answers/score/${user_id}/${exam_id}`, {
     method: 'GET',
   }).then(response => response.json())
     .then(data => {
-      calification.value = data;
+      isNaN(data) ? calification.value = 0 : calification.value = data;
+      if (calification.value >= 5) {
+        seeCertificate(loguedUser.id, course_id)
+      }
       createCalification(loguedUser.value.id, exam_id, data)
     })
     .catch(error => console.log('Error:', error));
@@ -205,7 +209,7 @@ function seeCertificate(user_id, course_id) {
     })
     .catch(error => console.log('Error:', error));
 }
- 
+
 // Watch to reset the values when the question change
 watch(currentQuestion, () => {
   userAnswer.value = null;
@@ -265,14 +269,35 @@ onMounted(() => {
     </aside>
   </div>
 
-  <div v-if="showCalification" class="container w-100 d-flex flex-column p-4 justify-content-center align-items-center">
-    <h2>You got:</h2>
-    <p class="fs-3">{{ calification }}</p>
-    <p class="text-muted fs-4" v-if="calification < 5">Don't give up, you'll get it next time!</p>
-    <p class="text-muted fs-4" v-if="calification >= 5">Congratulations! You got the certificate!</p>
-    <button v-if="calification >= 5" @click="seeCertificate(loguedUser.id, course_id)">Click here to see it</button>
-    <small class="text-muted" v-if="calification >= 5">It will appear in yout certificates collections</small>
+  <div v-if="showCalification"
+    class="container w-100 d-flex flex-column p-4 justify-content-center align-items-center bg-white shadow-lg rounded-4 position-relative">
+    <!-- Botón en la esquina superior izquierda del DIV -->
+    <RouterLink to="/" class="btn btn-outline-secondary position-absolute" style="top: 1rem; left: 1rem;">
+      Go back Home
+    </RouterLink>
+
+    <img :src="calification >= 5 ? '/happy_gilbert.png' : '/dont_give_up_gilbert.png'"
+      :alt="calification >= 5 ? 'approved' : 'try again'" class="mb-4 mt-3" style="max-width: 200px; height: auto;" />
+
+    <h2 class="text-primary fw-bold mb-2">You got:</h2>
+    <p class="fs-1 fw-bold text-dark">{{ calification || 0 }}</p>
+
+    <p class="fs-5 text-center" :class="calification < 5 ? 'text-muted' : 'text-success'">
+      {{ calification < 5 ? "Don't give up, you'll get it next time!" : "🎉 Congratulations! You got the certificate!"
+        }} </p>
+
+        <button v-if="calification >= 5" @click="seeCertificate(loguedUser.id, course_id)"
+          class="btn mt-4 px-4 py-2 fw-semibold">
+          🎓 Click here to get it!
+        </button>
+
+        <small class="text-muted mt-3 text-center" v-if="calification >= 5">
+          Once you click, it will appear in your certificates collection.
+        </small>
   </div>
+
+
+
 </template>
 
 <style scoped>

@@ -94,6 +94,7 @@ Route::get('/answers/score/{user_id}/{exam_id}', [UserTestController::class, 'ge
 Route::get('/answers', [UserTestController::class, 'showAllAnswers']); // Get all answers
 Route::get('/answers/{user_id}/{exam_id}', [UserTestController::class, 'showAnswerFromUserAndExam']); // Get all answers from a user and an exam
 Route::get('/answers/{user_id}/{exam_id}/{question_id}', [UserTestController::class, 'getAnswerFromQuestion']); // Get if the user has answered the question
+Route::delete('/answers/{user_id}/{exam_id}', [UserTestController::class, 'deleteUserAnswerFromExam']);
 Route::post('/answers', [UserTestController::class, 'createAnswer']); // Create a new answer
 Route::get('/answers/{id}', [UserTestController::class, 'correctAnswer']); // Correct an answer
 

@@ -51,6 +51,18 @@ class UserTestController extends Controller
         ], 201);
     }
 
+    public function deleteUserAnswerFromExam($user_id, $exam_id){
+        $answers = UserTest::where('user_id', $user_id)->where('exam_id', $exam_id)->get();
+
+        if($answers->isEmpty()){
+            return response()->json(['message' => 'No answers in this exam for this user'], 404);
+        }
+
+        UserTest::where('user_id', $user_id)->where('exam_id', $exam_id)->delete();
+
+        return response()->json(['message' => 'Answers deleted'], 200);
+    }
+
     public function correctAnswer(Request $request, $id)
     {
         $answer = UserTest::findOrFail($id);
