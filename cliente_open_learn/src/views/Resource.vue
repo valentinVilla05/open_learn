@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue';
+import CommentSection from '@/components/CommentSection.vue';
+import { ref, computed, Comment } from 'vue';
 import { useRoute } from 'vue-router';
 
 const emit = defineEmits(['sessionStarted']);
@@ -82,6 +83,7 @@ getCourseName(courseId)
             </RouterLink>
         </div>
     </main>
+    <CommentSection :courseId="courseId" :resourceId="resourceId" :userAuth="props.userAuth"></CommentSection>
 </template>
 <style scoped>
 p {

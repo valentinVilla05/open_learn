@@ -15,7 +15,11 @@ class CommentController extends Controller
 
     public function showCommentsByResource($resource_id)
     {
-        $comments = Comment::where('resource_id', $resource_id)->get();
+        $comments = Comment::where('resource_id', $resource_id)
+                    ->whereNull('response_id') // Get the main comments
+                    ->with('replies.replies.replies') // Number of replies that take
+                    ->get();
+
         return response()->json($comments, 200);
 
     }
