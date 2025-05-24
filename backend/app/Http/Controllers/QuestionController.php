@@ -39,9 +39,9 @@ class QuestionController extends Controller
 
         $data = $request->validate([
             'exam_id' => 'nullable|integer',
-            'statement' => 'required|string',
-            'correct_answer' => 'required|string',
-            'incorrect_answer_1' => 'required|string',
+            'statement' => 'nullable|string',
+            'correct_answer' => 'nullable|string',
+            'incorrect_answer_1' => 'nullable|string',
             'incorrect_answer_2' => 'nullable|string',
             'incorrect_answer_3' => 'nullable|string'
         ]);

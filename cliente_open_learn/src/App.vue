@@ -126,8 +126,8 @@ onBeforeUnmount(() => {
         <button type="button" class="btn-close mt-2" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
       <div class="toast-body position-relative text-center">
-        <span class="toast-text d-block">Need help?</span>
-        <RouterLink to="/faq" class="w-100 text-decoration-none position-relative" style="cursor: pointer;">
+        <span class="help rounded mx-auto w-50 toast-text d-block">Need help?</span>
+        <RouterLink to="/faq" class="help rounded w-100 text-decoration-none position-relative" style="cursor: pointer;">
           Click me!</RouterLink>
         <img src="/help.png" class="w-100" alt="help" />
 
@@ -187,6 +187,9 @@ body {
   margin-bottom: 0.5rem;
   color: black;
   font-size: 1.2em;
+}
+.help {
+  background-color: rgb(229, 228, 228);
 }
 
 footer {

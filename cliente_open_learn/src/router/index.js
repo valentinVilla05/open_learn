@@ -13,6 +13,10 @@ import CourseCreator from '@/views/CourseCreator.vue'
 import Faq from '@/views/Faq.vue'
 import Resource from '@/views/Resource.vue'
 import Exam from '@/views/Exam.vue'
+import ExamCreator from '@/views/ExamCreator.vue'
+import ExamManagement from '@/views/ExamManagement.vue'
+import QuestionCreator from '@/views/QuestionCreator.vue'
+import QuestionManagement from '@/views/QuestionManagement.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -81,6 +85,26 @@ const router = createRouter({
       path: '/controlPanel/courseCreator',
       name: 'courseCreator',
       component: CourseCreator
+    },
+    {
+      path: '/course/:course_id/examCreator',
+      name: 'examCreator',
+      component: ExamCreator,
+    },
+    {
+      path: '/controlPanel/examManagement',
+      name: 'examManagement',
+      component: ExamManagement,
+    },
+    {
+      path: '/controlPanel/questionCreator',
+      name: 'questionCreator',
+      component: QuestionCreator
+    },
+    {
+      path: '/controlPanel/questionManagement',
+      name: 'questionManagement',
+      component: QuestionManagement
     },
     {
       path: '/faq',

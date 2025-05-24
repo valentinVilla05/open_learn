@@ -14,7 +14,6 @@ const props = defineProps({
 
 const loguedUser = ref(null);
 
-// ⚠️ Opcional: si quieres seguir mostrando el nombre/rol del usuario, puedes mantener esta función:
 async function fetchUserData() {
     if (!props.userAuth) return;
 
@@ -30,11 +29,10 @@ async function fetchUserData() {
             loguedUser.value = data;
         }
     } catch {
-        // No haces nada, porque App.vue ya gestiona errores de sesión
     }
 }
 
-fetchUserData(); // Puedes llamarla al montar si quieres mostrar el usuario
+fetchUserData(); 
 
 function logOut() {
     emit('session-closed', null);
@@ -102,7 +100,7 @@ function logOut() {
                                 <RouterLink class="dropdown-item" to="/myAccount">My account</RouterLink>
                             </li>
                             <li>
-                                <RouterLink class="dropdown-item" to="/controlPanel" v-if="loguedUser?.rol == 'admin'">
+                                <RouterLink class="dropdown-item" to="/controlPanel" v-if="loguedUser?.rol == 'admin' || loguedUser?.rol == 'teacher'">
                                     Control Panel</RouterLink>
                             </li>
                             <li>

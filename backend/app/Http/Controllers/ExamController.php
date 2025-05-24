@@ -39,8 +39,8 @@ class ExamController extends Controller
             ], 409); // 409 Conflict
         }
 
-        $examen = Exam::create($data);
-        return response()->json(['message' => 'The exam was created succesfully'], 201);
+        $exam = Exam::create($data);
+        return response()->json($exam, 201);
     }
     public function updateExam(Request $request, $id)
     {
