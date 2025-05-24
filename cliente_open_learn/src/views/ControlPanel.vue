@@ -4,8 +4,8 @@ import { motion } from 'motion-v';
 import { ref, onMounted } from 'vue';
 import { userAuth } from '@/utils/userAuth';
 import ControlPanelTeacher from '@/components/ControlPanelTeacher.vue';
-const emit = defineEmits(['sessionStarted']);
 
+const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
     userAuth: {
         type: String,
@@ -33,8 +33,8 @@ onMounted(async () => {
             </ol>
         </nav>
     </div>
-    <ControlPanelAdmin v-if="loguedUser?.rol === 'admin'"></ControlPanelAdmin>
-    <ControlPanelTeacher v-if="loguedUser?.rol === 'teacher'"></ControlPanelTeacher>
+    <ControlPanelAdmin :userAuth="props.userAuth" v-if="loguedUser?.rol === 'admin'"></ControlPanelAdmin>
+    <ControlPanelTeacher :userAuth="props.userAuth" v-if="loguedUser?.rol === 'teacher'"></ControlPanelTeacher>
 </template>
 <style scoped>
 

@@ -1,5 +1,11 @@
 <script setup>
 import { motion } from 'motion-v';
+const props = defineProps({
+    userAuth: {
+        type: String,
+        required: false // Optional
+    }
+});
 </script>
 <template>
     <div class="container w-100 h-100 d-flex flex-row justify-content-evenly mt-5">
@@ -9,7 +15,7 @@ import { motion } from 'motion-v';
                 <h5 class="card-title">Exams Management</h5>
                 <p class="card-text">Manage the exams from your courses.</p>
                 <div class="text-end me-3">
-                    <RouterLink to="/controlPanel/examManagement" class="btn border">Go manage</RouterLink>
+                    <RouterLink to="/controlPanel/examManagement" :userAuth="props.userAuth" class="btn border">Go manage</RouterLink>
                 </div>
             </div>
         </motion.div>
@@ -20,7 +26,7 @@ import { motion } from 'motion-v';
                 <h5 class="card-title">Question Creator</h5>
                 <p class="card-text">Create questions for your future exams.</p>
                 <div class="text-end me-3">
-                    <RouterLink to="/controlPanel/questionCreator" class="btn border">Go manage</RouterLink>
+                    <RouterLink to="/controlPanel/questionCreator" :userAuth="props.userAuth" class="btn border">Go manage</RouterLink>
                 </div>
             </div>
         </motion.div>
@@ -32,7 +38,7 @@ import { motion } from 'motion-v';
                 <h5 class="card-title">Question pool</h5>
                 <p class="card-text">Manage all your questions created.</p>
                 <div class="text-end me-3">
-                    <RouterLink to="/controlPanel/questionManagement" class="btn border">Go manage</RouterLink>
+                    <RouterLink to="/controlPanel/questionManagement" :userAuth="props.userAuth" class="btn border">Go manage</RouterLink>
                 </div>
             </div>
         </motion.div>
