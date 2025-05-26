@@ -95,6 +95,7 @@ function enrrollUser(course_id, user_id) {
         })
             .then(response => response.json())
             .then(data => {
+                isEnrrolled.value = true;
                 Swal.fire({
                     title: "Inscription registered!",
                     text: "Enjoy with all the content!",
@@ -115,7 +116,6 @@ onMounted(async () => {
     }
     await getCourse(courseId); // Wait for course
 
-    // Solo si ambos están listos:
     if (loguedUser.value && course.value) {
         isEnrrolled.value = userCoursesList.value.some(
             inscription => inscription.course_id == course.value.id

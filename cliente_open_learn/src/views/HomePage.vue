@@ -169,29 +169,8 @@ onMounted(() => {
 
 <style scoped>
 .card {
-  width: 81em;
-  height: 15em;
   overflow: hidden;
+  height: 20em;
 }
 
-.card img {
-  height: 15em;
-
-  .toast {
-    background-color: transparent !important;
-    /* Elimina el fondo blanco */
-    box-shadow: none !important;
-    /* Elimina la sombra del toast */
-    border: none !important;
-    /* Elimina cualquier borde */
-  }
-
-  .toast-header {
-    background-color: transparent !important;
-    border-bottom: none !important;
-  }
-
-  object-fit: cover;
-  object-position: center;
-}
 </style>
