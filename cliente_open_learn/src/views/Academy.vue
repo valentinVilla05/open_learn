@@ -4,6 +4,7 @@ import MyCertificates from '@/components/MyCertificates.vue';
 import MyCourses from '@/components/MyCourses.vue';
 import CoursesTeacher from '@/components/CoursesTeacher.vue';
 import { userAuth } from '@/utils/userAuth';
+import router from '@/router';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -18,7 +19,11 @@ const isTeacher = ref(false);
 
 onMounted(async () => {
   const user = await userAuth(props.userAuth);
-  loguedUser.value = user;
+  if(user) {
+    loguedUser.value = user;
+  } else {
+    router.push('/catalog');
+  }
 
   if (user && user.rol) {
     user.rol === 'teacher' ? isTeacher.value = true : isTeacher.value = false

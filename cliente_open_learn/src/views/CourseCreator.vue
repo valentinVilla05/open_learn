@@ -1,6 +1,8 @@
 <script setup>
-import { ref, watch, watchEffect } from 'vue';
+import { ref, watch, watchEffect, onMounted } from 'vue';
 import Swal from 'sweetalert2';
+import { userAuth } from '@/utils/userAuth';
+import router from '@/router';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -9,7 +11,7 @@ const props = defineProps({
         required: false // Optional
     }
 });
-
+const loguedUser = ref(null);
 const courseData = ref({
     teacher_id: '',
     title: '',
@@ -25,13 +27,28 @@ function cleanForm() {
     courseData.value.title = '';
     courseData.value.description = '';
     courseData.value.teacher_id = '';
-    courseData.value.subject = '';
-    courseData.value.max_students = '';
-    courseData.value.image = '';
-    courseData.value.privacy = '';
-    courseData.value.duration = '';
+    courseData.value.subject = onMounted(async () => {
+        const user = await userAuth(props.userAuth);
+        if (user) {
+            loguedUser.value = user;
+            if (loguedUser.value.rol !== 'admin' || loguedUser.value.rol !== 'teacher') {
+                Swal.fire({
+                    icon: "error",
+                    title: "Access Denied",
+                    text: "You do not have permission to access this control panel.",
+                });
+                router.push('/');
+            }
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "You need to log in to be able to see this course",
+                text: "Please log in to continue.",
+            });
+            router.push('/'); // Redirect to login if user is not logged in
+        }
+    });
 }
-
 const teacherList = ref([]) // Get all the teachers
 
 function getTeacher() {
@@ -121,6 +138,31 @@ watchEffect(() => {
 
     validForm.value = validPrivacy.value && validTeacher.value && allFieldsFilled;
 });
+
+
+onMounted(async () => {
+    const user = await userAuth(props.userAuth);
+    if (user) {
+        loguedUser.value = user
+        if (loguedUser.value && loguedUser.value.rol != 'admin') {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "You don't have permission to access this page.",
+            confirmButtonText: 'Go to home',
+        })
+        router.push('/'); // Redirect to home page
+    }
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to access here.",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
+    }
+});
+
 </script>
 <template>
     <div class="w-75 text-start ms-5">

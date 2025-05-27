@@ -5,6 +5,7 @@ import { Modal } from "bootstrap";
 import Swal from 'sweetalert2';
 import { motion } from 'motion-v';
 import { userAuth } from '@/utils/userAuth';
+import router from '@/router';
 
 const emit = defineEmits(['sessionStarted']);
 
@@ -17,39 +18,6 @@ const props = defineProps({
 
 // Get the user data;
 const loguedUser = ref(null);
-
-onMounted(async () => {
-    const isValid = await userAuth(props.userAuth);
-    loguedUser.value = isValid;
-    checkAdmin(); // Check if the user is an admin
-});
-
-function checkAdmin() {
-    if (loguedUser.value == false) {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "It seems that your session has expired.",
-            confirmButtonText: 'Go to log in',
-        }).then(() => {
-            window.location.href = '/login'; // Redirect to login page
-        });
-    } else if (loguedUser && loguedUser.value.rol != 'admin') {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "You don't have permission to access this page.",
-            confirmButtonText: 'Go to home',
-        }).then(() => {
-            window.location.href = '/'; // Redirect to home page
-        });
-    }
-
-}
-
-
-
-
 let users = ref([]);
 
 // Conseguimos un array con los usuarios mediante un fetch;
@@ -67,7 +35,7 @@ async function getData() {
     }
 }
 
-onMounted(getData); 
+onMounted(getData);
 
 // Function to update the Rol
 function updateRol(user_id, rol) {
@@ -89,10 +57,7 @@ function updateRol(user_id, rol) {
 const selectedUser = ref(null); // Variable to save the selected user for the modal
 let modalInstanceUser = null;  // Declare the modal instance variable
 
-// Load the modal 
-onMounted(() => {
-    modalInstanceUser = new Modal(document.getElementById("deleteModal"));
-});
+
 
 // Open the modal and assign the selected user
 function openModal(user) {
@@ -144,6 +109,34 @@ function previousPage() {
         currentPage.value--;
     }
 }
+
+
+onMounted(async () => {
+    const user = await userAuth(props.userAuth);
+    if (user) {
+        loguedUser.value = user
+        if (loguedUser.value && loguedUser.value.rol != 'admin') {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "You don't have permission to access this page.",
+            confirmButtonText: 'Go to home',
+        })
+        router.push('/'); // Redirect to home page
+    }
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to access here.",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
+    }
+
+    const modalElement = document.getElementById("modalUpdate");
+    modalUpdate = new Modal(modalElement);
+    modalInstanceUser = new Modal(document.getElementById("deleteModal"));
+});
 </script>
 <template>
     <div class="w-75 text-start ms-5">
@@ -159,7 +152,8 @@ function previousPage() {
             </ol>
         </nav>
     </div>
-    <h2 class="w-75 text-start text-muted">Active users in OpenLearn <span class="badge text-bg-secondary rounded-5">{{ users.length + 1 }}</span></h2>
+    <h2 class="w-75 text-start text-muted">Active users in OpenLearn <span class="badge text-bg-secondary rounded-5">{{
+        users.length + 1 }}</span></h2>
     <div class="tab-pane fade show active table-responsive w-75 border shadow mt-3" id="home-tab-pane" role="tabpanel"
         aria-labelledby="home-tab" tabindex="0">
         <table class="table table-striped table-hover align-middle p-4" id="userTable">
@@ -217,11 +211,13 @@ function previousPage() {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    The user <b>{{ selectedUser?.name }}</b> with ID: <b>{{ selectedUser?.id }}</b> will be erased permanently.
+                    The user <b>{{ selectedUser?.name }}</b> with ID: <b>{{ selectedUser?.id }}</b> will be erased
+                    permanently.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" @click="deleteUser(selectedUser?.id)">Delete user.</button>
+                    <button type="button" class="btn btn-primary" @click="deleteUser(selectedUser?.id)">Delete
+                        user.</button>
                 </div>
             </div>
         </div>
@@ -274,7 +270,8 @@ function previousPage() {
 motion-tr {
     transform-origin: center;
 }
-.badge{
-    background: linear-gradient(rgb(220, 255, 200),rgba(110, 177, 131, 0.7), rgb(220, 255, 200)) !important;
+
+.badge {
+    background: linear-gradient(rgb(220, 255, 200), rgba(110, 177, 131, 0.7), rgb(220, 255, 200)) !important;
 }
 </style>

@@ -2,10 +2,10 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { userAuth } from '@/utils/userAuth';
-import { motion } from 'motion-v';
 import Swal from 'sweetalert2';
 import CoursesResources from '@/components/CoursesResources.vue';
 import CoursesExam from '@/components/CoursesExam.vue';
+import router from '@/router';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -113,6 +113,13 @@ onMounted(async () => {
     if (user) {
         loguedUser.value = user;
         await getInscriptions(user.id); // Wait for inscription
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to be able to see this course",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
     }
     await getCourse(courseId); // Wait for course
 
@@ -178,7 +185,8 @@ onMounted(async () => {
 
                 </div>
             </div>
-            <CoursesResources v-if="isEnrrolled || teacherAssigned" :userAuth="props.userAuth" :course_id="courseId" :teacherAssigned="teacherAssigned">
+            <CoursesResources v-if="isEnrrolled || teacherAssigned" :userAuth="props.userAuth" :course_id="courseId"
+                :teacherAssigned="teacherAssigned">
             </CoursesResources>
             <div v-else>
                 <!-- Maybe blur the content or just an image -->
@@ -198,7 +206,8 @@ onMounted(async () => {
                     <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
                 </ul>
             </div>
-            <CoursesExam :course_id="courseId" :user_id="loguedUser.id" :teacherAssigned="teacherAssigned" v-if="isEnrrolled"></CoursesExam>
+            <CoursesExam :course_id="courseId" :user_id="loguedUser.id" :teacherAssigned="teacherAssigned"
+                v-if="isEnrrolled"></CoursesExam>
         </aside>
 
 

@@ -2,6 +2,8 @@
 import { motion } from 'motion-v';
 import { ref, watch, onMounted } from 'vue';
 import { Toast } from 'bootstrap';
+import { userAuth } from '@/utils/userAuth';
+import router from '@/router';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -85,7 +87,14 @@ function getCoursesFromUser(user_id) {
 
 }
 getAllCourses(); // Call getAllCourses when the component is mounted
-onMounted(() => {
+onMounted(async() => {
+  const user = await userAuth(props.userAuth);
+  if(user) {
+    loguedUser.value = user;
+  } else {
+    router.push('/catalog');
+  }
+
   const toastEl = document.querySelector('.toast');
   if (toastEl) {
     const bsToast = new Toast(toastEl);

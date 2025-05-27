@@ -4,6 +4,8 @@ import { motion } from 'motion-v';
 import { ref, onMounted } from 'vue';
 import { userAuth } from '@/utils/userAuth';
 import ControlPanelTeacher from '@/components/ControlPanelTeacher.vue';
+import Swal from 'sweetalert2';
+import router from '@/router';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -19,6 +21,14 @@ onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
         loguedUser.value = user;
+        
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to access here.",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
     }
 });
 </script>
@@ -36,6 +46,4 @@ onMounted(async () => {
     <ControlPanelAdmin :userAuth="props.userAuth" v-if="loguedUser?.rol === 'admin'"></ControlPanelAdmin>
     <ControlPanelTeacher :userAuth="props.userAuth" v-if="loguedUser?.rol === 'teacher'"></ControlPanelTeacher>
 </template>
-<style scoped>
-
-</style>
+<style scoped></style>

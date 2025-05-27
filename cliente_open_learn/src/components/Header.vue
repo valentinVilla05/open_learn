@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import router from '@/router';
-import Swal from 'sweetalert2';
 import { motion } from 'motion-v';
+import { userAuth } from '@/utils/userAuth';
 
 const emit = defineEmits(['session-closed']);
 const props = defineProps({
@@ -14,108 +14,90 @@ const props = defineProps({
 
 const loguedUser = ref(null);
 
-async function fetchUserData() {
-    if (!props.userAuth) return;
-
-    try {
-        const response = await fetch('http://localhost:8000/api/user', {
-            headers: {
-                'Authorization': `Bearer ${props.userAuth}`,
-                'Accept': 'application/json'
+// Watch the prop: when userAuth changes, fetch the user data again
+watch(() => props.userAuth,
+    async (user) => {
+        if (user) {
+            try {
+                loguedUser.value = await userAuth(user);
+            } catch {
+                loguedUser.value = null;
             }
-        });
-        if (response.ok) {
-            const data = await response.json();
-            loguedUser.value = data;
+        } else {
+            loguedUser.value = null;
         }
-    } catch {
-    }
-}
+    },
+    { immediate: true } // run once on component mount
 
-fetchUserData(); 
+);
 
 function logOut() {
     emit('session-closed', null);
     sessionStorage.removeItem('sessionID');
     router.push('/');
 }
+
 </script>
+
 <template>
-    <header class="text-white p-3">
-        <div class="container d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-                <!-- Logo / Home button -->
-                <RouterLink to="/"><img src="/logo.png" alt="Logo" class="img-fluid" style="max-width: 40px;">
-                </RouterLink>
-                <RouterLink to="/" class="text-decoration-none">
-                    <h1 class="mb-0 ms-3 text-decoration-none">OpenLearn </h1>
+    <header class="text-white p-3 bg-custom">
+        <div class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div class="d-flex align-items-center mb-3 mb-md-0">
+                <RouterLink to="/" class="d-flex align-items-center text-decoration-none">
+                    <img src="/logo.png" alt="Logo" class="img-fluid" style="max-width: 40px; height: auto;" />
+                    <h1 class="mb-0 ms-2 fs-4 d-none d-sm-block text-white">OpenLearn</h1>
                 </RouterLink>
             </div>
 
-            <!-- Navegation menu -->
-            <nav class="navbar navbar-expand-md navbar-light">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul class="navbar-nav ms-auto text-center">
-                        <motion.li class="nav-item position-relative" :while-hover="{ scale: 1.10 }">
-                            <RouterLink to="/"
-                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">
-                                Home</RouterLink>
-                        </motion.li>
-                        <li class="nav-item position-relative">
-                            <RouterLink to="/catalog"
-                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">
-                                Catalog</RouterLink>
-                        </li>
-                        <li class="nav-item position-relative">
-                            <RouterLink v-show="userAuth" to="/my_academy"
-                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">
-                                My Academy</RouterLink>
-                        </li>
-                        <li class="nav-item position-relative">
-                            <RouterLink to="/about"
-                                class="nav-link nav-underline-link position-relative pb-1 fw-bold text-decoration-none ms-5 me-5">
-                                About</RouterLink>
+            <nav class="navbar navbar-light w-100 w-md-auto">
+                <div class="d-flex flex-column flex-md-row justify-content-end align-items-center w-100" id="navbarNav">
+                    <ul class="navbar-nav text-center flex-column flex-md-row justify-content-center">
+                        <li class="nav-item">
+                            <RouterLink v-if="loguedUser" to="/" class="nav-link fw-bold text-white mx-2 bar-effect">Home
+                            </RouterLink>
                         </li>
                         <li class="nav-item">
-                            <RouterLink class="nav-link fs-6 fw-bold ms-5 border border-2 rounded-2" to="/login"
-                                v-if="!userAuth">Log in</RouterLink>
+                            <RouterLink to="/catalog" class="nav-link fw-bold text-white mx-2 bar-effect">Catalog</RouterLink>
+                        </li>
+                        <li class="nav-item">
+                            <RouterLink v-if="loguedUser" to="/my_academy" class="nav-link fw-bold text-white mx-2 bar-effect">My
+                                Academy</RouterLink>
+                        </li>
+                        <li class="nav-item">
+                            <RouterLink to="/about" class="nav-link fw-bold text-white mx-2 bar-effect">About</RouterLink>
+                        </li>
+                        <li class="nav-item">
+                            <RouterLink class="nav-link fw-bold border rounded px-2 ms-2 text-white" to="/login"
+                                v-if="!loguedUser">Log in</RouterLink>
                         </li>
                     </ul>
 
-                    <!-- Profile menu -->
-                    <div class="dropdown ms-3" v-if="userAuth">
-                        <button class="btn-secondary dropdown-toggle d-flex align-items-center" type="button"
-                            id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="/profile_icon.png" alt="Perfil" class="img-fluid me-2"
-                                style="max-width: 50px; height: auto;">
+                    <div class="dropdown ms-3 d-flex justify-content-center" v-if="loguedUser">
+                        <button class="profile-btn dropdown-toggle d-flex align-items-center" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="/profile_icon.png" alt="Profile" class="profile-icon me-2" />
                             <span class="visually-hidden">Open personal menu</span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                        <ul class="dropdown-menu dropdown-menu-end">
                             <li>
                                 <RouterLink class="dropdown-item" to="/myAccount">My account</RouterLink>
                             </li>
                             <li>
-                                <RouterLink class="dropdown-item" to="/controlPanel" v-if="loguedUser?.rol == 'admin' || loguedUser?.rol == 'teacher'">
-                                    Control Panel</RouterLink>
+                                <RouterLink class="dropdown-item" to="/controlPanel"
+                                    v-if="loguedUser?.rol === 'admin' || loguedUser?.rol === 'teacher'">Control Panel
+                                </RouterLink>
                             </li>
-                            <li>
-                                <a class="dropdown-item text-danger" @click="logOut">Log out</a>
-                            </li>
+                            <li><a class="dropdown-item text-danger" @click="logOut">Log out</a></li>
                         </ul>
                     </div>
                 </div>
             </nav>
         </div>
     </header>
-
 </template>
+
 <style scoped>
-header {
+.bg-custom {
     background-color: #8EC8EC;
 }
 
@@ -124,23 +106,52 @@ h1 {
 }
 
 .nav-link {
+    padding: 0.5em 1em;
     color: white;
+    transition: background-color 0.3s ease;
+    /* Aseguramos una transición suave para el fondo */
 }
 
-#dropdownMenuButton1 {
-    border: 0;
-    background-color: #8EC8EC;
-    height: 4em;
+.nav-link:hover {
+    background-color: #73BBE7;
+    border-radius: 5px;
 }
 
-/* Estilos del menú desplegable */
+.router-link-active.nav-link {
+    background-color: #62B2E4;
+    border-radius: 0.5rem;
+}
+
+/* --- Efecto de la barrita --- */
+
+.bar-effect {
+    position: relative; /* Necesario para posicionar el pseudo-elemento */
+    overflow: hidden; /* Oculta la barrita hasta que se muestre */
+}
+
+.bar-effect::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0.25em; /* Grosor de la barrita */
+    background-color: white; /* Color de la barrita */
+    transform: translateX(-100%); /* Inicialmente fuera de vista a la izquierda */
+    transition: transform 0.3s ease-out; /* Transición suave para el movimiento */
+}
+
+.bar-effect:hover::after {
+    transform: translateX(0); /* Mueve la barrita a su posición final */
+}
+
+
 .dropdown-menu {
-    font-size: 1.1rem;
-    min-width: 180px;
+    font-size: 1rem;
 }
 
 .dropdown-item {
-    padding: 0.625em;
+    padding: 0.5rem 1rem;
 }
 
 .dropdown-item:hover {
@@ -153,46 +164,14 @@ h1 {
     color: black;
 }
 
-.router-link-active.nav-link {
-    color: rgb(75, 75, 75) !important;
-    position: relative;
-    background-color: #62B2E4;
-    border-radius: 0.5rem;
-    transition: background-color 0.3s ease;
-
+.profile-btn {
+    border: none;
+    background: transparent;
 }
 
-.nav-link:hover {
-    background-color: #73BBE7 !important;
-    border-radius: 5px;
-}
-
-.nav-underline-link {
-    color: white;
-    transition: color 0.3s ease;
-}
-
-.router-link-active.nav-link {
-    color: white;
-}
-
-.nav-underline-link::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0px;
-    width: 0%;
-    height: 4px;
-    background-color: white;
-    transition: width 0.4s ease;
-    border-radius: 2px;
-}
-
-.nav-underline-link.active::after {
-    width: 100%;
-}
-
-.nav-underline-link:hover::after {
-    width: 100%;
+.profile-icon {
+    width: 3em;
+    height: 3em;
+    object-fit: contain;
 }
 </style>

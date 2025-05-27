@@ -2,6 +2,8 @@
 import { onMounted, ref, computed } from 'vue';
 import { Modal } from "bootstrap";
 import Swal from 'sweetalert2';
+import router from '@/router';
+import { userAuth } from '@/utils/userAuth';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -12,6 +14,7 @@ const props = defineProps({
 });
 
 let courses = ref([]);
+const loguedUser = ref(null);
 
 // We get all the courses
 async function getCourses() {
@@ -128,12 +131,6 @@ function updateCourse(course_id) {
         .catch(error => console.error('Error:', error));
 }
 
-onMounted(() => {
-    const modalElement = document.getElementById("modalUpdate");
-    modalUpdate = new Modal(modalElement);
-
-})
-
 function openModal(course_id) {
     selectedCourse.value = courses.value.find(course => course.id == course_id);
 
@@ -183,6 +180,33 @@ function previousPage() {
     }
 }
 
+onMounted(async () => {
+    const user = await userAuth(props.userAuth);
+    if (user) {
+        loguedUser.value = user
+        if (loguedUser.value && loguedUser.value.rol != 'admin') {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "You don't have permission to access this page.",
+            confirmButtonText: 'Go to home',
+        })
+        router.push('/'); // Redirect to home page
+    }
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to access here.",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
+    }
+
+    const modalElement = document.getElementById("modalUpdate");
+    modalUpdate = new Modal(modalElement);
+
+});
+
 </script>
 <template>
     <div class="w-75 text-start ms-5">
@@ -200,7 +224,8 @@ function previousPage() {
     </div>
 
     <main class="container rounded shadow p-3">
-        <h2 class="w-75 text-start text-muted">Active courses in OpenLearn <span class="badge text-bg-secondary rounded-5">{{ courses.length }}</span></h2>
+        <h2 class="w-75 text-start text-muted">Active courses in OpenLearn <span
+                class="badge text-bg-secondary rounded-5">{{ courses.length }}</span></h2>
         <div class="card mb-5" v-for="course in paginatedCourses" :key="course.id">
             <div class="row g-2">
                 <div class="col-12 col-md-3 image d-flex align-items-center justify-content-center">
@@ -211,7 +236,8 @@ function previousPage() {
                         <div>
                             <h2 class="card-title">{{ course.title }}</h2>
                             <h6 class="card-title">Duration: {{ course.duration }}</h6>
-                            <h6 class="card-title">Teacher: {{ teacherList.find(teacher => teacher.id == course.teacher_id)?.name || 'No assigned' }}</h6>
+                            <h6 class="card-title">Teacher: {{teacherList.find(teacher => teacher.id ==
+                                course.teacher_id)?.name || 'No assigned' }}</h6>
                             <p class="card-text">
                                 {{ (course.description).slice(0, 75) }}...
                             </p>
@@ -349,7 +375,7 @@ function previousPage() {
     background-color: #FCDB77;
 }
 
-.badge{
-    background: linear-gradient(rgb(220, 255, 200),rgba(110, 177, 131, 0.7), rgb(220, 255, 200)) !important;
+.badge {
+    background: linear-gradient(rgb(220, 255, 200), rgba(110, 177, 131, 0.7), rgb(220, 255, 200)) !important;
 }
 </style>

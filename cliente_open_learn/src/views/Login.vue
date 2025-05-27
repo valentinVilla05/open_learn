@@ -153,6 +153,7 @@ async function login() {
 const nameUserSignUp = ref("");
 const emailUserSignUp = ref("");
 const passwordUserSignUp = ref("");
+const repeatPasswordUserSignUp = ref("");
 const wrongSignUpData = ref(false);
 const errorSignUpmessage = ref("");
 const validDataSignUp = ref(false);
@@ -173,6 +174,12 @@ async function getUsers() {
 getUsers();
 
 function validateSignUpData() {
+   if (repeatPasswordUserSignUp.value !== passwordUserSignUp.value) {
+      errorSignUpmessage.value = "Passwords do not match";
+      wrongSignUpData.value = true;
+      validDataSignUp.value = false;
+      return;
+   }
    if (nameUserSignUp.value.length === 0 || emailUserSignUp.value.length === 0 || passwordUserSignUp.value.length === 0) {
       errorSignUpmessage.value = "The fields cannot be empty";
       wrongSignUpData.value = true;
@@ -281,6 +288,11 @@ async function signUp() {
                   <input type="password" name="password" v-model="passwordUserSignUp" @input="validateSignUpData"
                      required />
                   <label for="password">Password</label>
+               </div>
+               <div class="input-group position-relative">
+                  <input type="password" name="repeatPassword" v-model="repeatPasswordUserSignUp" @input="validateSignUpData"
+                     required />
+                  <label for="repeatPassword">Repeat password</label>
                </div>
                <div class="input-group position-relative">
                   <p style="color: red; font-size: small*1.25" class="me-3 ms-3" v-if="wrongSignUpData">{{

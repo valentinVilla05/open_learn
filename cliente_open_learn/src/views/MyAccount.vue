@@ -1,10 +1,12 @@
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
 import { formatDate } from '@/utils/formatDate';
 import Swal from 'sweetalert2';
- 
+import router from '@/router';
+import { userAuth } from '@/utils/userAuth';
+
 const props = defineProps({
-  userAuth: {
+    userAuth: {
         type: String,
         required: false,
     },
@@ -40,7 +42,17 @@ async function getUser(token) {
         loguedUser.value = null;
     }
 }
-getUser(props.userAuth);
+onMounted(async () => {
+    const user = await userAuth(props.userAuth);
+    if (user) {
+        loguedUser.value = user;
+    } else {
+        router.push('/catalog');
+    }
+
+    getUser(props.userAuth);
+
+});
 </script>
 <template>
     <div class="background w-100 d-flex justify-content-center align-items-center py-5">
@@ -50,7 +62,7 @@ getUser(props.userAuth);
 
             <div class="input-group position-relative">
                 <label class="input-group-text" for="name">Name: </label>
-                <input type="text" name="name" class="form-control" :value="loguedUser.name" readonly/>
+                <input type="text" name="name" class="form-control" :value="loguedUser.name" readonly />
             </div>
 
             <div class="input-group position-relative">

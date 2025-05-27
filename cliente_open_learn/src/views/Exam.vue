@@ -74,7 +74,6 @@ onMounted(async () => {
             icon: "error",
             title: "Who are you?",
             text: "You must be logued in to do an exam",
-            footer: '<RouterLink to="/login" class="btn text-decoration-none">Go log in</RouterLink>'
         });
     }
 

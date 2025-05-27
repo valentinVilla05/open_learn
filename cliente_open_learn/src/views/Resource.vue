@@ -1,7 +1,10 @@
 <script setup>
 import CommentSection from '@/components/CommentSection.vue';
-import { ref, computed, Comment } from 'vue';
+import { ref, computed, Comment, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import router from '@/router';
+import { userAuth } from '@/utils/userAuth';
+import Swal from 'sweetalert2';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -43,6 +46,20 @@ function getCourseName(course_id) {
 getResourceData();
 getCourseName(courseId)
 
+onMounted(async () => {
+    const user = await userAuth(props.userAuth);
+    if (user) {
+        loguedUser.value = user;
+        await getInscriptions(user.id); // Wait for inscription
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to access here.",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
+    }
+});
 </script>
 <template>
     <div class="w-75 text-start ms-1 mt-2">

@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { userAuth } from '@/utils/userAuth';
+import router from '@/router';
+import Swal from 'sweetalert2';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -13,7 +15,7 @@ const props = defineProps({
 const teacherLogued = ref(null);
 const examList = ref([]);
 const coursesList = ref([]);
-
+const loguedUser = ref(null)
 
 function getCourses() { // We need to filter the courses that teaches the teacher loggued
     fetch('http://localhost:8000/api/courses', {
@@ -67,13 +69,29 @@ function previousPage() {
 onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
-        teacherLogued.value = user
-        console.log(teacherLogued.value)
+        loguedUser.value = user
+        if (loguedUser.value && loguedUser.value.rol != 'teacher') {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "You don't have permission to access this page.",
+            confirmButtonText: 'Go to home',
+        })
+        router.push('/'); // Redirect to home page
+    }
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to access here.",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
     }
 
     getCourses()
     getExamsTeacher()
-})
+});
+
 </script>
 <template>
     <div class="w-75 text-start ms-5">

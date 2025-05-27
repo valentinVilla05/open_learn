@@ -1,6 +1,8 @@
 <script setup>
-import { computed, ref, watch, watchEffect } from 'vue';
+import { computed, ref, watch, watchEffect, onMounted } from 'vue';
 import Swal from 'sweetalert2';
+import router from '@/router';
+import { userAuth } from '@/utils/userAuth';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -9,6 +11,8 @@ const props = defineProps({
         required: false // Optional
     }
 });
+
+const loguedUser = ref(null);
 const newQuestion = ref({
     'exam_id': null,
     'statement': '',
@@ -62,6 +66,30 @@ watchEffect(() => {
     if (validCorrectAnswer.value && validStatement.value && validIncorrectAnswer1.value) {
         validForm.value = true
     } else validForm.value = false
+});
+
+onMounted(async () => {
+    const user = await userAuth(props.userAuth);
+    if (user) {
+        loguedUser.value = user
+        if (loguedUser.value && loguedUser.value.rol != 'teacher') {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "You don't have permission to access this page.",
+            confirmButtonText: 'Go to home',
+        })
+        router.push('/'); // Redirect to home page
+    }
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to access here.",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
+    }
+
 });
 </script>
 <template>

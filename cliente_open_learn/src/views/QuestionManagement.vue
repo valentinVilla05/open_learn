@@ -3,6 +3,7 @@ import { onMounted, ref, computed, watchEffect } from 'vue';
 import { userAuth } from '@/utils/userAuth';
 import { Modal } from 'bootstrap';
 import Swal from 'sweetalert2';
+import router from '@/router';
 
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
@@ -12,6 +13,7 @@ const props = defineProps({
     }
 });
 
+const loguedUser = ref(null);
 const teacherLogued = ref(null);
 const examList = ref([]);
 const questionsList = ref([]);
@@ -103,9 +105,9 @@ function deleteQuestion(question_id) {
                         text: "Your question has been deleted succesfully!",
                         icon: "success"
                     });
-                    getCourses(); 
-                    getExamsTeacher(); 
-                    getQuestions(); 
+                    getCourses();
+                    getExamsTeacher();
+                    getQuestions();
                 })
                 .catch(error => console.error('Error:', error));
         }
@@ -184,8 +186,23 @@ function previousPage() {
 onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
-        teacherLogued.value = user
-        console.log(teacherLogued.value)
+        loguedUser.value = user
+        if (loguedUser.value && loguedUser.value.rol != 'teacher') {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "You don't have permission to access this page.",
+            confirmButtonText: 'Go to home',
+        })
+        router.push('/'); // Redirect to home page
+    }
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "You need to log in to access here.",
+            text: "Please log in to continue.",
+        });
+        router.push('/'); // Redirect to login if user is not logged in
     }
 
     const modalElement = document.getElementById("modalUpdate");
