@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { userAuth } from '@/utils/userAuth';
+import { Modal } from 'bootstrap';
 import Swal from 'sweetalert2';
 import CoursesResources from '@/components/CoursesResources.vue';
 import CoursesExam from '@/components/CoursesExam.vue';
@@ -22,7 +23,10 @@ const route = useRoute();
 const courseId = route.params.course_id;
 const course = ref(null); // Variable to store the course data
 const userCoursesList = ref([]);
+const allInscriptions = ref([]);
 const isEnrrolled = ref(false);
+const userName = ref(null);
+const allIUsers = ref([]);
 const capacityCompleted = ref(false);
 const teacherList = ref([]) // Get all the teachers
 const teacherName = ref(null);
@@ -47,6 +51,14 @@ function getInscriptions(user_id) {
         method: 'GET',
     }).then(response => response.json())
         .then(data => userCoursesList.value = data)
+        .catch(error => console.log('Error:', error));
+}
+
+function getAllInscriptions(course_id) {
+    fetch(`http://localhost:8000/api/inscriptions/course/${course_id}`, {
+        method: 'GET',
+    }).then(response => response.json())
+        .then(data => allInscriptions.value = data)
         .catch(error => console.log('Error:', error));
 }
 
@@ -101,11 +113,45 @@ function enrrollUser(course_id, user_id) {
                     text: "Enjoy with all the content!",
                     icon: "success"
                 });
+                getAllInscriptions(course_id); 
             })
             .catch(error => console.error('Error:', error));
     } else console.log("WUAAAAAAAAAAAAAAAA")
 }
 
+function getUsers() {
+    fetch('http://localhost:8000/api/users', {
+        method: 'GET',
+    }).then(response => response.json())
+        .then(data => allIUsers.value = data)
+        .catch(error => console.log('Error:', error));
+}
+
+let currentPage = ref(1);
+let usersPerPage = 10;
+let totalPages = computed(() => Math.ceil(allIUsers.value.length / usersPerPage));
+
+let paginatedUsers = computed(() => {
+    const start = (currentPage.value - 1) * usersPerPage;
+    const end = start + usersPerPage;
+    return allIUsers.value.slice(start, end);
+})
+
+function nextPage() {
+    if (currentPage.value < Math.ceil(allIUsers.value.length / usersPerPage)) { // Check if we are not on the last page;
+        currentPage.value++;
+    }
+}
+function previousPage() {
+    if (currentPage.value > 1) { // Check if we are not on the first page;
+        currentPage.value--;
+    }
+}
+
+let modalAddUser = null;
+function openModal(course_id) {
+    modalAddUser.show();
+}
 
 onMounted(async () => {
     await getTeacher()
@@ -131,7 +177,10 @@ onMounted(async () => {
     teacherName.value = teacherList.value.find(teacher => String(teacher.id) === String(course.value.teacher_id));
     teacherAssigned.value = String(course.value.teacher_id) === String(loguedUser.value.id);
     checkCapacity(courseId)
-
+    getUsers();
+    getAllInscriptions(courseId);
+    const modalElement = document.getElementById("modalAddUser");
+    modalAddUser = new Modal(modalElement);
 });
 
 </script>
@@ -201,6 +250,12 @@ onMounted(async () => {
                     <li class="mb-3 fs-6 text-muted"><strong>Teacher for this course:</strong> {{ teacherName?.name }}
                     </li>
                     <li class="mb-3 fs-6 text-muted"><strong>Max. students:</strong> {{ course?.max_students }}</li>
+                    <li class="mb-3 fs-6 text-muted"><strong>Students enrrolled:</strong>
+                        {{ allInscriptions.filter(inscription => inscription.course_id == courseId).length -1  }}
+                        <button @click="openModal(courseId)" class="btn p-1"
+                            v-if="course?.privacy == 'private' && teacherAssigned"><small>Add
+                                student </small></button>
+                    </li>
                     <li class="mb-3 fs-6 text-muted"><strong>Subject of this course:</strong> {{ course?.subject }}</li>
                     <li class="mb-3 fs-6 text-muted"><strong>Course's privacy:</strong> {{ course?.privacy }}</li>
                     <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
@@ -219,6 +274,46 @@ onMounted(async () => {
             <RouterLink to="/catalog" class="btn">Go to catalog</RouterLink>
         </div>
     </main>
+
+    <!-- Modal to manage users -->
+    <div class="modal fade" id="modalAddUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit course information</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2>Users enrrolled:</h2>
+                    <div
+                        class="container w-100 h-50 border d-flex justify-content-center align-items-center flex-column ">
+                        <div class="rounded d-flex justify-content-between align-items-center w-100 "
+                            v-for="(user) in paginatedUsers" :key="user.id">
+                            <p class="ms-2">{{ user.name }}</p>
+                            <button
+                                v-if="!allInscriptions.find(inscription => inscription.user_id == user.id && inscription.course_id == courseId)"
+                                class="btn addUser h-50" @click="enrrollUser(courseId, user.id)">Add student</button>
+                            <p v-else class="text-success-emphasis">User enrolled</p>
+                        </div>
+                    </div>
+                    <nav aria-label="Paginacion de usuarios">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                                <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
+                            </li>
+                            <li class="page-item" v-for="page in totalPages" :key="page"
+                                :class="{ active: currentPage === page }">
+                                <a class="page-link" href="#" @click.prevent="currentPage = page">{{ page }}</a>
+                            </li>
+                            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                                <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <style scoped>
 p {
@@ -242,8 +337,11 @@ p {
     border-radius: 8px;
 }
 
-
 .enrollButton {
     background-color: #6EB183;
+}
+
+.addUser {
+    background-color: #DCFFC8 !important;
 }
 </style>

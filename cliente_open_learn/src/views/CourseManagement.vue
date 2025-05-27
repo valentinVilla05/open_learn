@@ -15,65 +15,139 @@ const props = defineProps({
 
 let courses = ref([]);
 const loguedUser = ref(null);
+const courseInscriptions = ref({});
 
 // We get all the courses
 async function getCourses() {
     try {
         fetch('http://localhost:8000/api/courses')
             .then(response => response.json())
-            .then(data => courses.value = data);
+            .then(data => {
+                courses.value = data
+                data.forEach(course => {
+                    getInscriptions(course.id);
+                });
+            });
     } catch (error) {
         alert(`Error al obtener datos: ${error.message}`);
     }
 }
-onMounted(getCourses);
 
+function getInscriptions(course_id) {
+    fetch(`http://localhost:8000/api/inscriptions/course/${course_id}`, {
+        method: 'GET',
+    })
+        .then(response => response.json())
+        .then(data => {
+            courseInscriptions.value[course_id] = data.length;
+        })
+        .catch(error => {
+            console.log('Error:', error);
+            courseInscriptions.value[course_id] = 0; // fallback
+        });
+}
 // Function to delete a course;
 function deleteCourse(course_id, course_title) {
 
-    Swal.fire({
-        title: "Are you sure you want to delete this course?",
-        text: "All the resources that belongs to this course will be deleted too.",
-        imageUrl: "/deleteCourse.png",
-        imageWidth: 150,
-        imageHeight: 150,
-        showCancelButton: true,
-        confirmButtonColor: "red",
-        cancelButtonColor: "gray",
-        confirmButtonText: "Delete"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            let timerInterval;
+    if (courseInscriptions.value[course_id] > 0) {
+        Swal.fire({
+            title: "There are studets enrrolled in this course",
+            text: "Are you sure you want to keep going?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "I am sure"
+        }).then((result) => {
             Swal.fire({
-                title: "Course deleted",
-                text: "The course \"" + course_title + "\" has been deleted succesfully.",
-                icon: "success",
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: () => {
-                    Swal.showLoading();
-                    const timer = Swal.getPopup().querySelector("b");
-                    timerInterval = setInterval(() => {
-                        timer.textContent = `${Swal.getTimerLeft()}`;
-                    }, 100);
-                },
-                willClose: () => {
-                    clearInterval(timerInterval);
+                title: "Are you sure you want to delete this course?",
+                text: "All the resources that belongs to this course will be deleted too.",
+                imageUrl: "/deleteCourse.png",
+                imageWidth: 150,
+                imageHeight: 150,
+                showCancelButton: true,
+                confirmButtonColor: "red",
+                cancelButtonColor: "gray",
+                confirmButtonText: "Delete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let timerInterval;
+                    Swal.fire({
+                        title: "Course deleted",
+                        text: "The course \"" + course_title + "\" has been deleted succesfully.",
+                        icon: "success",
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            const timer = Swal.getPopup().querySelector("b");
+                            timerInterval = setInterval(() => {
+                                timer.textContent = `${Swal.getTimerLeft()}`;
+                            }, 100);
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval);
+                        }
+                    });
+                    fetch(`http://localhost:8000/api/courses/${course_id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${props.userAuth}`,
+                            'Accept': 'application/json',
+                        },
+                    })
+                        .then(response => response.json())
+                        .then(() => getCourses())
+                        .catch(error => console.error('Error:', error));
                 }
             });
-            fetch(`http://localhost:8000/api/courses/${course_id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${props.userAuth}`,
-                    'Accept': 'application/json',
-                },
-            })
-                .then(response => response.json())
-                .then(() => getCourses())
-                .catch(error => console.error('Error:', error));
-        }
-    });
+        });
+    } else {
+        Swal.fire({
+            title: "Are you sure you want to delete this course?",
+            text: "All the resources that belongs to this course will be deleted too.",
+            imageUrl: "/deleteCourse.png",
+            imageWidth: 150,
+            imageHeight: 150,
+            showCancelButton: true,
+            confirmButtonColor: "red",
+            cancelButtonColor: "gray",
+            confirmButtonText: "Delete"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let timerInterval;
+                Swal.fire({
+                    title: "Course deleted",
+                    text: "The course \"" + course_title + "\" has been deleted succesfully.",
+                    icon: "success",
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                            timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                });
+                fetch(`http://localhost:8000/api/courses/${course_id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${props.userAuth}`,
+                        'Accept': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(() => getCourses())
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    }
 }
 
 // Modal's logic
@@ -185,14 +259,14 @@ onMounted(async () => {
     if (user) {
         loguedUser.value = user
         if (loguedUser.value && loguedUser.value.rol != 'admin') {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "You don't have permission to access this page.",
-            confirmButtonText: 'Go to home',
-        })
-        router.push('/'); // Redirect to home page
-    }
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "You don't have permission to access this page.",
+                confirmButtonText: 'Go to home',
+            })
+            router.push('/'); // Redirect to home page
+        }
     } else {
         Swal.fire({
             icon: "error",
@@ -202,6 +276,7 @@ onMounted(async () => {
         router.push('/'); // Redirect to login if user is not logged in
     }
 
+    getCourses()
     const modalElement = document.getElementById("modalUpdate");
     modalUpdate = new Modal(modalElement);
 
@@ -237,10 +312,17 @@ onMounted(async () => {
                             <h2 class="card-title">{{ course.title }}</h2>
                             <h6 class="card-title">Duration: {{ course.duration }}</h6>
                             <h6 class="card-title">Teacher: {{teacherList.find(teacher => teacher.id ==
-                                course.teacher_id)?.name || 'No assigned' }}</h6>
+                                course.teacher_id)?.name || 'No assigned'}}</h6>
                             <p class="card-text">
                                 {{ (course.description).slice(0, 75) }}...
                             </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    There are {{ courseInscriptions[course.id] ?? '...' }} students enrolled in this
+                                    course.
+                                </small>
+                            </p>
+
                         </div>
                         <div class="btn-group mt-3 d-flex flex-wrap">
                             <button type="button" class="manageCoursesButton" id="asignCourse"
