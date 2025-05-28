@@ -14,6 +14,7 @@ const props = defineProps({
     }
 });
 
+const loguedUser = ref(null);
 const route = useRoute();
 const courseId = route.params.course_id;
 const resourceId = route.params.resource_id;
@@ -43,14 +44,90 @@ function getCourseName(course_id) {
         .catch(error => console.log('Error:', error));
 }
 
-getResourceData();
-getCourseName(courseId)
+function getInscriptions(user_id) {
+    return fetch(`http://localhost:8000/api/inscriptions/user/${user_id}`, {
+        method: 'GET',
+    }).then(response => response.json())
+        .then(data => {
+            if (!data.value.some(inscription => inscription.user_id === loguedUser.value.id && inscription.course_id === courseId)) {
+                Swal.fire({
+                    icon: "error",
+                    title: "You are not enrolled in this course.",
+                    text: "Please enroll to access the resources.",
+                }).then(() => router.push(`/course/${courseId}`));
+                return;
+            }
+        })
+        .catch(error => console.log('Error:', error));
+}
+
+function isImage(url) {
+  return /\.(jpeg|jpg|gif|png)$/i.test(url)
+}
+
+////////////////
+/// IA Chat ////
+////////////////
+const responseLlama = ref('');
+const prompt = ref('');
+const loading = ref(false);
+
+async function sendPrompt() {
+    loading.value = true;
+    responseLlama.value = '';
+
+    const response = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model: 'llama3.2', // Specify the model we are gonna use
+            prompt: prompt.value // Message to send
+        })
+    });
+
+    if (!response.ok || !response.body) { // If there is an error with the fecth or the reposnse is empty 
+        console.error("Error al obtener respuesta de la API:", response.statusText);
+        return;
+    }
+
+    const reader = response.body.getReader(); // Read the data from the response 
+    const decoder = new TextDecoder('utf-8'); // Transfotm the data from binary to text
+    let fullText = ''; // Varuable to staorage the responde
+
+    while (true) { // Inifinite loop until the response is finised
+        const { done, value } = await reader.read(); // value is a piece of the response of the server
+        if (done) break; // Break the loop when the response is done
+
+        const chunk = decoder.decode(value, { stream: true });  // Transform the value to legible text
+
+        // Ollama return a JSON line for each piece of text generated;
+        const lines = chunk.split('\n').filter(line => line.trim() !== '');  // Filter the lines to remove empty ones
+
+        for (const line of lines) {  // Convert each line to JSON 
+            try {
+                const parsed = JSON.parse(line);
+                if (parsed.response) { // If it is a part of the response, then add to the "accumulator"
+                    fullText += parsed.response;
+                    responseLlama.value = fullText;
+                }
+            } catch (e) {
+                console.warn('Línea no JSON válida:', line);
+            } finally {
+                loading.value = false;
+                prompt.value = '';
+            }
+        }
+    }
+    prompt.value = ''; // Clear the input
+}
 
 onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
         loguedUser.value = user;
-        await getInscriptions(user.id); // Wait for inscription
+        await getInscriptions(loguedUser.value.id); // Wait for inscription
     } else {
         Swal.fire({
             icon: "error",
@@ -59,6 +136,8 @@ onMounted(async () => {
         });
         router.push('/'); // Redirect to login if user is not logged in
     }
+    getResourceData();
+    getCourseName(courseId)
 });
 </script>
 <template>
@@ -79,20 +158,50 @@ onMounted(async () => {
         </nav>
     </div>
     <main class="container shadow border rounded w-100 m-3">
-        <h2 class="my-3">{{ resourceData?.name }}</h2>
-        <p>{{ resourceData?.description }}</p>
-        <div v-if="resourceData?.type == 'video'">
-            <p class="">Link to resource: <a :href="resourceData?.url" target="_blank">{{ resourceData?.url }}</a></p>
-            <iframe class="w-100" style="height: 30em;" :src="resourceData?.url" title="YouTube video player"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div v-else>
-            <p class="">Link to resource: <a :href="resourceData?.url" target="_blank">{{ resourceData?.url }}</a></p>
-            <div class="ratio ratio-4x3">
-                <iframe :src="resourceData?.url" type="application/pdf" />
+        <div>
+            <h2 class="my-3">{{ resourceData?.name }}</h2>
+            <p>{{ resourceData?.description }}</p>
+
+            <p>
+                Link to resource:
+                <a :href="resourceData?.url" target="_blank" rel="noopener noreferrer">
+                    {{ resourceData?.url }}
+                </a>
+            </p>
+
+            <!-- Video -->
+            <div v-if="resourceData?.type === 'video'">
+                <iframe class="w-100" style="height: 30em;" :src="resourceData.url" frameborder="0"
+                    allowfullscreen></iframe>
             </div>
+
+            <!-- Document (PDF, Word, etc.) or Image -->
+            <div v-else-if="resourceData?.type === 'document'">
+                <!-- Si es una imagen -->
+                <img v-if="isImage(resourceData.url)" :src="resourceData.url" alt="Uploaded Image"
+                    style="max-width: 100%; max-height: 30em;" />
+
+                <!-- Si no es una imagen, mostramos un iframe (PDF u otros documentos) -->
+                <div v-else class="ratio ratio-4x3">
+                    <iframe :src="resourceData.url" style="width: 100%; height: 100%; border: none;"
+                        frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="container m-3">
+            <h3>Any doubts about the topic? Ask it to Owl-IA</h3>
+            <p class="m-0">Write your thoughts:</p>
+            <div class="d-flex">
+                <input class="w-100 rounded border-1 m-2" type="text" v-model="prompt"
+                    placeholder="Escribe el prompt aquí" :disabled="loading" />
+                <button class="p-1 btn text-black" @click="sendPrompt" :disabled="loading">
+                    {{ loading ? 'Sending...' : 'Send prompt' }}</button>
+            </div>
+
+            <p class="m-0">Owl-IA response:</p>
+            <pre class="w-100 p-2 border rounded bg-light" style="max-height: 300px; overflow-y: auto;">
+              {{ responseLlama }}
+            </pre>
         </div>
 
         <div class="m-3">
@@ -105,5 +214,25 @@ onMounted(async () => {
 <style scoped>
 p {
     margin-block: 1lh;
+}
+
+input,
+textarea {
+    margin: 10px 0;
+    padding: 10px;
+    font-family: monospace;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 </style>

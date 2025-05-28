@@ -20,6 +20,7 @@ const resources = ref(null);
 let modalUpdate = null;
 const selectedResource = ref(null);
 const addResouce = ref(false);
+
 const resourceUpdatedData = ref({
     name: '',
     description: '',
@@ -43,7 +44,7 @@ function getResources(course_id) {
     }).then(response => response.json())
         .then(data => {
             resources.value = data
-            console.log(resources.value)
+            
         })
         .catch(error => console.log('Error:', error));
 }
@@ -149,6 +150,9 @@ function cleanForm() {
 
 function openModal(resource_id) {
     selectedResource.value = resource_id
+    resourceUpdatedData.value.name = resources.value.find(resource => resource.id === resource_id).name;
+    resourceUpdatedData.value.description = resources.value.find(resource => resource.id === resource_id).description;
+    resourceUpdatedData.value.url = resources.value.find(resource => resource.id === resource_id).url;
     modalUpdate.show();
 }
 
@@ -243,12 +247,12 @@ onMounted(() => {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update resource:</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div
-                        class="container shadow rounded w-50 border d-flex justify-content-center align-items-center flex-column my-3">
+                        class="container shadow rounded w-100 border d-flex justify-content-center align-items-center flex-column my-3">
                         <div class="input-group my-3 position-relative">
                             <label class="input-group-text" for="name">Name:*</label>
                             <input type="text" name="name" placeholder="" class="form-control"

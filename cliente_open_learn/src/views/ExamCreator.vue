@@ -55,6 +55,7 @@ function checkExamExists() {
             } else {
                 exam_id.value = data.find(exam => exam.course_id == course_id)?.id;
                 if (exam_id.value) {
+                    updateExamData.value.title = data.find(exam => exam.course_id == course_id)?.title;
                     getAddedQuestion(exam_id.value);
                     isExamActive.value = data.find(exam => exam.course_id == course_id)?.is_active
                 }

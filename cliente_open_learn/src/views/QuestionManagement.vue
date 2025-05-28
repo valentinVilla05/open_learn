@@ -13,7 +13,6 @@ const props = defineProps({
     }
 });
 
-const loguedUser = ref(null);
 const teacherLogued = ref(null);
 const examList = ref([]);
 const questionsList = ref([]);
@@ -80,6 +79,15 @@ function editQuestion(question_id) {
 }
 
 function deleteQuestion(question_id) {
+    if(questionsList.value.find(question => question.id == question_id).exam_id != null) {
+        Swal.fire({
+            icon: 'error',
+            title: 'This question is associated to an exam',
+            text: 'Remove from the exam to delete it'
+        })
+        return;
+    }
+
     Swal.fire({
         title: "Are you sure?",
         text: "The question will be deleted permanently",
@@ -186,8 +194,8 @@ function previousPage() {
 onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
-        loguedUser.value = user
-        if (loguedUser.value && loguedUser.value.rol != 'teacher') {
+        teacherLogued.value = user
+        if (teacherLogued.value && teacherLogued.value.rol != 'teacher') {
         Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -245,7 +253,7 @@ onMounted(async () => {
 
                 <div class="w-100 btn-group mt-4 d-flex flex-wrap">
                     <button class="w-50 manageQuestionButton text-decoration-none text-center " id="editQuestion"
-                        :disabled="question.exam_id != null" @click="openModal(question.id)">
+                        @click="openModal(question.id)">
                         Edit question
                     </button>
                     <button class="w-50 manageQuestionButton" id="deleteQuestion" :disabled="question.exam_id != null"

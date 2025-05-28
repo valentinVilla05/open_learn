@@ -15,7 +15,6 @@ const props = defineProps({
 const teacherLogued = ref(null);
 const examList = ref([]);
 const coursesList = ref([]);
-const loguedUser = ref(null)
 
 function getCourses() { // We need to filter the courses that teaches the teacher loggued
     fetch('http://localhost:8000/api/courses', {
@@ -39,6 +38,44 @@ function getExamsTeacher() {
         .catch(error => console.log('Error:', error));
 }
 
+function deleteExam(examId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`http://localhost:8000/api/exams/${examId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${props.userAuth}`,
+                    'Accept': 'application/json',
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire(
+                            'Deleted!',
+                            'Your exam has been deleted.',
+                            'success'
+                        );
+                        getExamsTeacher(); // Refresh the exam list
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'There was an error deleting the exam.',
+                            'error'
+                        );
+                    }
+                })
+        }
+    });
+}
 
 
 ////////////////////////////////
@@ -69,16 +106,16 @@ function previousPage() {
 onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
-        loguedUser.value = user
-        if (loguedUser.value && loguedUser.value.rol != 'teacher') {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "You don't have permission to access this page.",
-            confirmButtonText: 'Go to home',
-        })
-        router.push('/'); // Redirect to home page
-    }
+        teacherLogued.value = user
+        if (teacherLogued.value && teacherLogued.value.rol != 'teacher') {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "You don't have permission to access this page.",
+                confirmButtonText: 'Go to home',
+            })
+            router.push('/'); // Redirect to home page
+        }
     } else {
         Swal.fire({
             icon: "error",
@@ -122,7 +159,8 @@ onMounted(async () => {
                                 class="w-50 manageExamButton text-decoration-none text-center text-black" id="editExam">
                                 Edit Exam
                             </RouterLink>
-                            <button class="w-50 manageExamButton" id="deleteExam">Delete exam</button>
+                            <button class="w-50 manageExamButton" id="deleteExam" @click="deleteExam(exam.id)">Delete
+                                exam</button>
                         </div>
                     </div>
                 </div>
