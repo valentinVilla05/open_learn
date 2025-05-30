@@ -236,118 +236,142 @@ onMounted(async () => {
 
 </script>
 <template>
-    <div class="w-75 text-start ms-1 mt-2">
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <RouterLink to="/catalog" class="text-decoration-none text-">Catalog</RouterLink>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">
-                    <RouterLink :to="{ name: 'course', params: { course_id: courseData?.id } }"
-                        class="text-decoration-none">{{ courseData?.title }}</RouterLink>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Exam Creator
-                </li>
-            </ol>
-        </nav>
+  <div class="container-fluid px-3">
+    <!-- Breadcrumb -->
+    <div class="text-start mt-2">
+      <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <RouterLink to="/catalog" class="text-decoration-none">Catalog</RouterLink>
+          </li>
+          <li class="breadcrumb-item">
+            <RouterLink :to="{ name: 'course', params: { course_id: courseData?.id } }"
+              class="text-decoration-none">{{ courseData?.title }}</RouterLink>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Exam Creator</li>
+        </ol>
+      </nav>
     </div>
+
+    <!-- Exam Title -->
     <h2 class="text-center">Create a new exam:</h2>
-    <div class="container shadow rounded w-100 border d-flex justify-content-center align-items-center flex-column">
-        <div class="input-group py-3">
-            <label class="input-group-text" for="title">Title:</label>
-            <input type="text" name="title" :placeholder="'FinalHoot ' + (courseData?.title || '')" class="form-control"
-                v-model="updateExamData.title" />
-        </div>
+    <div class="container border shadow rounded p-4 mb-4">
+      <div class="input-group">
+        <label class="input-group-text" for="title">Title:</label>
+        <input
+          type="text"
+          name="title"
+          :placeholder="'FinalHoot ' + (courseData?.title || '')"
+          class="form-control"
+          v-model="updateExamData.title"
+        />
+      </div>
     </div>
+
+    <!-- Questions -->
     <h3 class="text-center m-3">Add or remove questions from the exam</h3>
-    <div class="container w-50 d-flex">
-        <div class="questionList w-100 overflow-auto rounded border shadow-sm p-2">
-            <p v-if="addedQuestions.length == 0" class="text-muted text-center fs-6 ">This exam doesn't have any
-                question
-                added yet.</p>
-            <div v-for="questionAdded in addedQuestions" class=" d-flex m-3 border rounded">
-                <p class="w-100 ms-2">{{ questionAdded.statement }} </p>
-                <button class="remove ms-auto px-2 bg-danger-emphasis"
-                    @click="removeQuestion(questionAdded.id)">Remove</button>
-            </div>
-        </div>
-        <div class="questionList w-100 overflow-auto rounded border shadow-sm p-2">
-            <p v-if="allQuestionList.length == 0" class="text-muted text-center fs-6">There aren't any question
-                available yet. Go to create some questions now.</p>
-            <div v-for="question in allQuestionList" class=" d-flex m-3 border rounded">
-                <p class="w-100 ms-2">{{ question.statement }} </p>
-                <button class="add ms-auto px-2" @click="addQuestion(question.id)">Add</button>
-            </div>
-        </div>
-    </div>
-    <div v-if="addedQuestions.length != 0" class="d-flex justify-content-center align-items-center w-50">
-        <p class="m-3 w-50" v-if="!isExamActive">Right now your exam is<strong class="text-warning"> inactive</strong>
+    <div class="row g-3 justify-content-center">
+      <!-- Added Questions -->
+      <div class="questionList col-12 col-md-6 border shadow-sm p-3 rounded">
+        <p v-if="addedQuestions.length === 0" class="text-muted text-center fs-6">
+          This exam doesn't have any question added yet.
         </p>
-        <p class="m-3 w-50" v-else>Your exam is <strong class="text-warning">active</strong> and your students will see
-            it!</p>
-        <button class="border border-1" :class="['toggle-container', isExamActive ? 'inactive' : 'active']"
-            @click="toggleSwitch">
-            <motion.div :data-state="isExamActive" class="toggle-handle" layout :transition="{
-                type: 'spring',
-                visualDuration: 0.3,
-                bounce: 0.2
-            }" />
-        </button>
+        <div v-for="questionAdded in addedQuestions" :key="questionAdded.id" class="d-flex align-items-center m-2 p-2 border rounded">
+          <p class="flex-grow-1 ms-2 mb-0">{{ questionAdded.statement }}</p>
+          <button class="remove ms-2 px-2" @click="removeQuestion(questionAdded.id)">Remove</button>
+        </div>
+      </div>
+
+      <!-- Available Questions -->
+      <div class="questionList col-12 col-md-6 border shadow-sm p-3 rounded">
+        <p v-if="allQuestionList.length === 0" class="text-muted text-center fs-6">
+          There aren't any questions available yet. Go create some now.
+        </p>
+        <div v-for="question in allQuestionList" :key="question.id" class="d-flex align-items-center m-2 p-2 border rounded">
+          <p class="flex-grow-1 ms-2 mb-0">{{ question.statement }}</p>
+          <button class="add ms-2 px-2" @click="addQuestion(question.id)">Add</button>
+        </div>
+      </div>
     </div>
-    <div v-else>
-        <p class="text-danger">The exam will stay inactive if there is no answers added in it.</p>
+
+    <!-- Toggle Exam Activation -->
+    <div v-if="addedQuestions.length !== 0" class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 mt-4 text-center">
+      <p class="m-0" v-if="!isExamActive">
+        Your exam is <strong class="text-warning">inactive</strong>.
+      </p>
+      <p class="m-0" v-else>
+        Your exam is <strong class="text-success">active</strong> and students can see it!
+      </p>
+      <button
+        class="toggle-container border-0"
+        :class="isExamActive ? 'inactive' : 'active'"
+        @click="toggleSwitch"
+      >
+        <motion.div :data-state="isExamActive" class="toggle-handle" layout :transition="{
+          type: 'spring',
+          visualDuration: 0.3,
+          bounce: 0.2
+        }" />
+      </button>
     </div>
-    <button class="btn buttonCreate p-2 m-2" @click="updateAndExit()">
-        Finish Exam
-    </button>
-    <small class="text-muted">Make sure your exam is active before leaving, otherwise students won’t be able to see
-        it.</small>
+
+    <div v-else class="text-center mt-3">
+      <p class="text-danger">The exam will remain inactive if no questions are added.</p>
+    </div>
+
+    <!-- Finish Button -->
+    <div class="text-center mt-4">
+      <button class="btn buttonCreate px-4 py-2" @click="updateAndExit()">Finish Exam</button>
+      <div>
+        <small class="text-muted">Make sure your exam is active before leaving so students can see it.</small>
+      </div>
+    </div>
+  </div>
 </template>
+
 <style scoped>
 .questionList {
-    height: 25em !important;
-}
-
-p {
-    margin-block: 1lh;
+  max-height: 25em;
+  overflow-y: auto;
 }
 
 .remove {
-    background-color: #FF708D;
-    border: none;
+  background-color: #FF708D;
+  border: none;
+  border-radius: 0.25rem;
 }
 
 .add {
-    background-color: #DCFFC8;
-    border: none;
+  background-color: #DCFFC8;
+  border: none;
+  border-radius: 0.25rem;
 }
 
 .toggle-container {
-    width: 70px;
-    height: 35px;
-    background-color: var(--hue-3-transparent);
-    border-radius: 35px;
-    cursor: pointer;
-    display: flex;
-    padding: 1.25px;
+  width: 70px;
+  height: 35px;
+  border-radius: 35px;
+  cursor: pointer;
+  display: flex;
+  padding: 1.25px;
+  transition: background-color 0.3s ease;
 }
 
 .toggle-container.active {
-    justify-content: flex-start;
-    background-color: crimson;
+  justify-content: flex-start;
+  background-color: crimson;
 }
 
 .toggle-container.inactive {
-    justify-content: flex-end;
-    background-color: #DCFFC8;
+  justify-content: flex-end;
+  background-color: #DCFFC8;
 }
 
 .toggle-handle {
-    width: 28px;
-    height: 28px;
-    background-color: lightgray;
-    border: 1px solid black;
-    border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  background-color: lightgray;
+  border: 1px solid black;
+  border-radius: 50%;
 }
 </style>

@@ -27,6 +27,9 @@ function cleanForm() {
     courseData.value.title = '';
     courseData.value.description = '';
     courseData.value.teacher_id = '';
+    courseData.value.privacy = '';
+    courseData.value.image = '';
+    courseData.value.max_students = '';
     courseData.value.subject = onMounted(async () => {
         const user = await userAuth(props.userAuth);
         if (user) {
@@ -66,11 +69,10 @@ getTeacher();
 
 function createCourse() {
     courseData.value.max_students = Number(courseData.value.max_students);
-    courseData.value.duration = String(courseData.value.duration) + " horas";
+    courseData.value.duration = String(courseData.value.duration) + " hours";
     if (courseData.value.image === '') {
         courseData.value.image = null;
     }
-    console.log(courseData.value)
     fetch('http://localhost:8000/api/courses', {
         method: 'POST',
         headers: {

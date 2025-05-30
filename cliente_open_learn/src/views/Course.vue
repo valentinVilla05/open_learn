@@ -25,12 +25,12 @@ const course = ref(null); // Variable to store the course data
 const userCoursesList = ref([]);
 const allInscriptions = ref([]);
 const isEnrrolled = ref(false);
-const userName = ref(null);
 const allIUsers = ref([]);
 const capacityCompleted = ref(false);
 const teacherList = ref([]) // Get all the teachers
 const teacherName = ref(null);
 const teacherAssigned = ref(null);
+const resourcesList = ref([]);
 
 const newInscription = ref({
     user_id: '',
@@ -59,6 +59,14 @@ function getAllInscriptions(course_id) {
         method: 'GET',
     }).then(response => response.json())
         .then(data => allInscriptions.value = data)
+        .catch(error => console.log('Error:', error));
+}
+
+function getResources(course_id) {
+    fetch(`http://localhost:8000/api/resources/${course_id}`, {
+        method: 'GET',
+    }).then(response => response.json())
+        .then(data => resourcesList.value = data)
         .catch(error => console.log('Error:', error));
 }
 
@@ -177,6 +185,7 @@ onMounted(async () => {
     teacherName.value = teacherList.value.find(teacher => String(teacher.id) === String(course.value.teacher_id));
     teacherAssigned.value = String(course.value.teacher_id) === String(loguedUser.value.id);
     checkCapacity(courseId)
+    getResources(courseId);
     getUsers();
     getAllInscriptions(courseId);
     const modalElement = document.getElementById("modalAddUser");
@@ -202,7 +211,7 @@ onMounted(async () => {
             <!-- Image with background title -->
             <div class="banner h-auto d-flex flex-column align-items-center justify-content-center text-white rounded"
                 :style="{
-                    backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.0)), url(${course.image})`,
+                    backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.5)), url(${course.image})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
@@ -237,8 +246,13 @@ onMounted(async () => {
             <CoursesResources v-if="isEnrrolled || teacherAssigned" :userAuth="props.userAuth" :course_id="courseId"
                 :teacherAssigned="teacherAssigned">
             </CoursesResources>
+            <div v-if="isEnrrolled || teacherAssigned && resourcesList.length == 0">
+                <p class="text-center fs-4">There are no resources for this course yet.</p>
+                <p class="text-center fs-5" v-if="teacherAssigned">Add new resources now!</p>
+            </div>
             <div v-else>
-                <!-- Maybe blur the content or just an image -->
+                <p class="text-center fs-4">You need to enroll in this course to see the content.</p>
+                <RouterLink to="/catalog" class="btn">Go to catalog</RouterLink>
             </div>
 
         </div>
@@ -250,8 +264,14 @@ onMounted(async () => {
                     <li class="mb-3 fs-6 text-muted"><strong>Teacher for this course:</strong> {{ teacherName?.name }}
                     </li>
                     <li class="mb-3 fs-6 text-muted"><strong>Max. students:</strong> {{ course?.max_students }}</li>
-                    <li class="mb-3 fs-6 text-muted"><strong>Students enrrolled:</strong>
+                    <li v-if="allInscriptions.filter(inscription => inscription.course_id == courseId).length > 1" class="mb-3 fs-6 text-muted"><strong>Students enrrolled:</strong>
                         {{ allInscriptions.filter(inscription => inscription.course_id == courseId).length -1  }}
+                        <button @click="openModal(courseId)" class="btn p-1"
+                            v-if="course?.privacy == 'private' && teacherAssigned"><small>Add
+                                student </small></button>
+                    </li>
+                    <li v-if="allInscriptions.filter(inscription => inscription.course_id == courseId).length <= 1" class="mb-3 fs-6 text-muted"><strong>Students enrrolled:</strong>
+                        {{ allInscriptions.filter(inscription => inscription.course_id == courseId).length  }}
                         <button @click="openModal(courseId)" class="btn p-1"
                             v-if="course?.privacy == 'private' && teacherAssigned"><small>Add
                                 student </small></button>
@@ -262,7 +282,7 @@ onMounted(async () => {
                 </ul>
             </div>
             <CoursesExam :course_id="courseId" :user_id="loguedUser.id" :teacherAssigned="teacherAssigned"
-                v-if="isEnrrolled"></CoursesExam>
+                v-if="isEnrrolled || teacherAssigned"></CoursesExam>
         </aside>
 
 

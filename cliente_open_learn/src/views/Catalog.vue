@@ -1,9 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { motion } from 'motion-v';
 
 // Get the list of courses
 const allCourses = ref([]);
+const searchFilter = ref('');
+
 
 function getAllCourses() {
     fetch('http://localhost:8000/api/courses', {
@@ -57,18 +59,57 @@ async function getUser(token) {
 }
 getUser(props.userAuth); // Call the function to get the user
 
+const filteredCourses = computed(() => {
+    return allCourses.value.filter(course => 
+        course.title.toLowerCase().includes(searchFilter.value.toLowerCase())
+    )
+})
+
+////////////////////////////////
+////// Course pagination ///////
+////////////////////////////////
+
+let currentPage = ref(1);
+let coursesPerPage = 9;
+let totalPages = computed(() => Math.ceil(filteredCourses.value.length / coursesPerPage));
+
+let paginatedCourses = computed(() => {
+    const start = (currentPage.value - 1) * coursesPerPage;
+    const end = start + coursesPerPage;
+    return filteredCourses.value.slice(start, end);
+})
+
+function nextPage() {
+    if (currentPage.value < Math.ceil(filteredCourses.value.length / coursesPerPage)) {
+        currentPage.value++;
+    }
+}
+function previousPage() {
+    if (currentPage.value > 1) {
+        currentPage.value--;
+    }
+}
 
 </script>
 
 <template>
     <div class="container mt-5">
+        <div class="d-flex justify-content-between">
+            <h2>Choose what to learn:</h2>
+            <div class="input-group mt-3 position-relative w-25">
+                <p></p>
+                <input type="text" v-model="searchFilter" placeholder="Search your interest" name="coursesFiltered" class="form-control w-75 rounded border-black">
+                <button class="input-group-text"><img src="/lens.png" alt="len" style="height: 2em; width: 2em;"> </button>
+            </div>
+        </div>
+        <hr class="w-100">
         <main class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col" v-for="course in allCourses" :key="course.id">
+            <div class="col" v-for="course in paginatedCourses" :key="course.id">
                 <div class="card h-100 d-flex flex-column">
                     <img :src="course.image" class="card-img-top" alt="Course image">
                     <div class="card-body d-flex flex-column">
                         <div class="mb-2">
-                            <h5 class="card-title">{{ course.title }}</h5>
+                            <h5 class="card-title fw-bold">{{ course.title }}</h5>
                             <p class="card-text">{{ course.description }}</p>
                             <p class="card-text">
                                 <small class="text-body-secondary">Duración: {{ course.duration }}</small>
@@ -89,6 +130,23 @@ getUser(props.userAuth); // Call the function to get the user
                 </div>
             </div>
         </main>
+        <div v-if="filteredCourses.length === 0">
+            <img src="/noData.png" alt="no data" class="img-fluid mx-auto d-block mt-5" style="max-width: 50%;">
+            <p class="text-center">No courses available at the moment.</p>
+        </div>
+        <nav aria-label="Paginación de usuarios" class="m-3" v-if="allCourses.length !== 0">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                    <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
+                </li>
+                <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page }">
+                    <a class="page-link" href="#" @click.prevent="currentPage = page">{{ page }}</a>
+                </li>
+                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                    <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 
 </template>

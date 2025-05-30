@@ -67,6 +67,9 @@ function logOut() {
                             <RouterLink to="/about" class="nav-link fw-bold text-white mx-2 bar-effect">About</RouterLink>
                         </li>
                         <li class="nav-item">
+                            <RouterLink to="/faq" class="nav-link fw-bold text-white mx-2 bar-effect">FAQ</RouterLink>
+                        </li>
+                        <li class="nav-item">
                             <RouterLink class="nav-link fw-bold border rounded px-2 ms-2 text-white" to="/login"
                                 v-if="!loguedUser">Log in</RouterLink>
                         </li>
@@ -109,7 +112,6 @@ h1 {
     padding: 0.5em 1em;
     color: white;
     transition: background-color 0.3s ease;
-    /* Aseguramos una transición suave para el fondo */
 }
 
 .nav-link:hover {
@@ -122,11 +124,9 @@ h1 {
     border-radius: 0.5rem;
 }
 
-/* --- Efecto de la barrita --- */
-
 .bar-effect {
-    position: relative; /* Necesario para posicionar el pseudo-elemento */
-    overflow: hidden; /* Oculta la barrita hasta que se muestre */
+    position: relative; 
+    overflow: hidden;
 }
 
 .bar-effect::after {
@@ -135,14 +135,14 @@ h1 {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 0.25em; /* Grosor de la barrita */
-    background-color: white; /* Color de la barrita */
-    transform: translateX(-100%); /* Inicialmente fuera de vista a la izquierda */
-    transition: transform 0.3s ease-out; /* Transición suave para el movimiento */
+    height: 0.25em; 
+    background-color: white; 
+    transform: translateX(-100%); 
+    transition: transform 0.3s ease-out; 
 }
 
 .bar-effect:hover::after {
-    transform: translateX(0); /* Mueve la barrita a su posición final */
+    transform: translateX(0);
 }
 
 

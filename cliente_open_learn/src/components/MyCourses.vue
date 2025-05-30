@@ -57,6 +57,18 @@ function getCertificates(user_id) {
             certificatesList.value = [];
         });
 }
+
+const selectedCourses = ref([]);
+
+const filteredCourses = computed(() => {
+    return list.value.filter(course => {
+        const isFinished = certificatesList.value.some(c => c.course_id === course.id && c.user_id === loguedUser.value?.id);
+        const status = isFinished ? 'Finished' : 'In progress';
+
+        return selectedCourses.value.length === 0 || selectedCourses.value.includes(status);
+    });
+});
+
 onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
@@ -70,8 +82,17 @@ onMounted(async () => {
 });
 </script>
 <template>
+
+        <label class="form-check-label m-2">
+            <input type="checkbox" v-model="selectedCourses" value="Finished" class="form-check-input" />
+            Finished
+        </label>
+        <label class="form-check-label m-3">
+            <input type="checkbox" v-model="selectedCourses" value="In progress" class="form-check-input" />
+            In progress
+        </label>
     <main v-if="list.length > 0" class="row row-cols-1 row-cols-md-3 g-4">
-        <div class="card mb-2 w-50" v-for="course in list" style="height: auto;">
+        <div class="card mb-2 w-50" v-for="course in filteredCourses" style="height: auto;">
             <div class="row g-1">
                 <div class="col-md-4">
                     <img :src="course.image" class="img-fluid rounded-start h-100" alt="Course image"

@@ -86,21 +86,33 @@ function deleteUser(user_id) {
     modalInstanceUser.hide();
 }
 
+const searchTerm = ref('');
+const selectedRoles = ref([]);
+const showFilters = ref(false);
+
+const filteredUsers = computed(() => {
+    return users.value.filter(user => {
+        const nameMatch = user.name.toLowerCase().includes(searchTerm.value.toLowerCase());
+        const roleMatch = selectedRoles.value.length === 0 || selectedRoles.value.includes(user.rol);
+        return nameMatch && roleMatch;
+    });
+});
+
 ////////////////////////////////
 /////// User Pagination ////////
 ////////////////////////////////
 let currentPage = ref(1);
 let usersPerPage = 10;
-let totalPages = computed(() => Math.ceil(users.value.length / usersPerPage));
+let totalPages = computed(() => Math.ceil(filteredUsers.value.length / usersPerPage));
 
 let paginatedUsers = computed(() => {
     const start = (currentPage.value - 1) * usersPerPage;
     const end = start + usersPerPage;
-    return users.value.slice(start, end);
+    return filteredUsers.value.slice(start, end);
 })
 
 function nextPage() {
-    if (currentPage.value < Math.ceil(users.value.length / usersPerPage)) { // Check if we are not on the last page;
+    if (currentPage.value < Math.ceil(filteredUsers.value.length / usersPerPage)) { // Check if we are not on the last page;
         currentPage.value++;
     }
 }
@@ -110,20 +122,19 @@ function previousPage() {
     }
 }
 
-
 onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
         loguedUser.value = user
         if (loguedUser.value && loguedUser.value.rol != 'admin') {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "You don't have permission to access this page.",
-            confirmButtonText: 'Go to home',
-        })
-        router.push('/'); // Redirect to home page
-    }
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "You don't have permission to access this page.",
+                confirmButtonText: 'Go to home',
+            })
+            router.push('/'); // Redirect to home page
+        }
     } else {
         Swal.fire({
             icon: "error",
@@ -133,8 +144,7 @@ onMounted(async () => {
         router.push('/'); // Redirect to login if user is not logged in
     }
 
-    const modalElement = document.getElementById("modalUpdate");
-    modalUpdate = new Modal(modalElement);
+
     modalInstanceUser = new Modal(document.getElementById("deleteModal"));
 });
 </script>
@@ -152,8 +162,12 @@ onMounted(async () => {
             </ol>
         </nav>
     </div>
-    <h2 class="w-75 text-start text-muted">Active users in OpenLearn <span class="badge text-bg-secondary rounded-5">{{
-        users.length + 1 }}</span></h2>
+    <div class="d-flex justify-content-between align-items-center mt-3 w-75">
+        <h2 class="w-75 text-start text-muted">Active users in OpenLearn <span
+                class="badge text-bg-secondary rounded-5">{{
+                    users.length }}</span></h2>
+        <button class="btn" @click="showFilters = !showFilters"><img src="/filter.png" alt="filter"></button>
+    </div>
     <div class="tab-pane fade show active table-responsive w-75 border shadow mt-3" id="home-tab-pane" role="tabpanel"
         aria-labelledby="home-tab" tabindex="0">
         <table class="table table-striped table-hover align-middle p-4" id="userTable">
@@ -188,6 +202,22 @@ onMounted(async () => {
                 </motion.tr>
             </tbody>
         </table>
+        <div class="container" v-if="showFilters">
+            <h4>Filter users:</h4>
+            <div class="border p-3 mb-3">
+                <div class="mb-3">
+                    <label class="form-check-label m-2">
+                        <input type="checkbox" v-model="selectedRoles" value="student" class="form-check-input" />
+                        Students
+                    </label>
+                    <label class="form-check-label m-2">
+                        <input type="checkbox" v-model="selectedRoles" value="teacher" class="form-check-input" />
+                        Teachers
+                    </label>
+                </div>
+                <input type="text" v-model="searchTerm" placeholder="Search users by name" class="form-control mb-3" />
+            </div>
+        </div>
         <nav aria-label="Paginacion de usuarios">
             <ul class="pagination justify-content-center">
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
@@ -202,6 +232,7 @@ onMounted(async () => {
             </ul>
         </nav>
     </div>
+
     <!-- Modal de confirmacion de eliminacion de usuario-->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -215,8 +246,8 @@ onMounted(async () => {
                     permanently.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" @click="deleteUser(selectedUser?.id)">Delete
+                    <button type="button" class="btn " data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn" @click="deleteUser(selectedUser?.id)">Delete
                         user.</button>
                 </div>
             </div>

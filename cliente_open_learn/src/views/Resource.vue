@@ -29,7 +29,6 @@ function getResourceData() {
         .then(data => {
             resourceData.value = data;
             resourceData.value = resourceData.value.find(resource => resource.id == resourceId);
-            console.log(resourceData.value)
         })
         .catch(error => console.log('Error:', error));
 }

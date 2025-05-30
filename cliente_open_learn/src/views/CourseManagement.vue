@@ -16,6 +16,7 @@ const props = defineProps({
 let courses = ref([]);
 const loguedUser = ref(null);
 const courseInscriptions = ref({});
+const searchFilter = ref('');
 
 // We get all the courses
 async function getCourses() {
@@ -222,6 +223,7 @@ function openModal(course_id) {
         updateDataCourse.value.max_students = selectedCourse.value.max_students;
         updateDataCourse.value.subject = selectedCourse.value.subject;
         updateDataCourse.value.duration = selectedCourse.value.duration;
+        updateDataCourse.value.teacher_id = selectedCourse.value.teacher_id;
 
         modalUpdate.show();
     } else {
@@ -229,22 +231,28 @@ function openModal(course_id) {
     }
 }
 
+const filteredCourses = computed(() => {
+    return courses.value.filter(course =>
+        course.title.toLowerCase().includes(searchFilter.value.toLowerCase())
+    )
+})
+
 ////////////////////////////////
 ////// Course pagination ///////
 ////////////////////////////////
 
 let currentPage = ref(1);
 let coursesPerPage = 5;
-let totalPages = computed(() => Math.ceil(courses.value.length / coursesPerPage));
+let totalPages = computed(() => Math.ceil(filteredCourses.value.length / coursesPerPage));
 
 let paginatedCourses = computed(() => {
     const start = (currentPage.value - 1) * coursesPerPage;
     const end = start + coursesPerPage;
-    return courses.value.slice(start, end);
+    return filteredCourses.value.slice(start, end);
 })
 
 function nextPage() {
-    if (currentPage.value < Math.ceil(courses.value.length / coursesPerPage)) {
+    if (currentPage.value < Math.ceil(filteredCourses.value.length / coursesPerPage)) {
         currentPage.value++;
     }
 }
@@ -299,8 +307,16 @@ onMounted(async () => {
     </div>
 
     <main class="container rounded shadow p-3">
-        <h2 class="w-75 text-start text-muted">Active courses in OpenLearn <span
-                class="badge text-bg-secondary rounded-5">{{ courses.length }}</span></h2>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="w-75 text-start text-muted">Active courses in OpenLearn <span
+                    class="badge text-bg-secondary rounded-5">{{ courses.length }}</span></h2>
+            <div class="input-group mt-3 position-relative w-25">
+                <input type="text" v-model="searchFilter" placeholder="Search your interest" name="coursesFiltered"
+                    class="form-control w-75 rounded border-black">
+                <button class="input-group-text"><img src="/lens.png" alt="len" style="height: 2em; width: 2em;">
+                </button>
+            </div>
+        </div>
         <div class="card mb-5" v-for="course in paginatedCourses" :key="course.id">
             <div class="row g-2">
                 <div class="col-12 col-md-3 image d-flex align-items-center justify-content-center">
@@ -337,7 +353,11 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-        <nav aria-label="Paginación de usuarios">
+        <div v-if="courses.length === 0" class="d-flex flex-column align-items-center justify-content-center">
+            <img src="/noData.png" alt="no data">
+            <p class="text-center text-muted">No courses available at the moment.</p>
+        </div>
+        <nav aria-label="Paginación de usuarios" v-if="courses.length !== 0">
             <ul class="pagination justify-content-center">
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
                     <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
@@ -371,8 +391,7 @@ onMounted(async () => {
 
                         <div class="input-group mt-3 position-relative">
                             <label class="input-group-text" for="teacher">Teacher:</label>
-                            <select name="teacher" class="form-control" v-model="updateDataCourse.teacher_id"
-                                :value="updateDataCourse.teacher_id">
+                            <select name="teacher" class="form-control" v-model="updateDataCourse.teacher_id">
                                 <option v-for="teacher in teacherList" :key="teacher.id" :value="teacher.id">
                                     {{ teacher.name }}</option>
                             </select>
@@ -411,8 +430,8 @@ onMounted(async () => {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click="updateCourse(selectedCourse.id)">Save
+                    <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn" @click="updateCourse(selectedCourse.id)">Save
                         changes</button>
                 </div>
             </div>

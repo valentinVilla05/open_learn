@@ -224,80 +224,121 @@ onMounted(() => {
 })
 </script>
 <template>
-  <div v-if="!showCalification" class="container w-100 d-flex flex-row p-4 justify-content-center align-items-center">
-    <section id="questionPanel" class="w-75 shadow-sm border rounded p-4"
-      v-if="questionsList.length && questionsList[currentQuestion]">
-      <h4 class="mb-4">Pregunta {{ currentQuestion + 1 }}</h4>
-      <p class="fs-5 mb-4">{{ questionsList[currentQuestion].statement }}</p>
+  <!-- Main container -->
+  <div v-if="!showCalification" class="container-fluid p-4">
+    <div class="row g-4">
+      <!-- Question panel -->
+      <section
+        id="questionPanel"
+        class="col-12 col-lg-8 shadow-sm border rounded p-4"
+        v-if="questionsList.length && questionsList[currentQuestion]"
+      >
+        <h4 class="mb-4">Pregunta {{ currentQuestion + 1 }}</h4>
+        <p class="fs-5 mb-4">{{ questionsList[currentQuestion].statement }}</p>
 
-      <div class="w-100 d-flex flex-wrap justify-content-between">
-        <motion.div v-for="(answer, index) in shuffledAnswers" :key="index"
-          @click="createAnswer(answer, questionsList[currentQuestion].id)" :class="[
-            'answer',
-            answer === userAnswer?.user_answer && answerState === 'correct' ? 'correctAnswer' : '',
-            answer === userAnswer?.user_answer && answerState === 'incorrect' ? 'incorrectAnswer' : '',
-            answered ? 'disabled-click' : '' // Aplica disabled-click si la pregunta ya fue respondida
-          ]" :whilehover="{ scale: 1.05 }" class="text-center w-50 mb-3 p-3 border rounded cursor-pointer">
-          {{ answer }}
-        </motion.div>
-      </div>
-      <div class="d-flex justify-content-between">
-        <button v-if="currentQuestion > 0" class="btn border border-0" @click="currentQuestion -= 1"
-          :disabled="currentQuestion == 0">
-          Previous Question
-        </button>
-        <button v-if="currentQuestion < questionsList.length - 1" class="btn border border-0"
-          @click="currentQuestion += 1;" :disabled="currentQuestion == questionsList.length - 1">
-          Next Question
-        </button>
-        <button v-if="currentQuestion >= questionsList.length - 1" class="getCalification btn"
-          @click="getCalification(loguedUser.id, exam_id)">
-          Get Calification
-        </button>
-      </div>
-    </section>
+        <div class="row g-3">
+          <motion.div
+            v-for="(answer, index) in shuffledAnswers"
+            :key="index"
+            @click="createAnswer(answer, questionsList[currentQuestion].id)"
+            :class="[
+              'answer',
+              answer === userAnswer?.user_answer && answerState === 'correct' ? 'correctAnswer' : '',
+              answer === userAnswer?.user_answer && answerState === 'incorrect' ? 'incorrectAnswer' : '',
+              answered ? 'disabled-click' : ''
+            ]"
+            :whilehover="{ scale: 1.05 }"
+            class="col-12 col-md-6 text-center p-3 border rounded"
+          >
+            {{ answer }}
+          </motion.div>
+        </div>
 
-    <aside id="questionList" class="ms-auto shadow-sm border rounded p-4" v-if="questionsList.length">
-      <h6 class="mb-3">Listado de Preguntas</h6>
-      <ul class="list-unstyled">
-        <li v-for="(question, index) in questionsList" :key="index" class="mb-2">
-          <div class="questionBoxUnanswered rounded fs-6 text-center btn-sm w-100" @click="currentQuestion = index">
-            Pregunta {{ index + 1 }}
-          </div>
-        </li>
-      </ul>
-    </aside>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-2">
+          <button
+            v-if="currentQuestion > 0"
+            class="btn "
+            @click="currentQuestion -= 1"
+            :disabled="currentQuestion == 0"
+          >
+            Previous Question
+          </button>
+
+          <button
+            v-if="currentQuestion < questionsList.length - 1"
+            class="btn"
+            @click="currentQuestion += 1"
+            :disabled="currentQuestion == questionsList.length - 1"
+          >
+            Next Question
+          </button>
+
+          <button
+            v-if="currentQuestion >= questionsList.length - 1"
+            class="btn getCalification"
+            @click="getCalification(loguedUser.id, exam_id)"
+          >
+            Get Calification
+          </button>
+        </div>
+      </section>
+
+      <!-- Questions List -->
+      <aside
+        id="questionList"
+        class="col-12 col-lg-4 shadow-sm border rounded p-4"
+        v-if="questionsList.length"
+      >
+        <h6 class="mb-3">Listado de Preguntas</h6>
+        <ul class="list-unstyled">
+          <li v-for="(question, index) in questionsList" :key="index" class="mb-2">
+            <div
+              class="questionBoxUnanswered rounded fs-6 text-center btn-sm w-100"
+              @click="currentQuestion = index"
+            >
+              Pregunta {{ index + 1 }}
+            </div>
+          </li>
+        </ul>
+      </aside>
+    </div>
   </div>
 
-  <div v-if="showCalification"
-    class="container w-100 d-flex flex-column p-4 justify-content-center align-items-center bg-white shadow-lg rounded-4 position-relative">
-    <!-- Botón en la esquina superior izquierda del DIV -->
-    <RouterLink to="/" class="btn btn-outline-secondary position-absolute" style="top: 1rem; left: 1rem;">
+  <!-- Calification viewer -->
+  <div
+    v-if="showCalification"
+    class="container d-flex flex-column justify-content-center align-items-center p-4 bg-white shadow-lg rounded-4 position-relative"
+  >
+    <RouterLink to="/" class="btn position-absolute" style="top: 1rem; left: 1rem;">
       Go back Home
     </RouterLink>
 
-    <img :src="calification >= 5 ? '/happy_gilbert.png' : '/dont_give_up_gilbert.png'"
-      :alt="calification >= 5 ? 'approved' : 'try again'" class="mb-4 mt-3" style="max-width: 200px; height: auto;" />
+    <img
+      :src="calification >= 5 ? '/happy_gilbert.png' : '/dont_give_up_gilbert.png'"
+      :alt="calification >= 5 ? 'approved' : 'try again'"
+      class="mb-4 mt-3"
+      style="max-width: 200px; height: auto;"
+    />
 
     <h2 class="text-primary fw-bold mb-2">You got:</h2>
     <p class="fs-1 fw-bold text-dark">{{ calification || 0 }}</p>
 
     <p class="fs-5 text-center" :class="calification < 5 ? 'text-muted' : 'text-success'">
-      {{ calification < 5 ? "Don't give up, you'll get it next time!" : "🎉 Congratulations! You got the certificate!"
-        }} </p>
+      {{ calification < 5 ? "Don't give up, you'll get it next time!" : "🎉 Congratulations! You got the certificate!" }}
+    </p>
 
-        <button v-if="calification >= 5" @click="seeCertificate(loguedUser.id, course_id)"
-          class="btn mt-4 px-4 py-2 fw-semibold">
-          🎓 Click here to get it!
-        </button>
+    <button
+      v-if="calification >= 5"
+      @click="seeCertificate(loguedUser.id, course_id)"
+      class="btn mt-4 px-4 py-2 fw-semibold"
+    >
+      🎓 Click here to get it!
+    </button>
 
-        <small class="text-muted mt-3 text-center" v-if="calification >= 5">
-          Once you click, it will appear in your certificates collection.
-        </small>
+    <small class="text-muted mt-3 text-center" v-if="calification >= 5">
+      Once you click, it will appear in your certificates collection.
+    </small>
   </div>
-
-
-
 </template>
 
 <style scoped>
@@ -318,31 +359,20 @@ onMounted(() => {
   background-color: crimson;
 }
 
-.neutralAnswer {
-  background-color: rgb(203, 203, 203);
-}
-
 .disabled-click {
   pointer-events: none;
-  /* Avoid the click */
   opacity: 0.7;
   cursor: not-allowed;
-  /* Change the cursor */
 }
 
 .questionBoxUnanswered {
   background-color: rgb(211, 211, 211);
-}
-
-.questionBoxCorrect {
-  background-color: #6EB183;
-}
-
-.questionBoxIncorrect {
-  background-color: crimson;
+  cursor: pointer;
+  padding: 0.5rem;
 }
 
 .getCalification {
   background-color: #FF9FB2 !important;
+  border: none;
 }
 </style>

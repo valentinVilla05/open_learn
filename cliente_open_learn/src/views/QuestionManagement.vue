@@ -58,7 +58,6 @@ function getQuestions() {
                 return question.exam_id === null ||
                     examList.value.some(exam => exam.id === question.exam_id);
             });
-            console.log(questionsList.value);
         })
         .catch(error => console.log('Error:', error));
 }

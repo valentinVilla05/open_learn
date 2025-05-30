@@ -1,6 +1,5 @@
 <script setup>
 import Header from '@/components/Header.vue';
-import Footer from '@/components/Footer.vue';
 import router from '@/router';
 import { ref, onMounted } from 'vue';
 import Swal from 'sweetalert2';
@@ -133,8 +132,6 @@ onBeforeUnmount(() => {
 
       </div>
     </div>
-
-    <Footer />
   </div>
 </template>
 <style scoped>
