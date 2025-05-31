@@ -6,7 +6,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://open-learn-daw.netlify.app/'],
+    'allowed_origins' => ['https://open-learn-daw.netlify.app'],
 
     'allowed_origins_patterns' => [],
 
