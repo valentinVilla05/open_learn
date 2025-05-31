@@ -12,12 +12,14 @@ WORKDIR /var/www/html
 # Esto es lo que lleva tu código Laravel del repositorio al contenedor.
 COPY . .
 
-# Copia el archivo de configuración de Nginx específico para Laravel.
-# Este archivo lo crearemos en el siguiente paso.
-COPY .docker/nginx/default.conf /etc/nginx/sites-available/default.conf
-# Crea un enlace simbólico para activar esta configuración de Nginx.
-# Esto asegura que Nginx use tu configuración personalizada para Laravel.
-RUN ln -sf /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+# Copia el archivo de configuración de Nginx específico para Laravel a una ubicación temporal.
+# No lo copiamos directamente a sites-available todavía porque necesitamos procesar las variables de entorno.
+COPY .docker/nginx/default.conf /etc/nginx/conf.d/default.conf.template
+
+# Usa envsubst para reemplazar las variables de entorno (como ${PORT})
+# en la plantilla de Nginx y guardar el resultado en el archivo de configuración final.
+RUN envsubst '$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/sites-enabled/default.conf \
+    && rm /etc/nginx/conf.d/default.conf.template # Elimina la plantilla temporal
 
 # Define variables de entorno para la aplicación Laravel.
 # Aunque estas están aquí, las variables configuradas en Render tendrán prioridad.
