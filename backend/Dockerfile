@@ -1,59 +1,62 @@
-# Usa una imagen base que incluye Nginx y PHP-FPM, ideal para Laravel.
-# Puedes cambiar 'latest' por una versión específica de PHP como 'php8.2' o 'php8.3'
-# si tienes requisitos de versión específicos para tu Laravel.
+# Usa una imagen base con Nginx y PHP-FPM, ideal para Laravel.
+# Puedes cambiar 'latest' por una versión específica de PHP (ej. 'php8.2' o 'php8.3')
+# si tu proyecto Laravel tiene requisitos de versión específicos.
 FROM richarvey/nginx-php-fpm:latest
 
 # Establece el directorio de trabajo dentro del contenedor Docker.
-# Esto significa que los comandos subsiguientes se ejecutarán desde esta ruta.
+# Todos los comandos siguientes se ejecutarán a partir de esta ruta.
 WORKDIR /var/www/html
 
-# Copia el contenido de tu directorio 'backend' (desde la raíz del contexto de construcción de Docker)
-# al directorio de trabajo actual dentro del contenedor (/var/www/html).
-# Esto es lo que lleva tu código Laravel del repositorio al contenedor.
+# Copia todo el contenido de tu directorio 'backend' desde tu repositorio
+# al directorio de trabajo dentro del contenedor (/var/www/html).
 COPY . .
 
-# Copia el archivo de configuración de Nginx específico para Laravel a una ubicación temporal.
-# No lo copiamos directamente a sites-available todavía porque necesitamos procesar las variables de entorno.
+# --- Inicio de la sección para manejar la configuración de Nginx con variables de entorno ---
+
+# Instala 'gettext-base', que incluye el comando 'envsubst'.
+# Esto es necesario para que Nginx pueda interpretar la variable ${PORT} de Render.
+RUN apt-get update && apt-get install -y gettext-base \
+    && rm -rf /var/lib/apt/lists/* # Limpia la caché de apt para reducir el tamaño de la imagen
+
+# Copia el archivo de configuración de Nginx personalizado a una ubicación temporal.
+# Nginx no procesa variables de entorno directamente, así que necesitamos un paso intermedio.
 COPY .docker/nginx/default.conf /etc/nginx/conf.d/default.conf.template
 
-# Usa envsubst para reemplazar las variables de entorno (como ${PORT})
-# en la plantilla de Nginx y guardar el resultado en el archivo de configuración final.
+# Usa 'envsubst' para reemplazar la variable '$PORT' en la plantilla de Nginx.
+# El resultado se guarda en el archivo de configuración final de Nginx,
+# que estará en la ubicación esperada por Nginx.
+# Luego, elimina la plantilla temporal.
 RUN envsubst '$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/sites-enabled/default.conf \
-    && rm /etc/nginx/conf.d/default.conf.template # Elimina la plantilla temporal
+    && rm /etc/nginx/conf.d/default.conf.template
 
-# Define variables de entorno para la aplicación Laravel.
-# Aunque estas están aquí, las variables configuradas en Render tendrán prioridad.
-# APP_ENV: Establece el entorno de la aplicación a producción.
-# APP_DEBUG: Deshabilita el modo de depuración para producción.
-# LOG_CHANNEL: Dirige los logs de Laravel a la salida estándar del contenedor (para Render).
-# WEBROOT: Indica a Nginx dónde está el directorio público de tu aplicación Laravel.
+# --- Fin de la sección de Nginx/envsubst ---
+
+# Define variables de entorno para la aplicación Laravel dentro del contenedor.
+# Estas pueden ser sobrescritas por las variables que configures en Render, lo cual es lo ideal.
 ENV APP_ENV production
 ENV APP_DEBUG false
 ENV LOG_CHANNEL stderr
-ENV WEBROOT /var/www/html/public
+ENV WEBROOT /var/www/html/public # Indispensable para que Nginx sepa dónde está el 'public' de Laravel.
 
-# Permite que Composer se ejecute como el usuario root, lo cual es necesario
-# en algunos entornos Docker para la instalación de dependencias.
+# Permite que Composer se ejecute como el usuario root, necesario en algunos entornos Docker.
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Instala las dependencias de PHP definidas en composer.json.
-# --no-dev: Omite las dependencias de desarrollo.
-# --optimize-autoloader: Optimiza la carga de clases para un mejor rendimiento.
+# Instala las dependencias de PHP usando Composer.
+# --no-dev: Excluye dependencias de desarrollo.
+# --optimize-autoloader: Optimiza la carga de clases para producción.
 RUN composer install --no-dev --optimize-autoloader
 
-# Ejecuta los comandos de optimización de Laravel.
-# config:cache: Cachea la configuración de la aplicación.
-# route:cache: Cachea las definiciones de rutas.
-# view:cache: Cachea las vistas compiladas.
+# Ejecuta las optimizaciones de Laravel para un mejor rendimiento en producción.
+# Esto cachea la configuración, rutas y vistas.
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
-# Expone el puerto 80 del contenedor, que es donde Nginx estará escuchando
-# para las solicitudes HTTP.
+# Expone el puerto 80 del contenedor, que es donde Nginx estará escuchando internamente.
+# Render mapeará este puerto al puerto externo asignado (${PORT}).
 EXPOSE 80
 
 # Define el comando que se ejecutará cuando el contenedor se inicie.
-# /start.sh es un script proporcionado por la imagen base richarvey/nginx-php-fpm
-# que se encarga de iniciar Nginx y PHP-FPM.
+# '/start.sh' es un script proporcionado por la imagen base richarvey/nginx-php-fpm
+# que se encarga de iniciar Nginx y PHP-FPM de manera conjunta.
 CMD ["/start.sh"]
