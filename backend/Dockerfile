@@ -15,7 +15,7 @@ COPY . .
 
 # Instala 'gettext-base', que incluye el comando 'envsubst'.
 # Esto es necesario para que Nginx pueda interpretar la variable ${PORT} de Render.
-RUN apk update && apk add gettext-misc \
+RUN apk update && apk add gettext \
     && rm -rf /var/cache/apk/* # Limpia la caché de apt para reducir el tamaño de la imagen
 
 # Copia el archivo de configuración de Nginx personalizado a una ubicación temporal.
