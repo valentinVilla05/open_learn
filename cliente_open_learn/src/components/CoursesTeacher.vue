@@ -15,7 +15,7 @@ const coursesAssigned = ref([]);
 
 // Get all the courses
 function getCourses() {
-    fetch('http://localhost:8000/api/courses', {
+    fetch('https://apiopenlearn.onrender.com/api/courses', {
         method: 'GET',
     }).then(response => response.json())
         .then(data =>

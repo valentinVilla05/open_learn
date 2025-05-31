@@ -28,7 +28,7 @@ const updateQuestion = ref({
 });
 
 function getCourses() { // We need to filter the courses that teaches the teacher loggued
-    fetch('http://localhost:8000/api/courses', {
+    fetch('https://apiopenlearn.onrender.com/api/courses', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -39,7 +39,7 @@ function getCourses() { // We need to filter the courses that teaches the teache
 }
 
 function getExamsTeacher() {
-    fetch('http://localhost:8000/api/exams', {
+    fetch('https://apiopenlearn.onrender.com/api/exams', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -50,7 +50,7 @@ function getExamsTeacher() {
 }
 
 function getQuestions() {
-    fetch('http://localhost:8000/api/questions', {
+    fetch('https://apiopenlearn.onrender.com/api/questions', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -63,7 +63,7 @@ function getQuestions() {
 }
 
 function editQuestion(question_id) {
-    fetch(`http://localhost:8000/api/questions/${question_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/questions/${question_id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ function deleteQuestion(question_id) {
         confirmButtonText: "Yes, delete it!"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch(`http://localhost:8000/api/questions/${question_id}`, {
+            fetch(`https://apiopenlearn.onrender.com/api/questions/${question_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

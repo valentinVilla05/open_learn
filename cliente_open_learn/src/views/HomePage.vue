@@ -24,7 +24,7 @@ async function getUser(token) {
   }
 
   try {
-    const response = await fetch('http://localhost:8000/api/user', {
+    const response = await fetch('https://apiopenlearn.onrender.com/api/user', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -51,7 +51,7 @@ async function getUser(token) {
 const allCourses = ref([]); // Variable to store all courses
 
 function getAllCourses() {
-  fetch('http://localhost:8000/api/courses', {
+  fetch('https://apiopenlearn.onrender.com/api/courses', {
     method: 'GET',
   }).then(response => response.json())
     .then(data => {
@@ -73,7 +73,7 @@ watch(
 const userCourses = ref([]); // Variable to store the courses of the logged user
 
 function getCoursesFromUser(user_id) {
-  fetch(`http://localhost:8000/api/inscriptions/user/${user_id}`, {
+  fetch(`https://apiopenlearn.onrender.com/api/inscriptions/user/${user_id}`, {
     method: 'GET',
   }).then(response => response.json())
     .then(data => {

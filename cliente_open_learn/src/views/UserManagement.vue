@@ -23,7 +23,7 @@ let users = ref([]);
 // Conseguimos un array con los usuarios mediante un fetch;
 async function getData() {
     try {
-        const response = await fetch(`http://localhost:8000/api/users`);
+        const response = await fetch(`https://apiopenlearn.onrender.com/api/users`);
 
         if (!response.ok) {
             throw new Error("Error fetching data");
@@ -39,7 +39,7 @@ onMounted(getData);
 
 // Function to update the Rol
 function updateRol(user_id, rol) {
-    fetch(`http://localhost:8000/api/users/${user_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/users/${user_id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ function openModal(user) {
 
 // Function to delete the user
 function deleteUser(user_id) {
-    fetch(`http://localhost:8000/api/users/${user_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/users/${user_id}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${props.userAuth}`,

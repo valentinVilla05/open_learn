@@ -36,7 +36,7 @@ const newAnswer = ref({
 
 // Get the questions of the exam
 function getQuestions(exam_id) {
-  fetch(`http://localhost:8000/api/questions/exam/${exam_id}`, {
+  fetch(`https://apiopenlearn.onrender.com/api/questions/exam/${exam_id}`, {
     method: 'GET',
   }).then(response => response.json())
     .then(data => {
@@ -56,7 +56,7 @@ function createAnswer(answer, question_id) {
   newAnswer.value.question_id = question_id
   newAnswer.value.user_answer = answer;
 
-  fetch('http://localhost:8000/api/answers', {
+  fetch('https://apiopenlearn.onrender.com/api/answers', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ function createAnswer(answer, question_id) {
 
 // Correct the answer
 function correctAnswer(answer_id) {
-  return fetch(`http://localhost:8000/api/answers/${answer_id}`, {
+  return fetch(`https://apiopenlearn.onrender.com/api/answers/${answer_id}`, {
     method: 'GET',
   }).then(response => response.json())
     .then(data => {
@@ -105,7 +105,7 @@ function checkQuestion(answer_id) {
 // Function to check if the question has been answered by the user before
 async function hasAnswered(user_id, exam_id, question_id) {
   try {
-    fetch(`http://localhost:8000/api/answers/${user_id}/${exam_id}/${question_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/answers/${user_id}/${exam_id}/${question_id}`, {
       method: 'GET',
     }).then(response => response.json())
       .then(data => {
@@ -157,7 +157,7 @@ function createCalification(user_id, exam_id, calification) {
     calification: calification
   };
 
-  fetch('http://localhost:8000/api/califications', {
+  fetch('https://apiopenlearn.onrender.com/api/califications', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ function createCalification(user_id, exam_id, calification) {
 
 function getCalification(user_id, exam_id) {
   localStorage.removeItem('exam_status')
-  fetch(`http://localhost:8000/api/answers/score/${user_id}/${exam_id}`, {
+  fetch(`https://apiopenlearn.onrender.com/api/answers/score/${user_id}/${exam_id}`, {
     method: 'GET',
   }).then(response => response.json())
     .then(data => {
@@ -190,7 +190,7 @@ function getCalification(user_id, exam_id) {
 }
 
 function seeCertificate(user_id, course_id) {
-  fetch(`http://localhost:8000/api/certificates/${user_id}/${course_id}`, {
+  fetch(`https://apiopenlearn.onrender.com/api/certificates/${user_id}/${course_id}`, {
     method: 'GET',
   })
     .then(response => {

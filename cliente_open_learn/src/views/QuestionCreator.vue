@@ -34,7 +34,7 @@ function cleanForm() {
     newQuestion.value.incorrect_answer_3 = '';
 }
 function createQuestion() {
-    fetch('http://localhost:8000/api/questions', {
+    fetch('https://apiopenlearn.onrender.com/api/questions', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

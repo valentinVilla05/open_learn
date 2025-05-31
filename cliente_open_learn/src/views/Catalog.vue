@@ -8,7 +8,7 @@ const searchFilter = ref('');
 
 
 function getAllCourses() {
-    fetch('http://localhost:8000/api/courses', {
+    fetch('https://apiopenlearn.onrender.com/api/courses', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -36,7 +36,7 @@ async function getUser(token) {
     }
 
     try {
-        const response = await fetch('http://localhost:8000/api/user', {
+        const response = await fetch('https://apiopenlearn.onrender.com/api/user', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

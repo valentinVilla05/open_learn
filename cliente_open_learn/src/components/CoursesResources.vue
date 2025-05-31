@@ -40,7 +40,7 @@ const newResourceData = ref({
 
 
 function getResources(course_id) {
-    fetch(`http://localhost:8000/api/resources/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/resources/${course_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -53,7 +53,7 @@ function getResources(course_id) {
 function createResource() {
     newResourceData.value.course_id = parseInt(props.course_id);
     console.log(newResourceData.value);
-    fetch('http://localhost:8000/api/resources', {
+    fetch('https://apiopenlearn.onrender.com/api/resources', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ function createResource() {
 }
 
 function updateResource(resource_id) {
-    fetch(`http://localhost:8000/api/resources/${resource_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/resources/${resource_id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ function deleteResource(resource_id) {
         confirmButtonText: "Yes, delete it!"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch(`http://localhost:8000/api/resources/${resource_id}`, {
+            fetch(`https://apiopenlearn.onrender.com/api/resources/${resource_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

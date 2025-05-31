@@ -14,14 +14,14 @@ const certificates = ref(null);
 const courses = ref(null)
 
 function getCertificates(user_id) {
-    fetch(`http://localhost:8000/api/certificates/user/${user_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/certificates/user/${user_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => certificates.value = data)
         .catch(error => console.log('Error:', error));
 }
 function getCourses() {
-    fetch('http://localhost:8000/api/courses', {
+    fetch('https://apiopenlearn.onrender.com/api/courses', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -31,7 +31,7 @@ function getCourses() {
 }
 
 function seeCertificate(user_id, course_id) {
-    fetch(`http://localhost:8000/api/certificates/${user_id}/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/certificates/${user_id}/${course_id}`, {
         method: 'GET',
     })
         .then(response => {

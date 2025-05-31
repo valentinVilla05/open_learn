@@ -23,7 +23,7 @@ const courseData = ref(null);
 
 // Get the resource data
 function getResourceData() {
-    fetch(' http://localhost:8000/api/resources ', {
+    fetch('https://apiopenlearn.onrender.com/api/resources ', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -34,7 +34,7 @@ function getResourceData() {
 }
 
 function getCourseName(course_id) {
-    fetch(`http://localhost:8000/api/courses/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/courses/${course_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -44,7 +44,7 @@ function getCourseName(course_id) {
 }
 
 function getInscriptions(user_id) {
-    return fetch(`http://localhost:8000/api/inscriptions/user/${user_id}`, {
+    return fetch(`https://apiopenlearn.onrender.com/api/inscriptions/user/${user_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {

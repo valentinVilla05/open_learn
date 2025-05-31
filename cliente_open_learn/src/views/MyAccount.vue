@@ -21,7 +21,7 @@ async function getUser(token) {
     }
 
     try {
-        const response = await fetch('http://localhost:8000/api/user', {
+        const response = await fetch('https://apiopenlearn.onrender.com/api/user', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

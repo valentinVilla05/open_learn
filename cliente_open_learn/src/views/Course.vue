@@ -40,7 +40,7 @@ const newInscription = ref({
 
 // Get the course data
 function getCourse(courseId) {
-    return fetch(`http://localhost:8000/api/courses/${courseId}`, {
+    return fetch(`https://apiopenlearn.onrender.com/api/courses/${courseId}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => course.value = data)
@@ -48,7 +48,7 @@ function getCourse(courseId) {
 }
 
 function getInscriptions(user_id) {
-    return fetch(`http://localhost:8000/api/inscriptions/user/${user_id}`, {
+    return fetch(`https://apiopenlearn.onrender.com/api/inscriptions/user/${user_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => userCoursesList.value = data)
@@ -56,7 +56,7 @@ function getInscriptions(user_id) {
 }
 
 function getAllInscriptions(course_id) {
-    fetch(`http://localhost:8000/api/inscriptions/course/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/inscriptions/course/${course_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => allInscriptions.value = data)
@@ -64,7 +64,7 @@ function getAllInscriptions(course_id) {
 }
 
 function getResources(course_id) {
-    fetch(`http://localhost:8000/api/resources/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/resources/${course_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => resourcesList.value = data)
@@ -72,7 +72,7 @@ function getResources(course_id) {
 }
 
 async function getTeacher() {
-    return fetch('http://localhost:8000/api/users', {
+    return fetch('https://apiopenlearn.onrender.com/api/users', {
         method: 'GET',
     })
         .then(response => response.json())
@@ -85,7 +85,7 @@ async function getTeacher() {
 async function checkCapacity(course_id) {
     const usersEnrolled = ref(null);
 
-    await fetch(`http://localhost:8000/api/inscriptions/course/${course_id}`, {
+    await fetch(`https://apiopenlearn.onrender.com/api/inscriptions/course/${course_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -105,7 +105,7 @@ function enrrollUser(course_id, user_id) {
         newInscription.value.user_id = user_id;
         newInscription.value.course_id = course_id;
 
-        fetch('http://localhost:8000/api/inscriptions', {
+        fetch('https://apiopenlearn.onrender.com/api/inscriptions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ function enrrollUser(course_id, user_id) {
 }
 
 function getUsers() {
-    fetch('http://localhost:8000/api/users', {
+    fetch('https://apiopenlearn.onrender.com/api/users', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => allIUsers.value = data)

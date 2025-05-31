@@ -44,7 +44,7 @@ const toggleSwitch = () => {
 }
 
 function checkExamExists() {
-    fetch(`http://localhost:8000/api/exams/course/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/exams/course/${course_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -65,7 +65,7 @@ function checkExamExists() {
 }
 
 function getCourseName(course_id) {
-    fetch(`http://localhost:8000/api/courses/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/courses/${course_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -76,7 +76,7 @@ function getCourseName(course_id) {
 
 async function getQuestions() {
     try {
-        const response = await fetch('http://localhost:8000/api/questions');
+        const response = await fetch('https://apiopenlearn.onrender.com/api/questions');
         const data = await response.json();
         allQuestionList.value = data.filter(question => question.exam_id == null);
     } catch (error) {
@@ -86,7 +86,7 @@ async function getQuestions() {
 
 async function getAddedQuestion(exam_id) {
     try {
-        const response = await fetch(`http://localhost:8000/api/questions/exam/${exam_id}`);
+        const response = await fetch(`https://apiopenlearn.onrender.com/api/questions/exam/${exam_id}`);
         const data = await response.json();
         addedQuestions.value = data;
     } catch (error) {
@@ -100,7 +100,7 @@ async function addQuestion(question_id) {
     };
 
     try {
-        await fetch(`http://localhost:8000/api/questions/${question_id}`, {
+        await fetch(`https://apiopenlearn.onrender.com/api/questions/${question_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ async function removeQuestion(question_id) {
     };
 
     try {
-        await fetch(`http://localhost:8000/api/questions/${question_id}`, {
+        await fetch(`https://apiopenlearn.onrender.com/api/questions/${question_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ function createExam() {
         'is_active': false
     };
     newExam.title = "FinalHoot " + courseData?.value.title
-    fetch('http://localhost:8000/api/exams', {
+    fetch('https://apiopenlearn.onrender.com/api/exams', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -184,7 +184,7 @@ function updateExamStatus(exam_id) {
     const examStatus = {
         'is_active': isExamActive.value
     };
-    fetch(`http://localhost:8000/api/exams/${exam_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/exams/${exam_id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

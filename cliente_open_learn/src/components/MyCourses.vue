@@ -19,7 +19,7 @@ const userCoursesList = ref(null);
 
 // Get all the courses
 function getCourses() {
-    fetch('http://localhost:8000/api/courses', {
+    fetch('https://apiopenlearn.onrender.com/api/courses', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => allCourses.value = data)
@@ -27,7 +27,7 @@ function getCourses() {
 }
 // Get all the courses from the user
 function userCourses(user_id) {
-    fetch(`http://localhost:8000/api/inscriptions/user/${user_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/inscriptions/user/${user_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => userCoursesList.value = data)
@@ -42,7 +42,7 @@ const list = computed(() => {
 
 // Get the certificates from the user to know if the course is completed
 function getCertificates(user_id) {
-    fetch(`http://localhost:8000/api/certificates/user/${user_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/certificates/user/${user_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {

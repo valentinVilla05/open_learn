@@ -21,7 +21,7 @@ const graduated = ref(false)
 
 // Get all the exams of this course
 function getExams(course_id) {
-    fetch(`http://localhost:8000/api/exams/course/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/exams/course/${course_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -32,7 +32,7 @@ function getExams(course_id) {
 }
 // Get the user's califications
 function loadUserCalifications(user_id) {
-    fetch(`http://localhost:8000/api/califications/user/${user_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/califications/user/${user_id}`, {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {

@@ -71,7 +71,7 @@ function validateData() {
 
 // Function to get the user information
 function getUser(token) {
-   fetch('http://localhost:8000/api/user', {
+   fetch('https://apiopenlearn.onrender.com/api/user', {
       method: 'GET',
       headers: {
          'Authorization': `Bearer ${token}`,
@@ -104,7 +104,7 @@ async function login() {
    };
 
    try {
-      const response = await fetch('http://localhost:8000/api/login', {
+      const response = await fetch('https://apiopenlearn.onrender.com/api/login', {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#?!$%^&*\-+_]).{8,}
 const emailList = ref([]);
 
 async function getUsers() {
-   fetch('http://localhost:8000/api/users', {
+   fetch('https://apiopenlearn.onrender.com/api/users', {
       method: 'GET',
    }).then(reponse => reponse.json())
       .then(data => emailList.value = data)
@@ -210,7 +210,7 @@ async function signUp() {
       password: passwordUserSignUp.value,
    }
 
-   fetch('http://localhost:8000/api/register', {
+   fetch('https://apiopenlearn.onrender.com/api/register', {
       method: 'POST',
       headers: {
          'Content-Type': 'application/json'

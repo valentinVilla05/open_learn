@@ -22,7 +22,7 @@ const newComment = ref({
 });
 
 function getUsersName() {
-    fetch('http://localhost:8000/api/users')
+    fetch('https://apiopenlearn.onrender.com/api/users')
         .then(res => res.json())
         .then(data => userList.value = data)
         .catch(error => console.error('Error:', error));
@@ -34,14 +34,14 @@ function getUserName(user_id) {
 }
 
 function getComments() {
-    fetch(`http://localhost:8000/api/comments/resource/${props.resourceId}`)
+    fetch(`https://apiopenlearn.onrender.com/api/comments/resource/${props.resourceId}`)
         .then(res => res.json())
         .then(data => commentsList.value = data)
         .catch(error => console.error('Error:', error));
 }
 
 function postComment(commentData) {
-    fetch('http://localhost:8000/api/comments', {
+    fetch('https://apiopenlearn.onrender.com/api/comments', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ function postComment(commentData) {
 }
 
 function deleteComment(comment_id) {
-    fetch(`http://localhost:8000/api/comments/${comment_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/comments/${comment_id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ const examList = ref([]);
 const coursesList = ref([]);
 
 function getCourses() { // We need to filter the courses that teaches the teacher loggued
-    fetch('http://localhost:8000/api/courses', {
+    fetch('https://apiopenlearn.onrender.com/api/courses', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -28,7 +28,7 @@ function getCourses() { // We need to filter the courses that teaches the teache
 }
 
 function getExamsTeacher() {
-    fetch('http://localhost:8000/api/exams', {
+    fetch('https://apiopenlearn.onrender.com/api/exams', {
         method: 'GET',
     }).then(response => response.json())
         .then(data => {
@@ -49,7 +49,7 @@ function deleteExam(examId) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch(`http://localhost:8000/api/exams/${examId}`, {
+            fetch(`https://apiopenlearn.onrender.com/api/exams/${examId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

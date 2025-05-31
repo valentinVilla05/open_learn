@@ -21,7 +21,7 @@ const searchFilter = ref('');
 // We get all the courses
 async function getCourses() {
     try {
-        fetch('http://localhost:8000/api/courses')
+        fetch('https://apiopenlearn.onrender.com/api/courses')
             .then(response => response.json())
             .then(data => {
                 courses.value = data
@@ -35,7 +35,7 @@ async function getCourses() {
 }
 
 function getInscriptions(course_id) {
-    fetch(`http://localhost:8000/api/inscriptions/course/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/inscriptions/course/${course_id}`, {
         method: 'GET',
     })
         .then(response => response.json())
@@ -91,7 +91,7 @@ function deleteCourse(course_id, course_title) {
                                 clearInterval(timerInterval);
                             }
                         });
-                        fetch(`http://localhost:8000/api/courses/${course_id}`, {
+                        fetch(`https://apiopenlearn.onrender.com/api/courses/${course_id}`, {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ function deleteCourse(course_id, course_title) {
                         clearInterval(timerInterval);
                     }
                 });
-                fetch(`http://localhost:8000/api/courses/${course_id}`, {
+                fetch(`https://apiopenlearn.onrender.com/api/courses/${course_id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ const teacherList = ref([]) // Get all the teachers
 const teacherName = ref(null)
 
 function getTeacher() {
-    fetch('http://localhost:8000/api/users', {
+    fetch('https://apiopenlearn.onrender.com/api/users', {
         method: 'GET',
     })
         .then(response => response.json())
@@ -185,7 +185,7 @@ const updateDataCourse = ref({
 });
 
 function updateCourse(course_id) {
-    fetch(`http://localhost:8000/api/courses/${course_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/courses/${course_id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

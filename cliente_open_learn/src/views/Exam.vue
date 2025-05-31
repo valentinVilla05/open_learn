@@ -52,7 +52,7 @@ function loadQuestions() {
 
 // Before start the exam, we delete every answer that the user has made
 function deleteAnswer(user_id, exam_id) {
-    fetch(`http://localhost:8000/api/answers/${user_id}/${exam_id}`, {
+    fetch(`https://apiopenlearn.onrender.com/api/answers/${user_id}/${exam_id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

@@ -55,7 +55,7 @@ function cleanForm() {
 const teacherList = ref([]) // Get all the teachers
 
 function getTeacher() {
-    fetch('http://localhost:8000/api/users', {
+    fetch('https://apiopenlearn.onrender.com/api/users', {
         method: 'GET',
     })
         .then(response => response.json())
@@ -73,7 +73,7 @@ function createCourse() {
     if (courseData.value.image === '') {
         courseData.value.image = null;
     }
-    fetch('http://localhost:8000/api/courses', {
+    fetch('https://apiopenlearn.onrender.com/api/courses', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
