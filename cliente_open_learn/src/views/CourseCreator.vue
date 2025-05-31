@@ -185,13 +185,13 @@ onMounted(async () => {
         <div
             class="container shadow rounded w-50 h-75 border d-flex justify-content-center align-items-center flex-column mt-3">
             <div class="input-group mt-3 position-relative">
-                <label class="input-group-text" for="title">Title:*</label>
+                <label class="input-group-text" for="title">Title:<span style="color: red;">*</span></label>
                 <input type="text" name="title" placeholder="Example: HTML5 & CSS3" class="form-control"
                     v-model="courseData.title" />
             </div>
 
             <div class="input-group mt-3 position-relative">
-                <label class="input-group-text" for="teacher">Teacher:*</label>
+                <label class="input-group-text" for="teacher">Teacher:<span style="color: red;">*</span></label>
                 <select name="teacher" class="form-control" v-model="courseData.teacher_id">
                     <option v-for="teacher in teacherList" :key="teacher.id" :value="teacher.id">{{ teacher.name }}
                     </option>
@@ -199,13 +199,13 @@ onMounted(async () => {
             </div>
 
             <div class="input-group mt-3 position-relative h-auto">
-                <label class="input-group-text" for="description">Description:*</label>
+                <label class="input-group-text" for="description">Description:<span style="color: red;">*</span></label>
                 <textarea type="text" name="description" placeholder="Learn everything about..." class="form-control"
                     v-model="courseData.description" />
             </div>
 
             <div class="input-group mt-3 mb-3 position-relative">
-                <label class="input-group-text" for="privacy">Privacy:*</label>
+                <label class="input-group-text" for="privacy">Privacy:<span style="color: red;">*</span></label>
                 <select name="privacy" class="form-control" v-model="courseData.privacy">
                     <option value="public">Public</option>
                     <option value="private">Private</option>
@@ -234,11 +234,11 @@ onMounted(async () => {
                 </div>
             </div>
             <div class="input-group mt-3 position-relative">
-                <label class="input-group-text" for="max_students">Max. Students:*</label>
+                <label class="input-group-text" for="max_students">Max. Students:<span style="color: red;">*</span></label>
                 <input type="number" min="1" name="max_students" class="form-control" v-model="courseData.max_students">
             </div>
             <div class="input-group mt-3 position-relative">
-                <label class="input-group-text" for="subject">Subject:*</label>
+                <label class="input-group-text" for="subject">Subject:<span style="color: red;">*</span></label>
                 <input type="text" name="subject" placeholder="Example: Frontend" class="form-control"
                     v-model="courseData.subject">
             </div>

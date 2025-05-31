@@ -60,49 +60,51 @@ function deleteCourse(course_id, course_title) {
             cancelButtonColor: "#d33",
             confirmButtonText: "I am sure"
         }).then((result) => {
-            Swal.fire({
-                title: "Are you sure you want to delete this course?",
-                text: "All the resources that belongs to this course will be deleted too.",
-                imageUrl: "/deleteCourse.png",
-                imageWidth: 150,
-                imageHeight: 150,
-                showCancelButton: true,
-                confirmButtonColor: "red",
-                cancelButtonColor: "gray",
-                confirmButtonText: "Delete"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    let timerInterval;
-                    Swal.fire({
-                        title: "Course deleted",
-                        text: "The course \"" + course_title + "\" has been deleted succesfully.",
-                        icon: "success",
-                        timer: 2000,
-                        timerProgressBar: true,
-                        didOpen: () => {
-                            Swal.showLoading();
-                            const timer = Swal.getPopup().querySelector("b");
-                            timerInterval = setInterval(() => {
-                                timer.textContent = `${Swal.getTimerLeft()}`;
-                            }, 100);
-                        },
-                        willClose: () => {
-                            clearInterval(timerInterval);
-                        }
-                    });
-                    fetch(`http://localhost:8000/api/courses/${course_id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${props.userAuth}`,
-                            'Accept': 'application/json',
-                        },
-                    })
-                        .then(response => response.json())
-                        .then(() => getCourses())
-                        .catch(error => console.error('Error:', error));
-                }
-            });
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Are you sure you want to delete this course?",
+                    text: "All the resources that belongs to this course will be deleted too.",
+                    imageUrl: "/deleteCourse.png",
+                    imageWidth: 150,
+                    imageHeight: 150,
+                    showCancelButton: true,
+                    confirmButtonColor: "red",
+                    cancelButtonColor: "gray",
+                    confirmButtonText: "Delete"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let timerInterval;
+                        Swal.fire({
+                            title: "Course deleted",
+                            text: "The course \"" + course_title + "\" has been deleted succesfully.",
+                            icon: "success",
+                            timer: 2000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const timer = Swal.getPopup().querySelector("b");
+                                timerInterval = setInterval(() => {
+                                    timer.textContent = `${Swal.getTimerLeft()}`;
+                                }, 100);
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        });
+                        fetch(`http://localhost:8000/api/courses/${course_id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${props.userAuth}`,
+                                'Accept': 'application/json',
+                            },
+                        })
+                            .then(response => response.json())
+                            .then(() => getCourses())
+                            .catch(error => console.error('Error:', error));
+                    }
+                });
+            }
         });
     } else {
         Swal.fire({

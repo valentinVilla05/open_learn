@@ -82,15 +82,16 @@ onMounted(async () => {
 });
 </script>
 <template>
-
-        <label class="form-check-label m-2">
-            <input type="checkbox" v-model="selectedCourses" value="Finished" class="form-check-input" />
-            Finished
+    <div v-if="list.length != 0">
+        <label class=" form-check-label m-2">
+        <input type="checkbox" v-model="selectedCourses" value="Finished" class="form-check-input" />
+        Finished
         </label>
         <label class="form-check-label m-3">
             <input type="checkbox" v-model="selectedCourses" value="In progress" class="form-check-input" />
             In progress
         </label>
+    </div>
     <main v-if="list.length > 0" class="row row-cols-1 row-cols-md-3 g-4">
         <div class="card mb-2 w-50" v-for="course in filteredCourses" style="height: auto;">
             <div class="row g-1">

@@ -1,6 +1,6 @@
 <script setup>
 import { motion } from 'motion-v';
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { Toast } from 'bootstrap';
 import { userAuth } from '@/utils/userAuth';
 import router from '@/router';
@@ -87,9 +87,16 @@ function getCoursesFromUser(user_id) {
 
 }
 getAllCourses(); // Call getAllCourses when the component is mounted
-onMounted(async() => {
+
+const recommendedCourses = computed(() => {
+  if (!allCourses.value || !userCourses.value) return [];
+  const enrolledIds = userCourses.value.map(c => c.course_id);
+  return allCourses.value.filter(c => !enrolledIds.includes(c.id)).slice(0, 3);
+});
+
+onMounted(async () => {
   const user = await userAuth(props.userAuth);
-  if(user) {
+  if (user) {
     loguedUser.value = user;
   } else {
     router.push('/catalog');
@@ -138,7 +145,7 @@ onMounted(async() => {
                   <div class="card-body">
                     <h5 class="card-title">{{ course.title }}</h5>
                     <p class="card-text">{{ course.description }}</p>
-                    <p class="card-text"><small class="text-body-secondary">Duracion: {{ course.duration }}</small></p>
+                    <p class="card-text"><small class="text-body-secondary">Duration: {{ course.duration }}</small></p>
                   </div>
                 </div>
                 <div class="col-md-4">
@@ -166,14 +173,28 @@ onMounted(async() => {
         <h4>You haven't started any course yet.</h4>
         <p>Explore our wide catalog and learn about every topic you want!</p>
       </div>
+
+      <div class="mt-5">
+        <h4>Recommended for you</h4>
+        <div class="row">
+          <div class="col-md-4" v-for="course in recommendedCourses" :key="course.id">
+            <div class="card h-100">
+              <img :src="course.image" class="card-img-top" alt="Course image">
+              <div class="card-body">
+                <h5 class="card-title">{{ course.title }}</h5>
+                <p class="card-text">{{ course.description.slice(0, 80) }}...</p>
+                <RouterLink class="btn" :to="{ name: 'course', params: { course_id: course.id } }">Check it
+                  out</RouterLink>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
-  <div v-else>
-    <h2 class="mt-5">Log in to enjoy all the content from OpenLearn!</h2>
-  </div>
 
-  
+
 </template>
 
 <style scoped>
@@ -181,5 +202,4 @@ onMounted(async() => {
   overflow: hidden;
   height: 20em;
 }
-
 </style>

@@ -146,6 +146,10 @@ onMounted(async () => {
     </div>
     <main class="container rounded shadow p-3 m-4 border">
         <h2 class="w-75 text-start text-muted">Your exams:</h2>
+        <div v-if="paginatedExam.length === 0">
+            <img src="/noData.png" alt="no data" class="img-fluid mx-auto d-block mt-5" style="width: 15em;">
+            <p class="text-center">You haven't created any exam yet.</p>
+        </div>
         <div class="card mb-5" v-for="exam in paginatedExam" :key="exam.id">
             <div class="row g-2 w-100">
                 <div class="col-12 col-md-9 w-100">
@@ -166,7 +170,7 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-        <nav aria-label="Paginación de usuarios">
+        <nav v-if="paginatedExam.length !== 0" aria-label="Paginación de usuarios">
             <ul class="pagination justify-content-center">
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
                     <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>

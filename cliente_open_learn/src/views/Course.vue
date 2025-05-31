@@ -8,6 +8,7 @@ import CoursesResources from '@/components/CoursesResources.vue';
 import CoursesExam from '@/components/CoursesExam.vue';
 import router from '@/router';
 
+
 const emit = defineEmits(['sessionStarted']);
 const props = defineProps({
     userAuth: {
@@ -215,7 +216,7 @@ onMounted(async () => {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
-                    minHeight: '20em'
+                    minHeight: 'auto'
                 }">
                 <div class="courseTittle w-100 p-3 rounded-5 text-shadow text-start">
                     <h1>{{ course.title }}</h1>
@@ -244,13 +245,13 @@ onMounted(async () => {
                 </div>
             </div>
             <CoursesResources v-if="isEnrrolled || teacherAssigned" :userAuth="props.userAuth" :course_id="courseId"
-                :teacherAssigned="teacherAssigned">
+                :teacherAssigned="teacherAssigned" @resource-added="getResources(courseId)">
             </CoursesResources>
-            <div v-if="isEnrrolled || teacherAssigned && resourcesList.length == 0">
+            <div v-if="(isEnrrolled || teacherAssigned) && resourcesList.length == 0">
                 <p class="text-center fs-4">There are no resources for this course yet.</p>
                 <p class="text-center fs-5" v-if="teacherAssigned">Add new resources now!</p>
             </div>
-            <div v-else>
+            <div v-if="!isEnrrolled && !teacherAssigned" class="text-center w-100">
                 <p class="text-center fs-4">You need to enroll in this course to see the content.</p>
                 <RouterLink to="/catalog" class="btn">Go to catalog</RouterLink>
             </div>
@@ -278,7 +279,6 @@ onMounted(async () => {
                     </li>
                     <li class="mb-3 fs-6 text-muted"><strong>Subject of this course:</strong> {{ course?.subject }}</li>
                     <li class="mb-3 fs-6 text-muted"><strong>Course's privacy:</strong> {{ course?.privacy }}</li>
-                    <li class="mb-3 fs-6 text-muted"><strong>Need information?</strong> Contact us!</li>
                 </ul>
             </div>
             <CoursesExam :course_id="courseId" :user_id="loguedUser.id" :teacherAssigned="teacherAssigned"

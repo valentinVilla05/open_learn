@@ -28,6 +28,7 @@ function startExam() {
         localStorage.setItem('exam_status', 'loading');
     }
     loadQuestions();
+    deleteAnswer(loguedUser.value.id, exam_id)
 }
 
 function loadQuestions() {
@@ -68,7 +69,6 @@ onMounted(async () => {
     const user = await userAuth(props.userAuth);
     if (user) {
         loguedUser.value = user;
-        deleteAnswer(loguedUser.value.id, exam_id)
     } else {
         Swal.fire({
             icon: "error",

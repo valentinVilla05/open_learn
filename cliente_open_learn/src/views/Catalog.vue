@@ -112,7 +112,7 @@ function previousPage() {
                             <h5 class="card-title fw-bold">{{ course.title }}</h5>
                             <p class="card-text">{{ course.description }}</p>
                             <p class="card-text">
-                                <small class="text-body-secondary">Duración: {{ course.duration }}</small>
+                                <small class="text-body-secondary">Duration: {{ course.duration }}</small>
                             </p>
                         </div>
                         <!-- Push this div to the bottom of the card body -->

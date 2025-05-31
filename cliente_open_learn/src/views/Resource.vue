@@ -176,11 +176,9 @@ onMounted(async () => {
 
             <!-- Document (PDF, Word, etc.) or Image -->
             <div v-else-if="resourceData?.type === 'document'">
-                <!-- Si es una imagen -->
                 <img v-if="isImage(resourceData.url)" :src="resourceData.url" alt="Uploaded Image"
                     style="max-width: 100%; max-height: 30em;" />
 
-                <!-- Si no es una imagen, mostramos un iframe (PDF u otros documentos) -->
                 <div v-else class="ratio ratio-4x3">
                     <iframe :src="resourceData.url" style="width: 100%; height: 100%; border: none;"
                         frameborder="0"></iframe>
@@ -192,7 +190,7 @@ onMounted(async () => {
             <p class="m-0">Write your thoughts:</p>
             <div class="d-flex">
                 <input class="w-100 rounded border-1 m-2" type="text" v-model="prompt"
-                    placeholder="Escribe el prompt aquí" :disabled="loading" />
+                    placeholder="Tell me about..." :disabled="loading" />
                 <button class="p-1 btn text-black" @click="sendPrompt" :disabled="loading">
                     {{ loading ? 'Sending...' : 'Send prompt' }}</button>
             </div>

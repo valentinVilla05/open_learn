@@ -4,6 +4,7 @@ import { motion } from 'motion-v';
 import { Modal } from 'bootstrap';
 import Swal from 'sweetalert2';
 
+const emit = defineEmits(['resource-added']); 
 const props = defineProps({
     userAuth: {
         type: String
@@ -50,7 +51,8 @@ function getResources(course_id) {
 }
 
 function createResource() {
-    newResourceData.value.course_id = props.course_id;
+    newResourceData.value.course_id = parseInt(props.course_id);
+    console.log(newResourceData.value);
     fetch('http://localhost:8000/api/resources', {
         method: 'POST',
         headers: {
@@ -69,6 +71,8 @@ function createResource() {
                 text: "The resource was added to the course!",
             });
             getResources(props.course_id)
+            emit('resource-added')
+            cleanForm();
         })
         .catch(error => console.error('Error:', error));
 }
@@ -91,6 +95,7 @@ function updateResource(resource_id) {
                 text: "The information has been updated succesfully!",
                 icon: "success"
             });
+            modalUpdate.hide();
         })
 }
 
@@ -212,15 +217,15 @@ onMounted(() => {
             class="container shadow rounded w-100 border d-flex justify-content-center align-items-center flex-column my-5">
             <h2>Create a new Resource</h2>
             <div class="input-group my-3 position-relative">
-                <label class="input-group-text" for="name">Name:*</label>
+                <label class="input-group-text" for="name">Name:<span style="color: red;">*</span></label>
                 <input type="text" name="name" placeholder="Unit 5..." class="form-control"
                     v-model="newResourceData.name" />
             </div>
             <div class="input-group my-3 position-relative">
-                <label class="input-group-text" for="type">Type:*</label>
+                <label class="input-group-text" for="type">Type:<span style="color: red;">*</span></label>
                 <select name="type" placeholder="document, url..." class="form-control" v-model="newResourceData.type">
                     <option value="document">Document</option>
-                    <option value="url">URL</option>
+                    <option value="link">URL</option>
                     <option value="video">Video</option>
                 </select>
             </div>
@@ -230,7 +235,7 @@ onMounted(() => {
                     v-model="newResourceData.description" />
             </div>
             <div class="input-group my-3 position-relative">
-                <label class="input-group-text" for="url">URL:*</label>
+                <label class="input-group-text" for="url">URL:<span style="color: red;">*</span></label>
                 <input type="text" name="url" placeholder="Write an url to the content" class="form-control"
                     v-model="newResourceData.url" />
             </div>
