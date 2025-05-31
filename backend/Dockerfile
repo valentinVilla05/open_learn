@@ -24,7 +24,8 @@ RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
-EXPOSE 80 # Sigue exponiendo el puerto 80 del contenedor, ya que el script lo mapeará.
+# Sigue exponiendo el puerto 80 del contenedor, ya que el script lo mapeará.
+EXPOSE 80 
 
 # ¡NUEVO! Usa un script de entrada personalizado para iniciar la aplicación.
 # Este script se encargará de sustituir el puerto en tiempo de ejecución.
