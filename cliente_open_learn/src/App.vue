@@ -21,7 +21,7 @@ let validationInterval = null; // Declare the variable for the interval
 
 async function tryRefreshToken() {
   try {
-    const response = await fetch('http://localhost:8000/api/refresh', {
+    const response = await fetch('https://apiopenlearn.onrender.com/api/refresh', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${session.value}`,
@@ -45,7 +45,7 @@ async function validateToken() {
 
   try {
     // Try to get the user with the actual token
-    const response = await fetch('http://localhost:8000/api/user', {
+    const response = await fetch('https://apiopenlearn.onrender.com/api/user', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${session.value}`, // Actual token
