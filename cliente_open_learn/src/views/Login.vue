@@ -158,7 +158,7 @@ const wrongSignUpData = ref(false);
 const errorSignUpmessage = ref("");
 const validDataSignUp = ref(false);
 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#?!$%^&*\-+_]).{8,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#?!$%^&*\-+_.]).{8,}$/
 
 // We get the users from teh db to validate if the email is already in use
 

@@ -61,7 +61,7 @@ function getInscriptions(user_id) {
 }
 
 function isImage(url) {
-  return /\.(jpeg|jpg|gif|png)$/i.test(url)
+    return /\.(jpeg|jpg|gif|png)$/i.test(url)
 }
 
 ////////////////
@@ -185,6 +185,7 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
+        <!--
         <div class="container m-3">
             <h3>Any doubts about the topic? Ask it to Owl-IA</h3>
             <p class="m-0">Write your thoughts:</p>
@@ -200,6 +201,7 @@ onMounted(async () => {
               {{ responseLlama }}
             </pre>
         </div>
+        -->
 
         <div class="m-3">
             <RouterLink :to="{ name: 'course', params: { course_id: courseId } }" class="btn">Go back to course
